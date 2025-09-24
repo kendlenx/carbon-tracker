@@ -127,7 +127,7 @@ class DatabaseService {
 
   Future<double> getTotalCO2ForDate(DateTime date) async {
     final activities = await getTransportActivitiesForDate(date);
-    return activities.fold(0.0, (sum, activity) => sum + activity.co2Emission);
+    return activities.fold<double>(0.0, (sum, activity) => sum + activity.co2Emission);
   }
 
   Future<double> getTotalCO2ForDateRange(DateTime startDate, DateTime endDate) async {
@@ -135,7 +135,7 @@ class DatabaseService {
       startDate: startDate,
       endDate: endDate,
     );
-    return activities.fold(0.0, (sum, activity) => sum + activity.co2Emission);
+    return activities.fold<double>(0.0, (sum, activity) => sum + activity.co2Emission);
   }
 
   Future<Map<String, double>> getCO2ByTransportType({
