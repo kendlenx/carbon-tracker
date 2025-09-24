@@ -539,4 +539,45 @@ class PermissionService extends ChangeNotifier {
 
     return false;
   }
+
+  // Convenience methods for permission screen
+  Future<bool> hasLocationPermission() async {
+    return isPermissionGranted(AppPermission.location);
+  }
+
+  Future<bool> hasCameraPermission() async {
+    return isPermissionGranted(AppPermission.camera);
+  }
+
+  Future<bool> hasNotificationPermission() async {
+    return isPermissionGranted(AppPermission.notification);
+  }
+
+  Future<bool> hasStoragePermission() async {
+    return isPermissionGranted(AppPermission.storage);
+  }
+
+  Future<bool> requestLocationPermission() async {
+    final status = await requestPermission(AppPermission.location);
+    return status == PermissionStatus.granted;
+  }
+
+  Future<bool> requestCameraPermission() async {
+    final status = await requestPermission(AppPermission.camera);
+    return status == PermissionStatus.granted;
+  }
+
+  Future<bool> requestNotificationPermission() async {
+    final status = await requestPermission(AppPermission.notification);
+    return status == PermissionStatus.granted;
+  }
+
+  Future<bool> requestStoragePermission() async {
+    final status = await requestPermission(AppPermission.storage);
+    return status == PermissionStatus.granted;
+  }
+
+  Future<bool> openAppSettings() async {
+    return await openSettings();
+  }
 }

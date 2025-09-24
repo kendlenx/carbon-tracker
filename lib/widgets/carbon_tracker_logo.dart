@@ -1,0 +1,216 @@
+import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+
+/// Carbon Tracker Logo Generator
+/// Creates a beautiful eco-friendly logo with green and dark theme
+class CarbonTrackerLogo extends StatelessWidget {
+  final double size;
+  final bool isDark;
+
+  const CarbonTrackerLogo({
+    Key? key,
+    this.size = 100,
+    this.isDark = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: CarbonTrackerLogoPainter(isDark: isDark),
+    );
+  }
+}
+
+class CarbonTrackerLogoPainter extends CustomPainter {
+  final bool isDark;
+
+  CarbonTrackerLogoPainter({required this.isDark});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width * 0.4;
+
+    // Define colors based on theme
+    final primaryGreen = isDark ? const Color(0xFF4CAF50) : const Color(0xFF2E7D32);
+    final secondaryGreen = isDark ? const Color(0xFF81C784) : const Color(0xFF66BB6A);
+    final accentGreen = const Color(0xFF8BC34A);
+    final darkColor = isDark ? const Color(0xFF1B1B1B) : const Color(0xFF212121);
+    final lightColor = isDark ? const Color(0xFF2E2E2E) : const Color(0xFF424242);
+
+    // Draw background circle with gradient
+    final backgroundPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          primaryGreen.withOpacity(0.1),
+          darkColor.withOpacity(0.8),
+        ],
+        stops: const [0.3, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: radius));
+
+    canvas.drawCircle(center, radius, backgroundPaint);
+
+    // Draw main leaf shape
+    _drawLeaf(canvas, center, size, primaryGreen, secondaryGreen);
+
+    // Draw CO2 molecules
+    _drawCO2Molecules(canvas, center, size, accentGreen);
+
+    // Draw circular progress indicator (representing tracking)
+    _drawProgressRing(canvas, center, radius * 0.85, primaryGreen);
+
+    // Add sparkle effects
+    _drawSparkles(canvas, center, size, accentGreen);
+  }
+
+  void _drawLeaf(Canvas canvas, Offset center, Size size, Color primary, Color secondary) {
+    final leafPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [secondary, primary],
+        stops: const [0.0, 1.0],
+      ).createShader(Rect.fromCenter(center: center, width: size.width * 0.6, height: size.height * 0.4));
+
+    // Main leaf body
+    final leafPath = Path();
+    final leafCenter = Offset(center.dx, center.dy - size.height * 0.05);
+    
+    leafPath.moveTo(leafCenter.dx, leafCenter.dy - size.height * 0.2);
+    leafPath.quadraticBezierTo(
+      leafCenter.dx + size.width * 0.15, leafCenter.dy - size.height * 0.1,
+      leafCenter.dx + size.width * 0.1, leafCenter.dy + size.height * 0.1,
+    );
+    leafPath.quadraticBezierTo(
+      leafCenter.dx, leafCenter.dy + size.height * 0.15,
+      leafCenter.dx - size.width * 0.1, leafCenter.dy + size.height * 0.1,
+    );
+    leafPath.quadraticBezierTo(
+      leafCenter.dx - size.width * 0.15, leafCenter.dy - size.height * 0.1,
+      leafCenter.dx, leafCenter.dy - size.height * 0.2,
+    );
+
+    canvas.drawPath(leafPath, leafPaint);
+
+    // Leaf vein
+    final veinPaint = Paint()
+      ..color = primary.withOpacity(0.6)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final veinPath = Path();
+    veinPath.moveTo(leafCenter.dx, leafCenter.dy - size.height * 0.18);
+    veinPath.lineTo(leafCenter.dx, leafCenter.dy + size.height * 0.12);
+
+    canvas.drawPath(veinPath, veinPaint);
+  }
+
+  void _drawCO2Molecules(Canvas canvas, Offset center, Size size, Color color) {
+    final moleculePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    // Draw small CO2 representations around the leaf
+    final positions = [
+      Offset(center.dx - size.width * 0.25, center.dy - size.height * 0.1),
+      Offset(center.dx + size.width * 0.25, center.dy + size.height * 0.05),
+      Offset(center.dx - size.width * 0.15, center.dy + size.height * 0.25),
+    ];
+
+    for (final pos in positions) {
+      canvas.drawCircle(pos, 3, moleculePaint);
+      canvas.drawCircle(Offset(pos.dx + 8, pos.dy), 2, moleculePaint);
+      canvas.drawCircle(Offset(pos.dx - 8, pos.dy), 2, moleculePaint);
+    }
+  }
+
+  void _drawProgressRing(Canvas canvas, Offset center, double radius, Color color) {
+    final ringPaint = Paint()
+      ..color = color.withOpacity(0.3)
+      ..strokeWidth = 3
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    // Draw partial circle to represent progress/tracking
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -1.5, // start angle
+      4.5, // sweep angle (about 3/4 of circle)
+      false,
+      ringPaint,
+    );
+  }
+
+  void _drawSparkles(Canvas canvas, Offset center, Size size, Color color) {
+    final sparklePaint = Paint()
+      ..color = color.withOpacity(0.8)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    // Small sparkles around the logo
+    final sparklePositions = [
+      Offset(center.dx + size.width * 0.3, center.dy - size.height * 0.3),
+      Offset(center.dx - size.width * 0.35, center.dy - size.height * 0.2),
+      Offset(center.dx + size.width * 0.35, center.dy + size.height * 0.3),
+    ];
+
+    for (final pos in sparklePositions) {
+      // Draw cross-shaped sparkle
+      canvas.drawLine(
+        Offset(pos.dx - 4, pos.dy),
+        Offset(pos.dx + 4, pos.dy),
+        sparklePaint,
+      );
+      canvas.drawLine(
+        Offset(pos.dx, pos.dy - 4),
+        Offset(pos.dx, pos.dy + 4),
+        sparklePaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+/// App icon widget that can be used in the AppBar
+class CarbonTrackerIcon extends StatelessWidget {
+  final double size;
+
+  const CarbonTrackerIcon({Key? key, this.size = 32}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(size * 0.2),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.green.shade400,
+            Colors.green.shade700,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withOpacity(0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: const Icon(
+        Icons.eco,
+        color: Colors.white,
+      ),
+    );
+  }
+}

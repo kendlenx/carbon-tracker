@@ -236,19 +236,83 @@ class DatabaseService {
     final today = DateTime(now.year, now.month, now.day);
     final weekAgo = today.subtract(const Duration(days: 7));
     final monthAgo = DateTime(now.year, now.month - 1, now.day);
+    final yearAgo = DateTime(now.year - 1, now.month, now.day);
 
     final todayTotal = await getTotalCO2ForDate(today);
     final weekTotal = await getTotalCO2ForDateRange(weekAgo, now);
     final monthTotal = await getTotalCO2ForDateRange(monthAgo, now);
+    final yearTotal = await getTotalCO2ForDateRange(yearAgo, now);
 
     final weeklyAverage = weekTotal / 7;
+    final allActivities = await getTransportActivities();
+    final totalCarbon = allActivities.fold<double>(0.0, (sum, activity) => sum + activity.co2Emission);
 
     return {
       'todayTotal': todayTotal,
       'weeklyAverage': weeklyAverage,
       'monthTotal': monthTotal,
       'weekTotal': weekTotal,
+      'yearlyTotal': yearTotal,
+      'totalCarbon': totalCarbon,
     };
+  }
+
+  // Initialize service
+  Future<void> initialize() async {
+    await database; // This will trigger database creation if needed
+  }
+
+  // Get all activities for export
+  Future<List<Map<String, dynamic>>> getAllActivities() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _transportActivitiesTable,
+      orderBy: 'created_at DESC',
+    );
+    return maps;
+  }
+
+  // Get activities by category (for food/shopping screens)
+  Future<List<Map<String, dynamic>>> getActivitiesByCategory(String category) async {
+    // For now, all activities are transport. In future, we'd have separate tables
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _transportActivitiesTable,
+      orderBy: 'created_at DESC',
+    );
+    
+    // Convert transport activities to generic format
+    return maps.map((map) => {
+      'id': map['id'],
+      'category': 'transport',
+      'subcategory': map['transport_type_id'],
+      'description': 'Transport activity',
+      'co2_amount': map['co2_emission'],
+      'created_at': DateTime.fromMillisecondsSinceEpoch(map['created_at']).toIso8601String(),
+      'metadata': {
+        'distance': map['distance_km'],
+        'notes': map['notes'],
+      }
+    }).toList();
+  }
+
+  // Insert general activity (for food/shopping)
+  Future<void> insertActivity(Map<String, dynamic> activity) async {
+    // For now, convert to transport activity
+    // In future, we'd have separate tables for each category
+    await addActivity({
+      'type': activity['subcategory'] ?? 'car',
+      'distance': 1.0, // default
+      'carbonFootprint': activity['co2_amount'] ?? 0.0,
+      'timestamp': activity['created_at'] ?? DateTime.now().toIso8601String(),
+      'source': activity['category'] ?? 'manual',
+    });
+  }
+
+  // Clear all data
+  Future<void> clearAllData() async {
+    final db = await database;
+    await db.delete(_transportActivitiesTable);
   }
 
   // Close database

@@ -4,6 +4,11 @@ import 'screens/add_activity_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/energy_screen.dart';
 import 'screens/achievements_screen.dart';
+import 'screens/food_screen.dart';
+import 'screens/shopping_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/goals_screen.dart';
+import 'screens/permissions_screen.dart';
 import 'services/database_service.dart';
 import 'services/carbon_calculator_service.dart';
 import 'services/theme_service.dart';
@@ -25,25 +30,11 @@ import 'widgets/hero_dashboard.dart';
 import 'widgets/morphing_fab.dart';
 import 'widgets/page_transitions.dart';
 import 'widgets/micro_interactions.dart';
+import 'widgets/carbon_tracker_logo.dart';
+import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize core services
-  await ThemeService.instance.loadThemePreference();
-  await LanguageService.instance.initialize();
-  await PermissionService.instance.initialize();
-  await AchievementService.instance.initialize();
-  await SmartFeaturesService.instance.initialize();
-  
-  // Initialize new smart services
-  await NotificationService.instance.initialize();
-  await GoalService.instance.initialize();
-  await LocationService.instance.initialize();
-  await VoiceService.instance.initialize();
-  await SmartHomeService.instance.initialize();
-  await DeviceIntegrationService.instance.initialize();
-  
   runApp(const CarbonTrackerApp());
 }
 
@@ -71,10 +62,11 @@ class CarbonTrackerApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: const CarbonTrackerHome(),
+          home: const SplashScreen(),
           debugShowCheckedModeBanner: false,
         );
       },
+      child: const SplashScreen(), // Pre-build child for performance
     );
   }
 }
@@ -117,46 +109,46 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   double weeklyAverage = 0.0; // kg CO₂
   double monthlyGoal = 400.0; // kg CO₂
   bool isLoading = true;
-  final AchievementService _achievementService = AchievementService.instance;
-  final LocationService _locationService = LocationService.instance;
-  final VoiceService _voiceService = VoiceService.instance;
   final LanguageService _languageService = LanguageService.instance;
   final PermissionService _permissionService = PermissionService.instance;
 
-  final List<CategoryData> categories = [
-    CategoryData(
-      category: CarbonCategory.transport,
-      title: 'Ulaşım',
-      subtitle: 'Araç, metro, yürüme',
-      icon: Icons.directions_car,
-      color: Colors.blue,
-      todayValue: 8.2,
-    ),
-    CategoryData(
-      category: CarbonCategory.energy,
-      title: 'Enerji',
-      subtitle: 'Elektrik, doğal gaz',
-      icon: Icons.flash_on,
-      color: Colors.orange,
-      todayValue: 2.8,
-    ),
-    CategoryData(
-      category: CarbonCategory.food,
-      title: 'Yemek',
-      subtitle: 'Beslenme alışkanlıkları',
-      icon: Icons.restaurant,
-      color: Colors.green,
-      todayValue: 1.2,
-    ),
-    CategoryData(
-      category: CarbonCategory.shopping,
-      title: 'Alışveriş',
-      subtitle: 'Tüketim malları',
-      icon: Icons.shopping_bag,
-      color: Colors.purple,
-      todayValue: 0.3,
-    ),
-  ];
+  List<CategoryData> get categories {
+    final isEnglish = _languageService.isEnglish;
+    return [
+      CategoryData(
+        category: CarbonCategory.transport,
+        title: isEnglish ? 'Transport' : 'Ulaşım',
+        subtitle: isEnglish ? 'Car, metro, walking' : 'Araç, metro, yürüme',
+        icon: Icons.directions_car,
+        color: Colors.blue,
+        todayValue: 8.2,
+      ),
+      CategoryData(
+        category: CarbonCategory.energy,
+        title: isEnglish ? 'Energy' : 'Enerji',
+        subtitle: isEnglish ? 'Electricity, natural gas' : 'Elektrik, doğal gaz',
+        icon: Icons.flash_on,
+        color: Colors.orange,
+        todayValue: 2.8,
+      ),
+      CategoryData(
+        category: CarbonCategory.food,
+        title: isEnglish ? 'Food' : 'Yemek',
+        subtitle: isEnglish ? 'Nutrition habits' : 'Beslenme alışkanlıkları',
+        icon: Icons.restaurant,
+        color: Colors.green,
+        todayValue: 1.2,
+      ),
+      CategoryData(
+        category: CarbonCategory.shopping,
+        title: isEnglish ? 'Shopping' : 'Alışveriş',
+        subtitle: isEnglish ? 'Consumer goods' : 'Tüketim malları',
+        icon: Icons.shopping_bag,
+        color: Colors.purple,
+        todayValue: 0.3,
+      ),
+    ];
+  }
 
   @override
   void initState() {
@@ -185,8 +177,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           isLoading = false;
         });
         
-        // Check for new achievements
-        _checkAchievements();
+        // Achievement checking disabled for now
       }
     } catch (e) {
       print('Error loading dashboard data: $e');
@@ -198,40 +189,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
     }
   }
   
-  Future<void> _checkAchievements() async {
-    final newAchievements = <Achievement>[];
-    
-    // Check daily achievements
-    final dailyAchievements = await _achievementService.checkDailyAchievements(totalCarbonToday);
-    newAchievements.addAll(dailyAchievements);
-    
-    // Check milestone achievements (this would need real data)
-    // For demo purposes, using dummy values
-    final milestoneAchievements = await _achievementService.checkMilestoneAchievements(
-      totalCO2Saved: weeklyAverage * 7, // dummy calculation
-      totalActivities: 10, // would be from database
-    );
-    newAchievements.addAll(milestoneAchievements);
-    
-    // Show achievement unlock dialog if any new achievements
-    if (newAchievements.isNotEmpty && mounted) {
-      await Future.delayed(const Duration(milliseconds: 500)); // Small delay for better UX
-      
-      if (!mounted) return;
-      
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => AchievementUnlockDialog(
-          newAchievements: newAchievements,
-          onDismiss: () {
-            // Refresh the UI to show updated achievements
-            setState(() {});
-          },
-        ),
-      );
-    }
-  }
+  // Achievement checking temporarily disabled
 
   void _navigateToCategory(CategoryData category) async {
     // Haptic feedback for navigation
@@ -260,11 +218,24 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         }
         break;
       case CarbonCategory.food:
-      case CarbonCategory.shopping:
-        await HapticHelper.trigger(HapticType.warning);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${category.title} detayları yakında!')),
+        final result = await context.pushWithTransition<bool>(
+          const FoodScreen(),
+          transition: TransitionType.slideUp,
         );
+        if (result == true) {
+          _loadDashboardData();
+          await HapticHelper.trigger(HapticType.success);
+        }
+        break;
+      case CarbonCategory.shopping:
+        final result = await context.pushWithTransition<bool>(
+          const ShoppingScreen(),
+          transition: TransitionType.fadeScale,
+        );
+        if (result == true) {
+          _loadDashboardData();
+          await HapticHelper.trigger(HapticType.success);
+        }
         break;
     }
   }
@@ -273,93 +244,183 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          '🌱 Carbon Tracker',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
+        title: Row(
+          children: [
+            CarbonTrackerIcon(size: 40),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    'Carbon Tracker',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  AnimatedBuilder(
+                    animation: _languageService,
+                    builder: (context, child) => Text(
+                      _languageService.isEnglish ? '🌍 Track your carbon footprint' : '🌍 Karbon ayak izini takip et',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
         actions: [
-          // Location tracking indicator
-          AnimatedBuilder(
-            animation: _locationService,
-            builder: (context, child) {
-              return IconButton(
-                icon: Icon(
-                  _locationService.isTracking ? Icons.gps_fixed : Icons.gps_off,
-                  color: _locationService.isTracking ? Colors.green : null,
-                ),
-                tooltip: _locationService.isTracking ? 'Konum takibi aktif' : 'Konum takibi kapalı',
-                onPressed: () async {
-                  if (_locationService.isTracking) {
-                    await _locationService.stopTracking();
-                  } else {
-                    await _locationService.startTracking();
-                  }
-                },
-              );
-            },
-          ),
-          // Language toggle
-          AnimatedBuilder(
-            animation: _languageService,
-            builder: (context, child) {
-              return IconButton(
-                icon: Text(
-                  _languageService.currentLanguageFlag,
-                  style: const TextStyle(fontSize: 20),
-                ),
-                tooltip: _languageService.currentLanguageDisplayName,
-                onPressed: () async {
+          // More options menu with all controls
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) async {
+              switch (value) {
+                case 'language':
                   await _languageService.toggleLanguage();
-                },
-              );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${_languageService.isEnglish ? 'Language changed to' : 'Dil değiştirildi:'} ${_languageService.currentLanguageDisplayName}'),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                  break;
+                case 'theme':
+                  await ThemeService.instance.toggleTheme();
+                  break;
+                case 'achievements':
+                  context.pushWithTransition(
+                    const AchievementsScreen(),
+                    transition: TransitionType.fadeScale,
+                  );
+                  break;
+                case 'statistics':
+                  context.pushWithTransition(
+                    const StatisticsScreen(),
+                    transition: TransitionType.slideUp,
+                  );
+                  break;
+                case 'permissions':
+                  context.pushWithTransition(
+                    const PermissionsScreen(),
+                    transition: TransitionType.slideUp,
+                  );
+                  break;
+                case 'settings':
+                  context.pushWithTransition(
+                    const SettingsScreen(),
+                    transition: TransitionType.slideLeft,
+                  );
+                  break;
+                case 'goals':
+                  context.pushWithTransition(
+                    const GoalsScreen(),
+                    transition: TransitionType.fadeScale,
+                  );
+                  break;
+              }
             },
-          ),
-          // Permission status
-          AnimatedBuilder(
-            animation: _permissionService,
-            builder: (context, child) {
-              final hasRequiredPermissions = _permissionService.areRequiredPermissionsGranted();
-              return IconButton(
-                icon: Icon(
-                  hasRequiredPermissions ? Icons.verified_user : Icons.warning,
-                  color: hasRequiredPermissions ? Colors.green : Colors.orange,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'language',
+                child: Row(
+                  children: [
+                    Text(
+                      _languageService.currentLanguageFlag,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Language' : 'Dil'),
+                    const Spacer(),
+                    Text(
+                      _languageService.currentLanguageDisplayName,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
                 ),
-                tooltip: hasRequiredPermissions ? 'İzinler tamam' : 'İzin gerekli',
-                onPressed: () async {
-                  await _permissionService.showPermissionsOverview(context);
-                },
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(ThemeService.instance.themeIcon),
-            tooltip: 'Tema: ${ThemeService.instance.themeName}',
-            onPressed: () async {
-              await ThemeService.instance.toggleTheme();
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.emoji_events),
-            tooltip: 'Başarılar',
-            onPressed: () {
-              context.pushWithTransition(
-                const AchievementsScreen(),
-                transition: TransitionType.fadeScale,
-                duration: const Duration(milliseconds: 400),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            tooltip: 'İstatistikler',
-            onPressed: () {
-              context.pushWithTransition(
-                const StatisticsScreen(),
-                transition: TransitionType.slideUp,
-                duration: const Duration(milliseconds: 350),
-              );
-            },
+              ),
+              PopupMenuItem(
+                value: 'theme',
+                child: Row(
+                  children: [
+                    Icon(ThemeService.instance.themeIcon, color: Colors.indigo),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Theme' : 'Tema'),
+                    const Spacer(),
+                    Text(
+                      _languageService.isEnglish ? ThemeService.instance.themeName : 
+                        (ThemeService.instance.themeName == 'Light' ? 'Açık' : 
+                         ThemeService.instance.themeName == 'Dark' ? 'Koyu' : 'Sistem'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              PopupMenuItem(
+                value: 'achievements',
+                child: Row(
+                  children: [
+                    const Icon(Icons.emoji_events, color: Colors.amber),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Achievements' : 'Başarılar'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'statistics',
+                child: Row(
+                  children: [
+                    const Icon(Icons.bar_chart, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Statistics' : 'İstatistikler'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'permissions',
+                child: Row(
+                  children: [
+                    const Icon(Icons.security, color: Colors.orange),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Permissions' : 'İzinler'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'goals',
+                child: Row(
+                  children: [
+                    const Icon(Icons.flag, color: Colors.green),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Goals' : 'Hedefler'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    const Icon(Icons.settings, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Settings' : 'Ayarlar'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -374,16 +435,11 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
             // Hero Dashboard
-            AnimatedBuilder(
-              animation: _achievementService,
-              builder: (context, child) {
-                return HeroDashboard(
-                  totalCarbonToday: totalCarbonToday,
-                  weeklyAverage: weeklyAverage,
-                  monthlyGoal: monthlyGoal,
-                  isLoading: false,
-                );
-              },
+            HeroDashboard(
+              totalCarbonToday: totalCarbonToday,
+              weeklyAverage: weeklyAverage,
+              monthlyGoal: monthlyGoal,
+              isLoading: false,
             ),
             const SizedBox(height: 24),
             
@@ -395,7 +451,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             
             // Kategoriler başlığı
             Text(
-              'Kategoriler',
+              _languageService.isEnglish ? 'Categories' : 'Kategoriler',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -434,7 +490,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           currentAction: FABAction(
             state: FABState.add,
             icon: Icons.add,
-            tooltip: 'Hızlı İşlemler',
+            tooltip: _languageService.isEnglish ? 'Quick Actions' : 'Hızlı İşlemler',
             onPressed: () async {
               final result = await context.pushWithTransition<bool>(
                 const AddActivityScreen(),
@@ -450,7 +506,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         actions: [
           SpeedDialAction(
             icon: Icons.directions_car,
-            label: 'Ulaşım',
+            label: _languageService.isEnglish ? 'Transport' : 'Ulaşım',
             backgroundColor: Colors.blue,
             onPressed: () async {
               final result = await context.pushWithTransition<bool>(
@@ -465,7 +521,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           ),
           SpeedDialAction(
             icon: Icons.flash_on,
-            label: 'Enerji',
+            label: _languageService.isEnglish ? 'Energy' : 'Enerji',
             backgroundColor: Colors.orange,
             onPressed: () async {
               final result = await context.pushWithTransition<bool>(
@@ -480,7 +536,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           ),
           SpeedDialAction(
             icon: Icons.add,
-            label: 'Genel Ekle',
+            label: _languageService.isEnglish ? 'Add General' : 'Genel Ekle',
             backgroundColor: Colors.green,
             onPressed: () async {
               final result = await context.pushWithTransition<bool>(
@@ -494,16 +550,13 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             },
           ),
           SpeedDialAction(
-            icon: _voiceService.isListening ? Icons.mic : Icons.mic_none,
-            label: 'Sesli Komut',
-            backgroundColor: _voiceService.isListening ? Colors.red : Colors.purple,
+            icon: Icons.mic_none,
+            label: _languageService.isEnglish ? 'Voice Command' : 'Sesli Komut',
+            backgroundColor: Colors.purple,
             onPressed: () async {
-              if (_voiceService.isListening) {
-                await _voiceService.stopListening();
-              } else {
-                await _voiceService.startListening();
-              }
-              setState(() {}); // Update UI
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(_languageService.isEnglish ? 'Voice command feature coming soon!' : 'Sesli komut özelliği yakında!')),
+              );
             },
           ),
         ],
