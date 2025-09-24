@@ -335,3 +335,218 @@ class _AnimatedLoadingState extends State<AnimatedLoading>
     );
   }
 }
+
+/// Fade in animasyonu
+class FadeInWidget extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+  final Duration delay;
+
+  const FadeInWidget({
+    Key? key,
+    required this.child,
+    this.duration = const Duration(milliseconds: 600),
+    this.delay = Duration.zero,
+  }) : super(key: key);
+
+  @override
+  State<FadeInWidget> createState() => _FadeInWidgetState();
+}
+
+class _FadeInWidgetState extends State<FadeInWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeIn,
+    ));
+
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: widget.child,
+    );
+  }
+}
+
+/// Slide in yönleri
+enum SlideDirection { left, right, up, down }
+
+/// Slide in animasyonu
+class SlideInWidget extends StatefulWidget {
+  final Widget child;
+  final SlideDirection direction;
+  final Duration duration;
+  final Duration delay;
+
+  const SlideInWidget({
+    Key? key,
+    required this.child,
+    this.direction = SlideDirection.up,
+    this.duration = const Duration(milliseconds: 600),
+    this.delay = Duration.zero,
+  }) : super(key: key);
+
+  @override
+  State<SlideInWidget> createState() => _SlideInWidgetState();
+}
+
+class _SlideInWidgetState extends State<SlideInWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    Offset begin;
+    switch (widget.direction) {
+      case SlideDirection.left:
+        begin = const Offset(-1.0, 0.0);
+        break;
+      case SlideDirection.right:
+        begin = const Offset(1.0, 0.0);
+        break;
+      case SlideDirection.up:
+        begin = const Offset(0.0, -1.0);
+        break;
+      case SlideDirection.down:
+        begin = const Offset(0.0, 1.0);
+        break;
+    }
+
+    _slideAnimation = Tween<Offset>(
+      begin: begin,
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    ));
+
+    Future.delayed(widget.delay, () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SlideTransition(
+      position: _slideAnimation,
+      child: widget.child,
+    );
+  }
+}
+
+/// Tap scale widget
+class TapScaleWidget extends StatefulWidget {
+  final Widget child;
+  final VoidCallback? onTap;
+  final double scaleValue;
+  final Duration duration;
+
+  const TapScaleWidget({
+    Key? key,
+    required this.child,
+    this.onTap,
+    this.scaleValue = 0.95,
+    this.duration = const Duration(milliseconds: 100),
+  }) : super(key: key);
+
+  @override
+  State<TapScaleWidget> createState() => _TapScaleWidgetState();
+}
+
+class _TapScaleWidgetState extends State<TapScaleWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: widget.scaleValue,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails details) {
+    _controller.forward();
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    _controller.reverse();
+    widget.onTap?.call();
+  }
+
+  void _onTapCancel() {
+    _controller.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
+      ),
+    );
+  }
+}
