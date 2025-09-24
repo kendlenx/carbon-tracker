@@ -283,18 +283,6 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             icon: const Icon(Icons.more_vert),
             onSelected: (value) async {
               switch (value) {
-                case 'language':
-                  await _languageService.toggleLanguage();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${_languageService.isEnglish ? 'Language changed to' : 'Dil değiştirildi:'} ${_languageService.currentLanguageDisplayName}'),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                  break;
-                case 'theme':
-                  await ThemeService.instance.toggleTheme();
-                  break;
                 case 'achievements':
                   context.pushWithTransition(
                     const AchievementsScreen(),
@@ -328,48 +316,6 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               }
             },
             itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'language',
-                child: Row(
-                  children: [
-                    Text(
-                      _languageService.currentLanguageFlag,
-                      style: const TextStyle(fontSize: 18),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Language' : 'Dil'),
-                    const Spacer(),
-                    Text(
-                      _languageService.currentLanguageDisplayName,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'theme',
-                child: Row(
-                  children: [
-                    Icon(ThemeService.instance.themeIcon, color: Colors.indigo),
-                    const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Theme' : 'Tema'),
-                    const Spacer(),
-                    Text(
-                      _languageService.isEnglish ? ThemeService.instance.themeName : 
-                        (ThemeService.instance.themeName == 'Light' ? 'Açık' : 
-                         ThemeService.instance.themeName == 'Dark' ? 'Koyu' : 'Sistem'),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const PopupMenuDivider(),
               PopupMenuItem(
                 value: 'achievements',
                 child: Row(
