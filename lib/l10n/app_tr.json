@@ -1,0 +1,250 @@
+{
+  "appTitle": "Carbon Tracker",
+  "appSubtitle": "Karbon ayak izini takip et",
+  
+  "navigation": {
+    "home": "Ana Sayfa",
+    "transport": "Ulaşım",
+    "energy": "Enerji",
+    "food": "Yemek",
+    "shopping": "Alışveriş",
+    "statistics": "İstatistikler",
+    "achievements": "Başarılar",
+    "settings": "Ayarlar"
+  },
+  
+  "dashboard": {
+    "todayTotal": "Bugün Toplam",
+    "weeklyAverage": "Haftalık Ortalama",
+    "monthlyGoal": "Aylık Hedef",
+    "carbonEmission": "kg CO₂",
+    "performance": "Performans",
+    "categories": "Kategoriler",
+    "loading": "Yükleniyor...",
+    "refresh": "Yenile"
+  },
+  
+  "transport": {
+    "title": "Ulaşım",
+    "subtitle": "Araç, metro, yürüme",
+    "walking": "Yürüme",
+    "cycling": "Bisiklet",
+    "publicTransport": "Toplu Taşıma",
+    "car": "Araba",
+    "motorcycle": "Motosiklet",
+    "taxi": "Taksi",
+    "plane": "Uçak",
+    "distance": "Mesafe",
+    "km": "km",
+    "addTrip": "Yolculuk Ekle",
+    "selectTransportType": "Ulaşım türünü seçin",
+    "enterDistance": "Mesafeyi girin",
+    "save": "Kaydet",
+    "cancel": "İptal"
+  },
+  
+  "energy": {
+    "title": "Enerji",
+    "subtitle": "Elektrik, doğal gaz",
+    "electricity": "Elektrik",
+    "naturalGas": "Doğal Gaz",
+    "heating": "Isıtma",
+    "cooling": "Soğutma",
+    "hotWater": "Sıcak Su",
+    "appliances": "Ev Aletleri",
+    "consumption": "Tüketim",
+    "kwh": "kWh",
+    "m3": "m³",
+    "addConsumption": "Tüketim Ekle",
+    "selectEnergyType": "Enerji türünü seçin",
+    "enterAmount": "Miktarı girin"
+  },
+  
+  "achievements": {
+    "title": "Başarılar",
+    "unlocked": "Açılan Başarılar",
+    "locked": "Kilitli Başarılar",
+    "progress": "İlerleme",
+    "congratulations": "Tebrikler!",
+    "newAchievement": "Yeni Başarı Açıldı!",
+    "continue": "Devam Et",
+    "close": "Kapat",
+    "level": "Seviye",
+    "bronze": "Bronz",
+    "silver": "Gümüş",
+    "gold": "Altın",
+    "platinum": "Platin",
+    "diamond": "Elmas"
+  },
+  
+  "goals": {
+    "title": "Hedefler",
+    "daily": "Günlük",
+    "weekly": "Haftalık",
+    "monthly": "Aylık",
+    "setGoal": "Hedef Belirle",
+    "currentGoal": "Mevcut Hedef",
+    "target": "Hedef",
+    "progress": "İlerleme",
+    "completed": "Tamamlandı",
+    "remaining": "Kalan",
+    "onTrack": "Yolunda",
+    "behindSchedule": "Geride",
+    "exceeded": "Aşıldı"
+  },
+  
+  "notifications": {
+    "title": "Bildirimler",
+    "dailyReminder": "Günlük Hatırlatma",
+    "weeklyReport": "Haftalık Rapor",
+    "achievementUnlocked": "Başarı Açıldı",
+    "goalReached": "Hedef Ulaşıldı",
+    "smartTip": "Akıllı İpucu",
+    "permissionRequired": "Bildirim izni gerekli",
+    "enable": "Etkinleştir",
+    "disable": "Devre Dışı Bırak"
+  },
+  
+  "location": {
+    "title": "Konum",
+    "tracking": "Takip",
+    "enabled": "Etkin",
+    "disabled": "Devre Dışı",
+    "permissionRequired": "Konum izni gerekli",
+    "nearbyBikePaths": "Yakındaki Bisiklet Yolları",
+    "publicTransportStops": "Toplu Taşıma Durakları",
+    "ecoFriendlyRoutes": "Çevre Dostu Rotalar",
+    "suggestions": "Öneriler"
+  },
+  
+  "voice": {
+    "title": "Sesli Komutlar",
+    "listening": "Dinliyor...",
+    "speak": "Konuş",
+    "stopListening": "Dinlemeyi Durdur",
+    "permissionRequired": "Mikrofon izni gerekli",
+    "commandHistory": "Komut Geçmişi",
+    "examples": "Örnek Komutlar",
+    "logTransport": "Ulaşım kaydı ekle",
+    "getDailyStats": "Bugünkü istatistikleri söyle",
+    "setGoal": "Hedef belirle"
+  },
+  
+  "smartHome": {
+    "title": "Akıllı Ev",
+    "connectedDevices": "Bağlı Cihazlar",
+    "automations": "Otomasyonlar",
+    "energyConsumption": "Enerji Tüketimi",
+    "optimizations": "Optimizasyonlar",
+    "thermostat": "Termostat",
+    "smartMeter": "Akıllı Sayaç",
+    "lightBulb": "Akıllı Ampul",
+    "smartPlug": "Akıllı Priz",
+    "connected": "Bağlı",
+    "disconnected": "Bağlantı Kesildi",
+    "connecting": "Bağlanıyor"
+  },
+  
+  "devices": {
+    "title": "Cihaz Entegrasyonları",
+    "appleWatch": "Apple Watch",
+    "wearOS": "Wear OS",
+    "siriShortcuts": "Siri Kısayolları",
+    "googleAssistant": "Google Assistant",
+    "carPlay": "CarPlay",
+    "androidAuto": "Android Auto",
+    "syncStatus": "Senkronizasyon Durumu",
+    "lastSync": "Son Senkronizasyon",
+    "shortcuts": "Kısayollar",
+    "healthData": "Sağlık Verisi"
+  },
+  
+  "statistics": {
+    "title": "İstatistikler",
+    "overview": "Genel Bakış",
+    "thisWeek": "Bu Hafta",
+    "thisMonth": "Bu Ay",
+    "thisYear": "Bu Yıl",
+    "comparison": "Karşılaştırma",
+    "trends": "Trendler",
+    "breakdown": "Dağılım",
+    "improvement": "İyileştirme",
+    "yourAverage": "Ortalamanız",
+    "turkeyAverage": "Türkiye Ortalaması",
+    "parisTarget": "Paris Hedefi"
+  },
+  
+  "settings": {
+    "title": "Ayarlar",
+    "language": "Dil",
+    "theme": "Tema",
+    "notifications": "Bildirimler",
+    "privacy": "Gizlilik",
+    "permissions": "İzinler",
+    "about": "Hakkında",
+    "version": "Sürüm",
+    "lightTheme": "Açık Tema",
+    "darkTheme": "Koyu Tema",
+    "systemTheme": "Sistem Teması",
+    "turkish": "Türkçe",
+    "english": "English"
+  },
+  
+  "permissions": {
+    "title": "İzinler",
+    "location": "Konum",
+    "microphone": "Mikrofon",
+    "notifications": "Bildirimler",
+    "camera": "Kamera",
+    "storage": "Depolama",
+    "required": "Gerekli",
+    "optional": "İsteğe Bağlı",
+    "granted": "Verildi",
+    "denied": "Reddedildi",
+    "requestPermission": "İzin İste",
+    "openSettings": "Ayarları Aç"
+  },
+  
+  "common": {
+    "ok": "Tamam",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "add": "Ekle",
+    "remove": "Kaldır",
+    "enable": "Etkinleştir",
+    "disable": "Devre Dışı Bırak",
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "warning": "Uyarı",
+    "info": "Bilgi",
+    "retry": "Yeniden Dene",
+    "skip": "Geç",
+    "next": "İleri",
+    "previous": "Geri",
+    "done": "Bitti",
+    "close": "Kapat"
+  },
+  
+  "tips": {
+    "walkMore": "Daha fazla yürüyerek karbon ayak izinizi azaltın",
+    "usePublicTransport": "Toplu taşımayı tercih edin",
+    "energyEfficient": "Enerji verimli cihazları kullanın",
+    "reduceWaste": "Atıkları azaltın ve geri dönüşüm yapın",
+    "localProducts": "Yerel ürünleri tercih edin",
+    "smartThermostat": "Akıllı termostat kullanın"
+  },
+  
+  "errors": {
+    "networkError": "İnternet bağlantısı hatası",
+    "permissionDenied": "İzin reddedildi",
+    "locationUnavailable": "Konum alınamıyor",
+    "microphoneUnavailable": "Mikrofon kullanılamıyor",
+    "saveError": "Kaydetme hatası",
+    "loadError": "Yükleme hatası",
+    "invalidInput": "Geçersiz giriş",
+    "tryAgain": "Tekrar deneyin"
+  }
+}

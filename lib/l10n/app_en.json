@@ -1,0 +1,250 @@
+{
+  "appTitle": "Carbon Tracker",
+  "appSubtitle": "Track your carbon footprint",
+  
+  "navigation": {
+    "home": "Home",
+    "transport": "Transport",
+    "energy": "Energy",
+    "food": "Food",
+    "shopping": "Shopping",
+    "statistics": "Statistics",
+    "achievements": "Achievements",
+    "settings": "Settings"
+  },
+  
+  "dashboard": {
+    "todayTotal": "Today Total",
+    "weeklyAverage": "Weekly Average",
+    "monthlyGoal": "Monthly Goal",
+    "carbonEmission": "kg CO₂",
+    "performance": "Performance",
+    "categories": "Categories",
+    "loading": "Loading...",
+    "refresh": "Refresh"
+  },
+  
+  "transport": {
+    "title": "Transport",
+    "subtitle": "Car, metro, walking",
+    "walking": "Walking",
+    "cycling": "Cycling",
+    "publicTransport": "Public Transport",
+    "car": "Car",
+    "motorcycle": "Motorcycle",
+    "taxi": "Taxi",
+    "plane": "Plane",
+    "distance": "Distance",
+    "km": "km",
+    "addTrip": "Add Trip",
+    "selectTransportType": "Select transport type",
+    "enterDistance": "Enter distance",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  
+  "energy": {
+    "title": "Energy",
+    "subtitle": "Electricity, natural gas",
+    "electricity": "Electricity",
+    "naturalGas": "Natural Gas",
+    "heating": "Heating",
+    "cooling": "Cooling",
+    "hotWater": "Hot Water",
+    "appliances": "Appliances",
+    "consumption": "Consumption",
+    "kwh": "kWh",
+    "m3": "m³",
+    "addConsumption": "Add Consumption",
+    "selectEnergyType": "Select energy type",
+    "enterAmount": "Enter amount"
+  },
+  
+  "achievements": {
+    "title": "Achievements",
+    "unlocked": "Unlocked Achievements",
+    "locked": "Locked Achievements",
+    "progress": "Progress",
+    "congratulations": "Congratulations!",
+    "newAchievement": "New Achievement Unlocked!",
+    "continue": "Continue",
+    "close": "Close",
+    "level": "Level",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "platinum": "Platinum",
+    "diamond": "Diamond"
+  },
+  
+  "goals": {
+    "title": "Goals",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "setGoal": "Set Goal",
+    "currentGoal": "Current Goal",
+    "target": "Target",
+    "progress": "Progress",
+    "completed": "Completed",
+    "remaining": "Remaining",
+    "onTrack": "On Track",
+    "behindSchedule": "Behind Schedule",
+    "exceeded": "Exceeded"
+  },
+  
+  "notifications": {
+    "title": "Notifications",
+    "dailyReminder": "Daily Reminder",
+    "weeklyReport": "Weekly Report",
+    "achievementUnlocked": "Achievement Unlocked",
+    "goalReached": "Goal Reached",
+    "smartTip": "Smart Tip",
+    "permissionRequired": "Notification permission required",
+    "enable": "Enable",
+    "disable": "Disable"
+  },
+  
+  "location": {
+    "title": "Location",
+    "tracking": "Tracking",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "permissionRequired": "Location permission required",
+    "nearbyBikePaths": "Nearby Bike Paths",
+    "publicTransportStops": "Public Transport Stops",
+    "ecoFriendlyRoutes": "Eco-Friendly Routes",
+    "suggestions": "Suggestions"
+  },
+  
+  "voice": {
+    "title": "Voice Commands",
+    "listening": "Listening...",
+    "speak": "Speak",
+    "stopListening": "Stop Listening",
+    "permissionRequired": "Microphone permission required",
+    "commandHistory": "Command History",
+    "examples": "Example Commands",
+    "logTransport": "Log transport activity",
+    "getDailyStats": "Get daily statistics",
+    "setGoal": "Set goal"
+  },
+  
+  "smartHome": {
+    "title": "Smart Home",
+    "connectedDevices": "Connected Devices",
+    "automations": "Automations",
+    "energyConsumption": "Energy Consumption",
+    "optimizations": "Optimizations",
+    "thermostat": "Thermostat",
+    "smartMeter": "Smart Meter",
+    "lightBulb": "Smart Bulb",
+    "smartPlug": "Smart Plug",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "connecting": "Connecting"
+  },
+  
+  "devices": {
+    "title": "Device Integrations",
+    "appleWatch": "Apple Watch",
+    "wearOS": "Wear OS",
+    "siriShortcuts": "Siri Shortcuts",
+    "googleAssistant": "Google Assistant",
+    "carPlay": "CarPlay",
+    "androidAuto": "Android Auto",
+    "syncStatus": "Sync Status",
+    "lastSync": "Last Sync",
+    "shortcuts": "Shortcuts",
+    "healthData": "Health Data"
+  },
+  
+  "statistics": {
+    "title": "Statistics",
+    "overview": "Overview",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "thisYear": "This Year",
+    "comparison": "Comparison",
+    "trends": "Trends",
+    "breakdown": "Breakdown",
+    "improvement": "Improvement",
+    "yourAverage": "Your Average",
+    "turkeyAverage": "Turkey Average",
+    "parisTarget": "Paris Target"
+  },
+  
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "permissions": "Permissions",
+    "about": "About",
+    "version": "Version",
+    "lightTheme": "Light Theme",
+    "darkTheme": "Dark Theme",
+    "systemTheme": "System Theme",
+    "turkish": "Türkçe",
+    "english": "English"
+  },
+  
+  "permissions": {
+    "title": "Permissions",
+    "location": "Location",
+    "microphone": "Microphone",
+    "notifications": "Notifications",
+    "camera": "Camera",
+    "storage": "Storage",
+    "required": "Required",
+    "optional": "Optional",
+    "granted": "Granted",
+    "denied": "Denied",
+    "requestPermission": "Request Permission",
+    "openSettings": "Open Settings"
+  },
+  
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "remove": "Remove",
+    "enable": "Enable",
+    "disable": "Disable",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Info",
+    "retry": "Retry",
+    "skip": "Skip",
+    "next": "Next",
+    "previous": "Previous",
+    "done": "Done",
+    "close": "Close"
+  },
+  
+  "tips": {
+    "walkMore": "Walk more to reduce your carbon footprint",
+    "usePublicTransport": "Use public transportation",
+    "energyEfficient": "Use energy-efficient appliances",
+    "reduceWaste": "Reduce waste and recycle",
+    "localProducts": "Choose local products",
+    "smartThermostat": "Use a smart thermostat"
+  },
+  
+  "errors": {
+    "networkError": "Network connection error",
+    "permissionDenied": "Permission denied",
+    "locationUnavailable": "Location unavailable",
+    "microphoneUnavailable": "Microphone unavailable",
+    "saveError": "Save error",
+    "loadError": "Load error",
+    "invalidInput": "Invalid input",
+    "tryAgain": "Try again"
+  }
+}

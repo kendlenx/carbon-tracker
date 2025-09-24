@@ -9,6 +9,16 @@ import 'services/carbon_calculator_service.dart';
 import 'services/theme_service.dart';
 import 'services/achievement_service.dart';
 import 'services/smart_features_service.dart';
+import 'services/notification_service.dart';
+import 'services/goal_service.dart';
+import 'services/location_service.dart';
+import 'services/voice_service.dart';
+import 'services/smart_home_service.dart';
+import 'services/device_integration_service.dart';
+import 'services/language_service.dart';
+import 'services/permission_service.dart';
+import 'l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/achievement_widgets.dart';
 import 'widgets/liquid_pull_refresh.dart';
 import 'widgets/hero_dashboard.dart';
@@ -18,9 +28,22 @@ import 'widgets/micro_interactions.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize core services
   await ThemeService.instance.loadThemePreference();
+  await LanguageService.instance.initialize();
+  await PermissionService.instance.initialize();
   await AchievementService.instance.initialize();
   await SmartFeaturesService.instance.initialize();
+  
+  // Initialize new smart services
+  await NotificationService.instance.initialize();
+  await GoalService.instance.initialize();
+  await LocationService.instance.initialize();
+  await VoiceService.instance.initialize();
+  await SmartHomeService.instance.initialize();
+  await DeviceIntegrationService.instance.initialize();
+  
   runApp(const CarbonTrackerApp());
 }
 
@@ -30,13 +53,24 @@ class CarbonTrackerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: ThemeService.instance,
+      animation: Listenable.merge([
+        ThemeService.instance,
+        LanguageService.instance,
+      ]),
       builder: (context, child) {
         return MaterialApp(
           title: 'Carbon Tracker',
           theme: ThemeService.instance.lightTheme,
           darkTheme: ThemeService.instance.darkTheme,
           themeMode: ThemeService.instance.themeMode,
+          locale: LanguageService.instance.currentLocale,
+          supportedLocales: LanguageService.supportedLocales,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           home: const CarbonTrackerHome(),
           debugShowCheckedModeBanner: false,
         );
@@ -84,7 +118,10 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   double monthlyGoal = 400.0; // kg CO₂
   bool isLoading = true;
   final AchievementService _achievementService = AchievementService.instance;
-  final SmartFeaturesService _smartFeaturesService = SmartFeaturesService.instance;
+  final LocationService _locationService = LocationService.instance;
+  final VoiceService _voiceService = VoiceService.instance;
+  final LanguageService _languageService = LanguageService.instance;
+  final PermissionService _permissionService = PermissionService.instance;
 
   final List<CategoryData> categories = [
     CategoryData(
@@ -124,7 +161,18 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   @override
   void initState() {
     super.initState();
-    _loadDashboardData();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    await _loadDashboardData();
+    
+    // Check permissions on first launch
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (_permissionService.isFirstTimeSetup()) {
+        await _permissionService.showFirstTimePermissionSetup(context);
+      }
+    });
   }
 
   Future<void> _loadDashboardData() async {
@@ -231,6 +279,59 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
+          // Location tracking indicator
+          AnimatedBuilder(
+            animation: _locationService,
+            builder: (context, child) {
+              return IconButton(
+                icon: Icon(
+                  _locationService.isTracking ? Icons.gps_fixed : Icons.gps_off,
+                  color: _locationService.isTracking ? Colors.green : null,
+                ),
+                tooltip: _locationService.isTracking ? 'Konum takibi aktif' : 'Konum takibi kapalı',
+                onPressed: () async {
+                  if (_locationService.isTracking) {
+                    await _locationService.stopTracking();
+                  } else {
+                    await _locationService.startTracking();
+                  }
+                },
+              );
+            },
+          ),
+          // Language toggle
+          AnimatedBuilder(
+            animation: _languageService,
+            builder: (context, child) {
+              return IconButton(
+                icon: Text(
+                  _languageService.currentLanguageFlag,
+                  style: const TextStyle(fontSize: 20),
+                ),
+                tooltip: _languageService.currentLanguageDisplayName,
+                onPressed: () async {
+                  await _languageService.toggleLanguage();
+                },
+              );
+            },
+          ),
+          // Permission status
+          AnimatedBuilder(
+            animation: _permissionService,
+            builder: (context, child) {
+              final hasRequiredPermissions = _permissionService.areRequiredPermissionsGranted();
+              return IconButton(
+                icon: Icon(
+                  hasRequiredPermissions ? Icons.verified_user : Icons.warning,
+                  color: hasRequiredPermissions ? Colors.green : Colors.orange,
+                ),
+                tooltip: hasRequiredPermissions ? 'İzinler tamam' : 'İzin gerekli',
+                onPressed: () async {
+                  await _permissionService.showPermissionsOverview(context);
+                },
+              );
+            },
+          ),
           IconButton(
             icon: Icon(ThemeService.instance.themeIcon),
             tooltip: 'Tema: ${ThemeService.instance.themeName}',
@@ -334,7 +435,16 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             state: FABState.add,
             icon: Icons.add,
             tooltip: 'Hızlı İşlemler',
-            onPressed: () {},
+            onPressed: () async {
+              final result = await context.pushWithTransition<bool>(
+                const AddActivityScreen(),
+                transition: TransitionType.fadeScale,
+                duration: const Duration(milliseconds: 350),
+              );
+              if (result == true) {
+                _loadDashboardData();
+              }
+            },
           ),
         ),
         actions: [
@@ -383,26 +493,21 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               }
             },
           ),
+          SpeedDialAction(
+            icon: _voiceService.isListening ? Icons.mic : Icons.mic_none,
+            label: 'Sesli Komut',
+            backgroundColor: _voiceService.isListening ? Colors.red : Colors.purple,
+            onPressed: () async {
+              if (_voiceService.isListening) {
+                await _voiceService.stopListening();
+              } else {
+                await _voiceService.startListening();
+              }
+              setState(() {}); // Update UI
+            },
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: 12,
-          ),
-        ),
-      ],
     );
   }
 

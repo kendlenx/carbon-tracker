@@ -289,22 +289,34 @@ class _MicroCardState extends State<MicroCard>
           builder: (context, child) {
             return Transform.scale(
               scale: _scaleAnimation.value,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: widget.borderRadius,
-                  boxShadow: [
-                    BoxShadow(
-                      color: (widget.shadowColor ?? Colors.black).withOpacity(0.1),
-                      blurRadius: _elevationAnimation.value,
-                      offset: Offset(0, _elevationAnimation.value / 2),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: widget.borderRadius,
+                    boxShadow: [
+                      BoxShadow(
+                        color: (widget.shadowColor ?? Colors.black).withOpacity(0.1),
+                        blurRadius: _elevationAnimation.value,
+                        offset: Offset(0, _elevationAnimation.value / 2),
+                      ),
+                    ],
+                  ),
+                  child: Material(
+                    borderRadius: widget.borderRadius,
+                    color: Theme.of(context).cardColor,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: widget.borderRadius,
+                        border: Border.all(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.black.withOpacity(0.1),
+                          width: 0.5,
+                        ),
+                      ),
+                      child: widget.child,
                     ),
-                  ],
+                  ),
                 ),
-                child: Material(
-                  borderRadius: widget.borderRadius,
-                  child: widget.child,
-                ),
-              ),
             );
           },
         ),

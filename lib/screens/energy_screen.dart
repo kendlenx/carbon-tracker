@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widgets/modern_ui_elements.dart';
 import '../services/carbon_calculator_service.dart';
-import '../services/database_service.dart';
 
 class EnergyScreen extends StatefulWidget {
   const EnergyScreen({super.key});

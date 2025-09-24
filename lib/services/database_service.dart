@@ -187,6 +187,49 @@ class DatabaseService {
     );
   }
 
+  // General activity methods
+  Future<String> addActivity(Map<String, dynamic> activityData) async {
+    // This is a simplified implementation that converts general activity data to transport activity
+    // In a real app, you might have separate tables for different activity types
+    
+    try {
+      final id = DateTime.now().millisecondsSinceEpoch.toString();
+      final type = activityData['type'] as String? ?? 'Araba';
+      final distance = activityData['distance'] as double? ?? 1.0;
+      final carbonFootprint = activityData['carbonFootprint'] as double? ?? 0.2;
+      final timestamp = activityData['timestamp'] as String? ?? DateTime.now().toIso8601String();
+      final source = activityData['source'] as String? ?? 'manual';
+      
+      // Convert to TransportType (simplified)
+      TransportType? transportType;
+      if (type.toLowerCase().contains('yürü')) {
+        transportType = TransportData.getTransportTypeById('walking');
+      } else if (type.toLowerCase().contains('bisiklet')) {
+        transportType = TransportData.getTransportTypeById('cycling');
+      } else {
+        transportType = TransportData.getTransportTypeById('car'); // default
+      }
+      
+      if (transportType == null) {
+        transportType = TransportData.transportTypes.first; // fallback
+      }
+      
+      final activity = TransportActivity(
+        id: id,
+        transportType: transportType,
+        distanceKm: distance,
+        co2Emission: carbonFootprint.abs(), // Make sure it's positive
+        createdAt: DateTime.tryParse(timestamp) ?? DateTime.now(),
+        notes: 'Added via ${source}',
+      );
+      
+      return await insertTransportActivity(activity);
+    } catch (e) {
+      print('Error adding activity: $e');
+      return '';
+    }
+  }
+
   // Get statistics for dashboard
   Future<Map<String, dynamic>> getDashboardStats() async {
     final now = DateTime.now();
