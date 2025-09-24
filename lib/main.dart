@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/transport_screen.dart';
 import 'screens/add_activity_screen.dart';
+import 'screens/statistics_screen.dart';
 import 'services/database_service.dart';
 
 void main() {
@@ -163,6 +164,19 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'İstatistikler',
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const StatisticsScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
