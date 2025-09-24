@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/transport_screen.dart';
 
 void main() {
   runApp(const CarbonTrackerApp());
@@ -100,6 +101,25 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       todayValue: 0.3,
     ),
   ];
+
+  void _navigateToCategory(CategoryData category) {
+    switch (category.category) {
+      case CarbonCategory.transport:
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const TransportScreen(),
+          ),
+        );
+        break;
+      case CarbonCategory.energy:
+      case CarbonCategory.food:
+      case CarbonCategory.shopping:
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${category.title} detayları yakında!')),
+        );
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -221,9 +241,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       elevation: 2,
       child: InkWell(
         onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${category.title} detayları yakında!')),
-          );
+          _navigateToCategory(category);
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
