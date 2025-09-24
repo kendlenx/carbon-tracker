@@ -3,6 +3,7 @@ import 'screens/transport_screen.dart';
 import 'screens/add_activity_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'services/database_service.dart';
+import 'services/carbon_calculator_service.dart';
 
 void main() {
   runApp(const CarbonTrackerApp());
@@ -29,6 +30,123 @@ class CarbonTrackerApp extends StatelessWidget {
       home: const CarbonTrackerHome(),
       debugShowCheckedModeBanner: false,
     );
+  }
+
+  Widget _buildPerformanceCard() {
+    final comparison = CarbonCalculatorService.compareWithAverage(weeklyAverage);
+    final tips = CarbonCalculatorService.generateTips(weeklyAverage);
+    
+    return Card(
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  _getPerformanceIcon(comparison.performanceLevel),
+                  color: comparison.performanceColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Performans: ${comparison.performanceText}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            
+            // Karşılaştırma verileri
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildComparisonItem('Siz', '${weeklyAverage.toStringAsFixed(1)} kg'),
+                _buildComparisonItem('TR Ort.', '${comparison.turkeyAverage.toStringAsFixed(1)} kg'),
+                _buildComparisonItem('Paris Hedef', '${comparison.parisTarget.toStringAsFixed(1)} kg'),
+              ],
+            ),
+            
+            if (tips.isNotEmpty) ..[
+              const SizedBox(height: 16),
+              const Divider(),
+              const SizedBox(height: 8),
+              Text(
+                '💡 Öneriler',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...tips.take(2).map((tip) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: tip.difficultyColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        tip.tip,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComparisonItem(String label, String value) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: 10,
+          ),
+        ),
+      ],
+    );
+  }
+
+  IconData _getPerformanceIcon(PerformanceLevel level) {
+    switch (level) {
+      case PerformanceLevel.excellent:
+        return Icons.eco;
+      case PerformanceLevel.good:
+        return Icons.thumb_up;
+      case PerformanceLevel.average:
+        return Icons.remove;
+      case PerformanceLevel.poor:
+        return Icons.thumb_down;
+      case PerformanceLevel.critical:
+        return Icons.warning;
+    }
   }
 }
 
@@ -227,6 +345,12 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               ),
             ),
             const SizedBox(height: 24),
+            
+            // Performans karşılaştırması
+            if (weeklyAverage > 0) ..[
+              _buildPerformanceCard(),
+              const SizedBox(height: 24),
+            ],
             
             // Kategoriler başlığı
             Text(
