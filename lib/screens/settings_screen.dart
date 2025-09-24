@@ -188,10 +188,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               // Data Management
               _buildDataManagementSection(),
-              const SizedBox(height: 24),
-
-              // About Section
-              _buildAboutSection(),
             ],
           ),
         ),
@@ -466,75 +462,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildAboutSection() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _languageService.isEnglish ? 'About' : 'Hakkında',
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            _buildPreferenceItem(
-              icon: Icons.info,
-              title: _languageService.isEnglish ? 'Version' : 'Sürüm',
-              subtitle: '1.0.0',
-            ),
-
-            const Divider(),
-
-            _buildPreferenceItem(
-              icon: Icons.privacy_tip,
-              title: _languageService.isEnglish ? 'Privacy Policy' : 'Gizlilik Politikası',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(_languageService.isEnglish ? 'Privacy policy coming soon!' : 'Gizlilik politikası yakında!'),
-                  ),
-                );
-              },
-            ),
-
-            const Divider(),
-
-            _buildPreferenceItem(
-              icon: Icons.description,
-              title: _languageService.isEnglish ? 'Terms of Service' : 'Kullanım Şartları',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(_languageService.isEnglish ? 'Terms of service coming soon!' : 'Kullanım şartları yakında!'),
-                  ),
-                );
-              },
-            ),
-
-            const Divider(),
-
-            _buildPreferenceItem(
-              icon: Icons.support,
-              title: _languageService.isEnglish ? 'Support' : 'Destek',
-              subtitle: 'support@carbontracker.com',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(_languageService.isEnglish ? 'Support contact copied!' : 'Destek iletişim kopyalandı!'),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildPreferenceItem({
     required IconData icon,
@@ -570,7 +497,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.grey.shade300
+                          : Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -614,7 +543,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   subtitle,
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey.shade300
+                      : Colors.grey.shade600,
                   ),
                 ),
               ],
@@ -662,7 +593,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       subtitle,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).brightness == Brightness.dark 
+                          ? Colors.grey.shade300
+                          : Colors.grey.shade600,
                       ),
                     ),
                   ],

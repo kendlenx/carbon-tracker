@@ -42,7 +42,7 @@
     <!-- Home widget izni -->
     <uses-permission android:name="android.permission.BIND_APPWIDGET" />
     <application
-        android:label="carbon_tracker"
+        android:label="Carbon Tracker"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

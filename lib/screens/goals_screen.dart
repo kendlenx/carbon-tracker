@@ -198,103 +198,97 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
 
   Widget _buildOverviewCard() {
     final dailyProgress = _currentDaily / _dailyGoal;
-    final weeklyProgress = _currentWeekly / _weeklyGoal;
-    final monthlyProgress = _currentMonthly / _monthlyGoal;
     
     return Card(
-      elevation: 4,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            colors: [Colors.green.withOpacity(0.1), Colors.blue.withOpacity(0.1)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              Text(
-                _languageService.isEnglish ? 'Today\'s Progress' : 'Bugünkü İlerleme',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Text(
+              _languageService.isEnglish ? 'Today\'s Goal Progress' : 'Bugünkü Hedef İlerlemesi',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
-              
-              // Circular Progress
-              AnimatedBuilder(
-                animation: _progressAnimationController,
-                builder: (context, child) {
-                  return Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: CircularProgressIndicator(
-                          value: dailyProgress * _progressAnimationController.value,
-                          strokeWidth: 8,
-                          backgroundColor: Colors.grey.shade200,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            dailyProgress <= 1.0 ? Colors.green : Colors.red,
-                          ),
+            ),
+            const SizedBox(height: 20),
+            
+            // Simplified Progress Ring
+            AnimatedBuilder(
+              animation: _progressAnimationController,
+              builder: (context, child) {
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: CircularProgressIndicator(
+                        value: (dailyProgress * _progressAnimationController.value).clamp(0.0, 1.0),
+                        strokeWidth: 6,
+                        backgroundColor: Colors.grey.shade200,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          dailyProgress <= 1.0 ? Colors.green : Colors.orange,
                         ),
                       ),
-                      Column(
-                        children: [
-                          Text(
-                            '${_currentDaily.toStringAsFixed(1)}',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${_currentDaily.toStringAsFixed(1)}',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
-                          Text(
-                            'kg CO₂',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
-                            ),
+                        ),
+                        Text(
+                          'kg CO₂',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey.shade600,
                           ),
-                          Text(
-                            '/ ${_dailyGoal.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
+            
+            const SizedBox(height: 12),
+            
+            // Simple progress text
+            Text(
+              '${_currentDaily.toStringAsFixed(1)} / ${_dailyGoal.toStringAsFixed(0)} kg CO₂',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade700,
               ),
-              
-              const SizedBox(height: 16),
-              
-              // Status Message
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: dailyProgress <= 1.0 ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  dailyProgress <= 1.0 
-                    ? (_languageService.isEnglish ? '🎉 On track!' : '🎉 Hedefteyiz!')
-                    : (_languageService.isEnglish ? '⚠️ Over goal' : '⚠️ Hedef aşıldı'),
-                  style: TextStyle(
-                    color: dailyProgress <= 1.0 ? Colors.green.shade700 : Colors.red.shade700,
-                    fontWeight: FontWeight.w600,
-                  ),
+            ),
+            
+            const SizedBox(height: 8),
+            
+            // Status indicator
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: dailyProgress <= 1.0 ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                dailyProgress <= 1.0 
+                  ? (_languageService.isEnglish ? 'On track' : 'Hedefteyiz')
+                  : (_languageService.isEnglish ? 'Over goal' : 'Hedef aşıldı'),
+                style: TextStyle(
+                  color: dailyProgress <= 1.0 ? Colors.green.shade700 : Colors.orange.shade700,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -520,74 +514,94 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
   }
 
   Widget _buildAchievementsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          _languageService.isEnglish ? 'Achievements' : 'Başarılar',
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        
-        SizedBox(
-          height: 120,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _achievements.length,
-            itemBuilder: (context, index) {
-              final achievement = _achievements[index];
-              return Container(
-                width: 100,
-                margin: const EdgeInsets.only(right: 12),
-                child: MicroCard(
-                  onTap: () => _showAchievementDetails(achievement),
-                  hapticType: HapticType.light,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: achievement.isUnlocked 
-                              ? achievement.color.withOpacity(0.2)
-                              : Colors.grey.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            achievement.icon,
-                            color: achievement.isUnlocked 
-                              ? achievement.color
-                              : Colors.grey,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          achievement.getTitle(_languageService.isEnglish),
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
-                            color: achievement.isUnlocked 
-                              ? Colors.black
-                              : Colors.grey,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
+    // Show only first 3 achievements for simplicity
+    final displayAchievements = _achievements.take(3).toList();
+    
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _languageService.isEnglish ? 'Goal Achievements' : 'Hedef Başarıları',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              );
-            },
-          ),
+                TextButton(
+                  onPressed: () {
+                    // Navigate to full achievements screen
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(_languageService.isEnglish 
+                          ? 'More achievements coming soon!'
+                          : 'Daha fazla başarı yakında!'),
+                      ),
+                    );
+                  },
+                  child: Text(_languageService.isEnglish ? 'View All' : 'Tümünü Gör'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            
+            // Simple achievement list
+            ...displayAchievements.map((achievement) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: achievement.isUnlocked 
+                        ? achievement.color.withOpacity(0.1)
+                        : Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      achievement.icon,
+                      color: achievement.isUnlocked 
+                        ? achievement.color
+                        : Colors.grey,
+                      size: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      achievement.getTitle(_languageService.isEnglish),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: achievement.isUnlocked 
+                          ? null
+                          : Colors.grey,
+                      ),
+                    ),
+                  ),
+                  if (achievement.isUnlocked)
+                    Icon(
+                      Icons.check_circle,
+                      color: achievement.color,
+                      size: 16,
+                    )
+                  else
+                    Icon(
+                      Icons.radio_button_unchecked,
+                      color: Colors.grey.shade400,
+                      size: 16,
+                    ),
+                ],
+              ),
+            )),
+          ],
         ),
-      ],
+      ),
     );
   }
 

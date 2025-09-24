@@ -449,12 +449,46 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               const SizedBox(height: 24),
             ],
             
+            // İpuçları Kısmı
+            _buildTipsSection(),
+            const SizedBox(height: 24),
+            
+            // Başarılar Kısmı
+            _buildAchievementsSection(),
+            const SizedBox(height: 24),
+            
             // Kategoriler başlığı
-            Text(
-              _languageService.isEnglish ? 'Categories' : 'Kategoriler',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.grid_view,
+                  color: Theme.of(context).primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _languageService.isEnglish ? 'Categories' : 'Kategoriler',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _languageService.isEnglish ? 'Track Activities' : 'Aktiviteleri İzle',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             
@@ -735,7 +769,410 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       case PerformanceLevel.poor:
         return Icons.thumb_down;
       case PerformanceLevel.critical:
-        return Icons.warning;
+        return Icons.trending_up;
     }
+  }
+
+  Widget _buildAchievementsSection() {
+    final achievements = _getRandomAchievements();
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            Colors.purple.withOpacity(0.05),
+            Colors.blue.withOpacity(0.03),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: Colors.grey.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.emoji_events,
+                      color: Colors.amber,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _languageService.isEnglish ? 'Achievements' : 'Başarılar',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _languageService.isEnglish ? 'Your recent milestones' : 'Son kazandığınız rozetler',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  context.pushWithTransition(
+                    const AchievementsScreen(),
+                    transition: TransitionType.fadeScale,
+                  );
+                },
+                icon: const Icon(Icons.arrow_forward_ios, size: 14),
+                label: Text(
+                  _languageService.isEnglish ? 'All' : 'Tümü',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 80,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: achievements.length,
+              itemBuilder: (context, index) {
+                final achievement = achievements[index];
+                return Container(
+                  width: 80,
+                  margin: const EdgeInsets.only(right: 12),
+                  child: MicroCard(
+                    onTap: () => _showAchievementDetail(achievement),
+                    hapticType: HapticType.light,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: achievement['color'].withOpacity(0.1),
+                        border: Border.all(
+                          color: achievement['color'].withOpacity(0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: achievement['color'].withOpacity(0.2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    achievement['icon'],
+                                    color: achievement['color'],
+                                    size: 16,
+                                  ),
+                                ),
+                                if (achievement['isNew'] == true)
+                                  Positioned(
+                                    right: -2,
+                                    top: -2,
+                                    child: Container(
+                                      width: 12,
+                                      height: 12,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              achievement['title'],
+                              style: const TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTipsSection() {
+    final tip = _getRandomTip();
+    
+    return Card(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            colors: [Colors.blue.withOpacity(0.1), Colors.green.withOpacity(0.1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: tip['color'].withOpacity(0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      tip['icon'],
+                      color: tip['color'],
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _languageService.isEnglish ? 'Eco Tip' : 'Eko İpucu',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          tip['category'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.refresh, size: 20),
+                    onPressed: () {
+                      setState(() {}); // This will refresh and get a new tip
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                tip['text'],
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.4,
+                ),
+              ),
+              if (tip['impact'] != null) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    tip['impact'],
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.green.shade700,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<Map<String, dynamic>> _getRandomAchievements() {
+    final allAchievements = [
+      {
+        'title': _languageService.isEnglish ? 'First Steps' : 'İlk Adımlar',
+        'icon': Icons.eco,
+        'color': Colors.green,
+        'isNew': true,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Week Warrior' : 'Hafta Savaşçısı',
+        'icon': Icons.calendar_view_week,
+        'color': Colors.blue,
+        'isNew': false,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Green Commuter' : 'Yeşil Yolcu',
+        'icon': Icons.directions_bike,
+        'color': Colors.teal,
+        'isNew': true,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Energy Saver' : 'Enerji Tasarrufçusu',
+        'icon': Icons.flash_off,
+        'color': Colors.orange,
+        'isNew': false,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Food Hero' : 'Yemek Kahramanı',
+        'icon': Icons.restaurant,
+        'color': Colors.red,
+        'isNew': false,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Mindful Shopper' : 'Bilinçli Alışverişçi',
+        'icon': Icons.shopping_basket,
+        'color': Colors.purple,
+        'isNew': true,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Carbon Crusher' : 'Karbon Ezici',
+        'icon': Icons.trending_down,
+        'color': Colors.indigo,
+        'isNew': false,
+      },
+      {
+        'title': _languageService.isEnglish ? 'Planet Protector' : 'Gezegen Koruyucusu',
+        'icon': Icons.public,
+        'color': Colors.cyan,
+        'isNew': true,
+      },
+    ];
+    
+    allAchievements.shuffle();
+    return allAchievements.take(4).toList();
+  }
+
+  Map<String, dynamic> _getRandomTip() {
+    final allTips = [
+      {
+        'text': _languageService.isEnglish ? 'Walk or cycle for trips under 5km. It\'s healthier and reduces emissions by up to 2.6 kg CO₂ per day.' : '5 km altındaki yolculuklarda yürüyün veya bisiklet kullanın. Daha sağlıklı ve günde 2.6 kg CO₂ tasarrufu sağlar.',
+        'category': _languageService.isEnglish ? 'Transport' : 'Ulaşım',
+        'icon': Icons.directions_bike,
+        'color': Colors.green,
+        'impact': _languageService.isEnglish ? 'Save up to 2.6 kg CO₂/day' : 'Günde 2.6 kg CO₂ tasarrufu',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Switch to LED bulbs throughout your home. They use 75% less energy and last 25 times longer.' : 'Evinizdeki tüm ampulleri LED ile değiştirin. %75 daha az enerji kullanır ve 25 kat daha uzun sürer.',
+        'category': _languageService.isEnglish ? 'Energy' : 'Enerji',
+        'icon': Icons.lightbulb,
+        'color': Colors.orange,
+        'impact': _languageService.isEnglish ? 'Save 75% energy' : '%75 enerji tasarrufu',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Try "Meatless Monday" - reducing meat consumption by one day saves 3.3 kg CO₂ weekly.' : '"Etsiz Pazartesi" deneyin - haftada bir gün et tüketimini azaltmak 3.3 kg CO₂ tasarrufu sağlar.',
+        'category': _languageService.isEnglish ? 'Food' : 'Beslenme',
+        'icon': Icons.restaurant,
+        'color': Colors.red,
+        'impact': _languageService.isEnglish ? 'Save 3.3 kg CO₂/week' : 'Haftada 3.3 kg CO₂ tasarrufu',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Buy local produce when possible. Food transport accounts for 11% of food-related emissions.' : 'Mümkün olduğunca yerel ürünler alın. Gıda taşımacılığı, gıdayla ilgili emisyonların %11\'ini oluşturur.',
+        'category': _languageService.isEnglish ? 'Shopping' : 'Alışveriş',
+        'icon': Icons.local_grocery_store,
+        'color': Colors.green,
+        'impact': _languageService.isEnglish ? 'Reduce transport emissions' : 'Taşıma emisyonlarını azaltır',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Unplug electronics when not in use. "Vampire" power consumption can add 10% to your electricity bill.' : 'Kullanmadığınızda elektronik cihazları prizden çekin. "Vampir" güç tüketimi elektrik faturanıza %10 ekleyebilir.',
+        'category': _languageService.isEnglish ? 'Energy' : 'Enerji',
+        'icon': Icons.power_off,
+        'color': Colors.blue,
+        'impact': _languageService.isEnglish ? 'Save 10% on electricity' : 'Elektrikte %10 tasarruf',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Use public transport or carpool. A full bus can take 40 cars off the road, saving 80 kg CO₂ per trip.' : 'Toplu taşıma kullanın veya araç paylaşın. Dolu bir otobüs yoldan 40 arabayı çıkarır, yolculuk başına 80 kg CO₂ tasarrufu.',
+        'category': _languageService.isEnglish ? 'Transport' : 'Ulaşım',
+        'icon': Icons.bus_alert,
+        'color': Colors.teal,
+        'impact': _languageService.isEnglish ? 'Save 80 kg CO₂/trip' : 'Yolculuk başına 80 kg CO₂ tasarrufu',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Fix leaky faucets promptly. A single drip per second wastes over 3,000 gallons per year.' : 'Sızıntılı muslukları hemen tamir edin. Saniyede bir damla, yılda 11.000 litreden fazla su israfi yapar.',
+        'category': _languageService.isEnglish ? 'Home' : 'Ev',
+        'icon': Icons.water_drop,
+        'color': Colors.lightBlue,
+        'impact': _languageService.isEnglish ? 'Save thousands of gallons' : 'Binlerce litre tasarruf',
+      },
+      {
+        'text': _languageService.isEnglish ? 'Start composting kitchen scraps. It reduces methane emissions and creates nutrient-rich soil.' : 'Mutfak artıklarını kompostlamaya başlayın. Metan emisyonlarını azaltır ve besin açısından zengin toprak oluşturur.',
+        'category': _languageService.isEnglish ? 'Waste' : 'Atık',
+        'icon': Icons.compost,
+        'color': Colors.brown,
+        'impact': _languageService.isEnglish ? 'Reduce methane emissions' : 'Metan emisyonlarını azaltır',
+      },
+    ];
+    
+    allTips.shuffle();
+    return allTips.first;
+  }
+
+  void _showAchievementDetail(Map<String, dynamic> achievement) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(achievement['icon'], color: achievement['color']),
+            const SizedBox(width: 8),
+            Expanded(child: Text(achievement['title'])),
+          ],
+        ),
+        content: Text(
+          _languageService.isEnglish 
+            ? 'Congratulations on earning this achievement! Keep up the great work in reducing your carbon footprint.'
+            : 'Bu başarıyı kazandığınız için tebrikler! Karbon ayak izinizi azaltmada harika işler çıkarmaya devam edin.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(_languageService.isEnglish ? 'Close' : 'Kapat'),
+          ),
+        ],
+      ),
+    );
   }
 }
