@@ -2,46 +2,44 @@
 
 # 🌱 **Carbon Tracker**
 
-*Track Your Carbon Footprint, Transform Your Impact*
+*Karbon Ayak İzinizi Takip Edin, Etkilerinizi Dönüştürün*
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev/)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://choosealicense.com/licenses/mit/)
 
-**A comprehensive mobile app to monitor your environmental impact and contribute to a greener planet**
-
-![Carbon Tracker Banner](screenshots/app_banner.png)
+**Çevresel etkilerinizi izlemek ve daha yeşil bir gezegene katkıda bulunmak için kapsamlı bir mobil uygulama**
 
 </div>
 
 ---
 
-## 🎯 **About Carbon Tracker**
+## 🎯 **Carbon Tracker Hakkında**
 
-Carbon Tracker is a **premium-grade mobile application** designed specifically for Turkish users to monitor, analyze, and reduce their carbon footprint. With **advanced AI-like recommendations**, **gamification elements**, and **stunning animations**, it transforms environmental awareness into an engaging daily habit.
+Carbon Tracker, Türk kullanıcıların karbon ayak izlerini izlemek, analiz etmek ve azaltmak için özel olarak tasarlanmış **premium kalitede bir mobil uygulamadır**. **Gelişmiş AI benzeri öneriler**, **oyunlaştırma öğeleri** ve **çarpıcı animasyonlar** ile çevresel farkındalığı ilgi çekici bir günlük alışkanlığa dönüştürür.
 
-> 🌍 **Every step towards a cleaner planet matters!**
+> 🌍 **Daha temiz bir gezegene doğru atılan her adım önemlidir!**
 
 ---
 
-## ✨ **Premium Features**
+## ✨ **Premium Özellikler**
 
-### 🚗 **Smart Transport Tracking**
-- **9 Transportation Types**: Car, bus, metro, minibus, taxi, bicycle, walking, motorcycle, and more
-- **Real-time CO₂ Calculations**: Instant emissions based on distance and transport type
-- **Turkey-specific Emission Factors**: Localized calculations for accurate results
-- **Fuel Consumption Analysis**: Detailed insights for petrol and diesel usage
+### 🚗 **Akıllı Ulaşım Takibi**
+- **9 Ulaşım Türü**: Araba, otobüs, metro, minibüs, taksi, bisiklet, yürüme, motosiklet ve daha fazlası
+- **Gerçek Zamanlı CO₂ Hesaplamaları**: Mesafe ve ulaşım türüne dayalı anlık emisyon hesapları
+- **Türkiye'ye Özel Emisyon Faktörleri**: Doğru sonuçlar için yerelлеştirilmiş hesaplamalar
+- **Yakıt Tüketim Analizi**: Benzin ve dizel kullanımı için detaylı bilgiler
 
-### ⚡ **Energy Monitoring**
-- **Electricity Consumption**: Track monthly usage with daily CO₂ breakdown
-- **Natural Gas Tracking**: Monitor heating and hot water environmental impact
-- **Turkey Energy Mix**: Calculations based on national energy production sources
+### ⚡ **Enerji İzleme**
+- **Elektrik Tüketimi**: Günlük CO₂ dökümü ile aylık kullanımı takip edin
+- **Doğal Gaz Takibi**: Isıtma ve sıcak su çevresel etkisini izleyin
+- **Türkiye Enerji Karışımı**: Ulusal enerji üretim kaynaklarına dayalı hesaplamalar
 
-### 🏆 **Achievement & Gamification System**
-- **Badge Collection**: Unlock achievements for eco-friendly behavior
-- **XP & Leveling**: Gain experience points and level up
-- **Streak Tracking**: Maintain consistent environmental habits
-- **Celebration Animations**: Satisfying unlock experiences
+### 🏆 **Başarı ve Oyunlaştırma Sistemi**
+- **Rozet Koleksiyonu**: Çevre dostu davranışlar için başarıları açın
+- **XP ve Seviye Atlama**: Deneyim puanları kazanın ve seviye atlayın
+- **Süreklilik Takibi**: Tutarlı çevresel alışkanlıkları koru
+- **Kutlama Animasyonları**: Tatmin edici açılış deneyimleri
 
 ### 🧠 **AI-Powered Smart Features**
 - **🎤 Voice Commands**: Turkish voice recognition for hands-free activity logging
