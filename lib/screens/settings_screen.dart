@@ -10,6 +10,9 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cross_file/cross_file.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:math';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -24,7 +27,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final PermissionService _permissionService = PermissionService.instance;
 
   String _userName = '';
+  String _defaultUserName = '';
   String _userEmail = '';
+  String _profileImagePath = '';
   bool _notificationsEnabled = true;
   bool _hapticFeedbackEnabled = true;
   bool _autoBackupEnabled = false;
@@ -41,12 +46,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadUserSettings() async {
-    // Load user preferences - in a real app, this would come from a user service
-    setState(() {
-      _userName = 'Carbon Tracker User';
-      _userEmail = 'user@carbontracker.com';
-      _joinDate = '2024-01-01';
-    });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Generate default username if not exists
+      String defaultUsername = prefs.getString('default_user_name') ?? '';
+      if (defaultUsername.isEmpty) {
+        final random = Random();
+        final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+        final randomPart = random.nextInt(999).toString().padLeft(3, '0');
+        // Use last 6 digits of timestamp + 3 random digits for uniqueness
+        final uniquePart = timestamp.substring(timestamp.length - 6) + randomPart;
+        defaultUsername = 'user_$uniquePart';
+        await prefs.setString('default_user_name', defaultUsername);
+      }
+      
+      setState(() {
+        _defaultUserName = defaultUsername;
+        _userName = prefs.getString('user_name') ?? defaultUsername;
+        _userEmail = prefs.getString('user_email') ?? 'user@carbontracker.com';
+        _joinDate = prefs.getString('user_join_date') ?? '2024-01-01';
+        _profileImagePath = prefs.getString('user_profile_image') ?? '';
+      });
+    } catch (e) {
+      // Fallback to defaults
+      final random = Random();
+      final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+      final randomPart = random.nextInt(999).toString().padLeft(3, '0');
+      final uniquePart = timestamp.substring(timestamp.length - 6) + randomPart;
+      final defaultUsername = 'user_$uniquePart';
+      
+      setState(() {
+        _defaultUserName = defaultUsername;
+        _userName = defaultUsername;
+        _userEmail = 'user@carbontracker.com';
+        _joinDate = '2024-01-01';
+      });
+    }
+  }
+
+  Future<void> _saveUserSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_name', _userName);
+    await prefs.setString('user_email', _userEmail);
+    await prefs.setString('user_join_date', _joinDate);
+    await prefs.setString('user_profile_image', _profileImagePath);
   }
 
   Future<void> _loadUserStats() async {
@@ -204,16 +248,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.green,
-                  child: Text(
-                    _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                GestureDetector(
+                  onTap: _changeProfilePicture,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.green,
+                        backgroundImage: _profileImagePath.isNotEmpty 
+                          ? FileImage(File(_profileImagePath)) 
+                          : null,
+                        child: _profileImagePath.isEmpty 
+                          ? Text(
+                              _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            )
+                          : null,
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(4),
+                          child: const Icon(
+                            Icons.camera_alt,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -641,9 +713,247 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _editProfile() {
+    final nameController = TextEditingController(text: _userName);
+    final emailController = TextEditingController(text: _userEmail);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            left: 16,
+            right: 16,
+            top: 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.person, color: Theme.of(context).primaryColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    _languageService.isEnglish ? 'Edit Profile' : 'Profili Düzenle',
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: _languageService.isEnglish ? 'Username' : 'Kullanıcı Adı',
+                  border: const OutlineInputBorder(),
+                  hintText: _defaultUserName,
+                ),
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: _languageService.isEnglish ? 'Email' : 'E-posta',
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final name = nameController.text.trim();
+                    final email = emailController.text.trim();
+
+                    String? error;
+                    if (name.isEmpty) {
+                      error = _languageService.isEnglish ? 'Username cannot be empty' : 'Kullanıcı adı boş olamaz';
+                    } else if (email.isEmpty || !RegExp(r'^.+@.+\..+').hasMatch(email)) {
+                      // Basic email validation fallback
+                      error = _languageService.isEnglish ? 'Please enter a valid email' : 'Geçerli bir e-posta girin';
+                    }
+
+                    if (error != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+                      return;
+                    }
+
+                    setState(() {
+                      _userName = name;
+                      _userEmail = email;
+                    });
+                    await _saveUserSettings();
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(_languageService.isEnglish ? 'Profile updated' : 'Profil güncellendi'),
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.save),
+                  label: Text(_languageService.isEnglish ? 'Save' : 'Kaydet'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _changeProfilePicture() async {
+    final ImagePicker picker = ImagePicker();
+    
+    try {
+      showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _languageService.isEnglish ? 'Change Profile Picture' : 'Profil Fotoğrafını Değiştir',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildImageSourceOption(
+                      icon: Icons.camera_alt,
+                      label: _languageService.isEnglish ? 'Camera' : 'Kamera',
+                      onTap: () async {
+                        Navigator.pop(context);
+                        final XFile? image = await picker.pickImage(
+                          source: ImageSource.camera,
+                          maxWidth: 512,
+                          maxHeight: 512,
+                          imageQuality: 85,
+                        );
+                        if (image != null) {
+                          await _updateProfileImage(image.path);
+                        }
+                      },
+                    ),
+                    _buildImageSourceOption(
+                      icon: Icons.photo_library,
+                      label: _languageService.isEnglish ? 'Gallery' : 'Galeri',
+                      onTap: () async {
+                        Navigator.pop(context);
+                        final XFile? image = await picker.pickImage(
+                          source: ImageSource.gallery,
+                          maxWidth: 512,
+                          maxHeight: 512,
+                          imageQuality: 85,
+                        );
+                        if (image != null) {
+                          await _updateProfileImage(image.path);
+                        }
+                      },
+                    ),
+                    if (_profileImagePath.isNotEmpty)
+                      _buildImageSourceOption(
+                        icon: Icons.delete,
+                        label: _languageService.isEnglish ? 'Remove' : 'Kaldır',
+                        color: Colors.red,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await _removeProfileImage();
+                        },
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_languageService.isEnglish ? 'Error accessing camera/gallery' : 'Kamera/galeri erişim hatası'),
+        ),
+      );
+    }
+  }
+
+  Widget _buildImageSourceOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: (color ?? Theme.of(context).primaryColor).withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              color: color ?? Theme.of(context).primaryColor,
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: color ?? Theme.of(context).primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _updateProfileImage(String imagePath) async {
+    setState(() {
+      _profileImagePath = imagePath;
+    });
+    await _saveUserSettings();
+    
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_languageService.isEnglish ? 'Profile editing coming soon!' : 'Profil düzenleme yakında!'),
+        content: Text(_languageService.isEnglish ? 'Profile picture updated' : 'Profil fotoğrafı güncellendi'),
+      ),
+    );
+  }
+
+  Future<void> _removeProfileImage() async {
+    setState(() {
+      _profileImagePath = '';
+    });
+    await _saveUserSettings();
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_languageService.isEnglish ? 'Profile picture removed' : 'Profil fotoğrafı kaldırıldı'),
       ),
     );
   }
