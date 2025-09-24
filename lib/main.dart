@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/transport_screen.dart';
+import 'screens/add_activity_screen.dart';
 import 'services/database_service.dart';
 
 void main() {
@@ -249,13 +250,19 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Yeni aktivite ekleme
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Yeni aktivite ekleme özelliği yakında!')),
+        onPressed: () async {
+          final result = await Navigator.of(context).push<bool>(
+            MaterialPageRoute(
+              builder: (context) => const AddActivityScreen(),
+            ),
           );
+          // Eğer aktivite eklendiyse verileri yenile
+          if (result == true) {
+            _loadDashboardData();
+          }
         },
         child: const Icon(Icons.add),
+        tooltip: 'Yeni Aktivite Ekle',
       ),
     );
   }
