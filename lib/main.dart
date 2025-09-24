@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/transport_screen.dart';
+import 'services/database_service.dart';
 
 void main() {
   runApp(const CarbonTrackerApp());
@@ -63,9 +64,10 @@ class CarbonTrackerHome extends StatefulWidget {
 }
 
 class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
-  double totalCarbonToday = 12.5; // kg CO₂
-  double weeklyAverage = 15.2; // kg CO₂
+  double totalCarbonToday = 0.0; // kg CO₂
+  double weeklyAverage = 0.0; // kg CO₂
   double monthlyGoal = 400.0; // kg CO₂
+  bool isLoading = true;
 
   final List<CategoryData> categories = [
     CategoryData(
@@ -102,14 +104,44 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
     ),
   ];
 
-  void _navigateToCategory(CategoryData category) {
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboardData();
+  }
+
+  Future<void> _loadDashboardData() async {
+    try {
+      final stats = await DatabaseService.instance.getDashboardStats();
+      if (mounted) {
+        setState(() {
+          totalCarbonToday = stats['todayTotal'];
+          weeklyAverage = stats['weeklyAverage'];
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading dashboard data: $e');
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
+  }
+
+  void _navigateToCategory(CategoryData category) async {
     switch (category.category) {
       case CarbonCategory.transport:
-        Navigator.of(context).push(
+        final result = await Navigator.of(context).push<bool>(
           MaterialPageRoute(
             builder: (context) => const TransportScreen(),
           ),
         );
+        // Eğer aktivite kaydedildiyse (result == true), verileri yenile
+        if (result == true) {
+          _loadDashboardData();
+        }
         break;
       case CarbonCategory.energy:
       case CarbonCategory.food:
@@ -131,7 +163,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: SingleChildScrollView(
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,7 +234,15 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               ),
               itemCount: categories.length,
               itemBuilder: (context, index) {
-                return _buildCategoryCard(categories[index]);
+                final category = categories[index];
+                double todayValue = 0.0;
+                
+                // Sadece ulaşım kategorisi için bugünkü değeri göster
+                if (category.category == CarbonCategory.transport) {
+                  todayValue = totalCarbonToday;
+                }
+                
+                return _buildCategoryCard(category, todayValue);
               },
             ),
           ],
@@ -236,7 +278,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
     );
   }
 
-  Widget _buildCategoryCard(CategoryData category) {
+  Widget _buildCategoryCard(CategoryData category, double todayValue) {
     return Card(
       elevation: 2,
       child: InkWell(
@@ -275,7 +317,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               ),
               const SizedBox(height: 8),
               Text(
-                '${category.todayValue.toStringAsFixed(1)} kg CO₂',
+                '${todayValue.toStringAsFixed(1)} kg CO₂',
                 style: TextStyle(
                   color: category.color,
                   fontWeight: FontWeight.bold,

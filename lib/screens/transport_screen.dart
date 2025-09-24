@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/transport_model.dart';
+import '../services/database_service.dart';
 
 class TransportScreen extends StatefulWidget {
   const TransportScreen({super.key});
@@ -53,7 +54,7 @@ class _TransportScreenState extends State<TransportScreen> {
     });
   }
 
-  void _saveActivity() {
+  void _saveActivity() async {
     if (selectedTransportType == null || distanceController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Lütfen ulaşım türü ve mesafe seçin')),
@@ -69,31 +70,53 @@ class _TransportScreenState extends State<TransportScreen> {
       return;
     }
 
-    final activity = TransportActivity.create(
-      transportType: selectedTransportType!,
-      distanceKm: distance,
-      notes: notesController.text.isEmpty ? null : notesController.text,
-    );
+    try {
+      final activity = TransportActivity.create(
+        transportType: selectedTransportType!,
+        distanceKm: distance,
+        notes: notesController.text.isEmpty ? null : notesController.text,
+      );
 
-    // TODO: Aktiviteyi veritabanına kaydet
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Ulaşım aktivitesi kaydedildi! ${activity.co2Emission.toStringAsFixed(2)} kg CO₂',
-        ),
-        backgroundColor: Colors.green,
-      ),
-    );
+      // Aktiviteyi veritabanına kaydet
+      await DatabaseService.instance.insertTransportActivity(activity);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '✅ Ulaşım aktivitesi kaydedildi! ${activity.co2Emission.toStringAsFixed(2)} kg CO₂',
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
+        );
 
-    // Formu temizle
-    setState(() {
-      selectedTransportType = null;
-      distanceController.clear();
-      notesController.clear();
-      showResult = false;
-      calculatedCO2 = 0.0;
-    });
+        // Formu temizle
+        setState(() {
+          selectedTransportType = null;
+          distanceController.clear();
+          notesController.clear();
+          showResult = false;
+          calculatedCO2 = 0.0;
+        });
+
+        // Ana sayfaya dön
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            Navigator.of(context).pop(true); // true değeri ana sayfayı yenilemek için
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Hata: Aktivite kaydedilemedi. $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
