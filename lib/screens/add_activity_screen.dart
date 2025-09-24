@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/transport_screen.dart';
+import '../screens/energy_screen.dart';
 
 class AddActivityScreen extends StatelessWidget {
   const AddActivityScreen({super.key});
@@ -52,7 +53,11 @@ class AddActivityScreen extends StatelessWidget {
                     icon: Icons.flash_on,
                     color: Colors.orange,
                     onTap: () {
-                      _showComingSoon(context, 'Enerji');
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => const EnergyScreen(),
+                        ),
+                      );
                     },
                   ),
                   _buildCategoryTile(

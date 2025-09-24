@@ -44,6 +44,9 @@ dependencies:
   
   # Date formatting
   intl: ^0.19.0
+  
+  # Shared preferences for settings
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

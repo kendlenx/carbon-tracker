@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'screens/transport_screen.dart';
 import 'screens/add_activity_screen.dart';
 import 'screens/statistics_screen.dart';
+import 'screens/energy_screen.dart';
 import 'services/database_service.dart';
 import 'services/carbon_calculator_service.dart';
+import 'services/theme_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ThemeService.instance.loadThemePreference();
   runApp(const CarbonTrackerApp());
 }
 
@@ -14,21 +18,18 @@ class CarbonTrackerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Carbon Tracker',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-        ),
-      ),
-      home: const CarbonTrackerHome(),
-      debugShowCheckedModeBanner: false,
+    return AnimatedBuilder(
+      animation: ThemeService.instance,
+      builder: (context, child) {
+        return MaterialApp(
+          title: 'Carbon Tracker',
+          theme: ThemeService.instance.lightTheme,
+          darkTheme: ThemeService.instance.darkTheme,
+          themeMode: ThemeService.instance.themeMode,
+          home: const CarbonTrackerHome(),
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
@@ -147,6 +148,15 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         }
         break;
       case CarbonCategory.energy:
+        final result = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (context) => const EnergyScreen(),
+          ),
+        );
+        if (result == true) {
+          _loadDashboardData();
+        }
+        break;
       case CarbonCategory.food:
       case CarbonCategory.shopping:
         ScaffoldMessenger.of(context).showSnackBar(
@@ -164,8 +174,15 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           '🌱 Carbon Tracker',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         actions: [
+          IconButton(
+            icon: Icon(ThemeService.instance.themeIcon),
+            tooltip: 'Tema: ${ThemeService.instance.themeName}',
+            onPressed: () async {
+              await ThemeService.instance.toggleTheme();
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.bar_chart),
             tooltip: 'İstatistikler',
