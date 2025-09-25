@@ -6,7 +6,16 @@ import '../widgets/micro_interactions.dart';
 import '../widgets/modern_ui_elements.dart';
 
 class TransportScreen extends StatefulWidget {
-  const TransportScreen({super.key});
+  final String? preSelectedTransportType;
+  final double? preSelectedDistance;
+  final bool isQuickAdd;
+  
+  const TransportScreen({
+    super.key,
+    this.preSelectedTransportType,
+    this.preSelectedDistance,
+    this.isQuickAdd = false,
+  });
 
   @override
   State<TransportScreen> createState() => _TransportScreenState();
@@ -51,6 +60,33 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(parent: _resultAnimationController, curve: Curves.easeOutBack),
     );
+    
+    // Set pre-selected values for quick add
+    if (widget.isQuickAdd) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.preSelectedTransportType != null) {
+          // Find the transport type by ID
+          final transportType = TransportData.getTransportTypeById(widget.preSelectedTransportType!);
+          if (transportType != null) {
+            _selectTransportType(transportType);
+          }
+        }
+        
+        if (widget.preSelectedDistance != null) {
+          distanceController.text = widget.preSelectedDistance!.toStringAsFixed(1);
+          _calculateCO2();
+        }
+        
+        // Auto-save for quick add after a short delay
+        if (widget.preSelectedTransportType != null && widget.preSelectedDistance != null) {
+          Future.delayed(const Duration(milliseconds: 1000), () {
+            if (mounted) {
+              _saveActivity();
+            }
+          });
+        }
+      });
+    }
     
     _animationController.forward();
   }

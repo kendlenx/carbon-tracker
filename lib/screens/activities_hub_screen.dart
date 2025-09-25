@@ -49,11 +49,16 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
               color: Colors.green,
               onTap: () async {
                 await HapticHelper.trigger(HapticType.selection);
-                Navigator.of(context).push(
+                final result = await Navigator.of(context).push<bool>(
                   MaterialPageRoute(
                     builder: (context) => const AddActivityScreen(),
                   ),
                 );
+                
+                // Eğer aktivite eklendiyse, haptic feedback ver
+                if (result == true) {
+                  await HapticHelper.trigger(HapticType.success);
+                }
               },
             ),
             const SizedBox(height: 24),

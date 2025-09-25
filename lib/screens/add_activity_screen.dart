@@ -417,22 +417,37 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
   void _quickAddTransport(BuildContext context, String transportTypeId, double distance) async {
     await HapticHelper.trigger(HapticType.selection);
     
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('⚡ ${_languageService.isEnglish ? 'Quick Add' : 'Hızlı Ekleme'}'),
-        content: Text(
-          _languageService.isEnglish
-              ? 'Quick add feature will be active soon!\n\nFor now, you can add activities from category pages.'
-              : 'Hızlı ekleme özelliği yakında aktif olacak!\n\nŞimdilik kategori sayfalarından aktivite ekleyebilirsiniz.',
+    // Transport screen'e gidip doğrudan parametrelerle aktivite ekle
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TransportScreen(
+          preSelectedTransportType: transportTypeId,
+          preSelectedDistance: distance,
+          isQuickAdd: true,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'OK' : 'Tamam'),
-          ),
-        ],
       ),
     );
+    
+    // Eğer aktivite başarıyla eklendiyse, başarı mesajı göster ve geri dön
+    if (result == true) {
+      await HapticHelper.trigger(HapticType.success);
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              _languageService.isEnglish 
+                ? '✅ Activity added successfully!'
+                : '✅ Aktivite başarıyla eklendi!',
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+        
+        // Ana sayfaya geri dön
+        Navigator.of(context).pop(true);
+      }
+    }
   }
 }
