@@ -42,31 +42,37 @@ class NotificationService extends ChangeNotifier {
 
   /// Initialize notifications
   Future<void> initialize() async {
-    tz.initializeTimeZones();
-    
-    // Android initialization settings
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    
-    // iOS initialization settings
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-    );
-    
-    const InitializationSettings settings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-    
-    await _notifications.initialize(
-      settings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
-    );
-    
-    await _requestPermissions();
-    await _loadSettings();
-    await _scheduleDefaultNotifications();
+    try {
+      tz.initializeTimeZones();
+      
+      // Android initialization settings
+      const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+      
+      // iOS initialization settings
+      const DarwinInitializationSettings iosSettings = DarwinInitializationSettings(
+        requestSoundPermission: true,
+        requestBadgePermission: true,
+        requestAlertPermission: true,
+      );
+      
+      const InitializationSettings settings = InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      );
+      
+      await _notifications.initialize(
+        settings,
+        onDidReceiveNotificationResponse: _onNotificationTapped,
+      );
+      
+      await _requestPermissions();
+      await _loadSettings();
+      await _scheduleDefaultNotifications();
+    } catch (e) {
+      print('Error initializing notifications: $e');
+      // Don't throw - continue app startup even if notifications fail
+      _notificationsEnabled = false;
+    }
   }
 
   /// Request notification permissions
@@ -176,7 +182,7 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Günlük karbon takibi hatırlatıcıları',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/launcher_icon',
         ),
         iOS: DarwinNotificationDetails(
           categoryIdentifier: 'daily_reminder',
@@ -217,7 +223,7 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Haftalık karbon performans raporları',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/launcher_icon',
         ),
         iOS: DarwinNotificationDetails(
           categoryIdentifier: 'weekly_report',
@@ -244,7 +250,7 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Başarı bildirimleri',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/launcher_icon',
           color: Colors.green,
           playSound: true,
           enableVibration: true,
@@ -273,7 +279,7 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Karbon azaltma önerileri',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/launcher_icon',
           color: Colors.blue,
         ),
         iOS: DarwinNotificationDetails(
@@ -315,7 +321,7 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Hedef ilerleme bildirimleri',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/launcher_icon',
           color: Colors.orange,
           playSound: true,
         ),
@@ -402,7 +408,7 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Karbon azaltma önerileri',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/ic_launcher',
+          icon: '@mipmap/launcher_icon',
           color: Colors.blue,
         ),
         iOS: DarwinNotificationDetails(
