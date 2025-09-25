@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/modern_ui_elements.dart';
 import '../services/carbon_calculator_service.dart';
+import '../services/database_service.dart';
+import '../services/language_service.dart';
 
 class EnergyScreen extends StatefulWidget {
   const EnergyScreen({super.key});
@@ -12,6 +14,8 @@ class EnergyScreen extends StatefulWidget {
 class _EnergyScreenState extends State<EnergyScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  
+  final LanguageService _languageService = LanguageService.instance;
   
   // Elektrik formu
   final TextEditingController _electricityController = TextEditingController();
@@ -70,27 +74,63 @@ class _EnergyScreenState extends State<EnergyScreen>
   Future<void> _saveElectricity() async {
     if (_electricityController.text.isEmpty || _electricityEmission <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen geçerli bir kWh değeri girin')),
+        SnackBar(content: Text(_languageService.isEnglish ? 'Please enter a valid kWh value' : 'Lütfen geçerli bir kWh değeri girin')),
       );
       return;
     }
 
-    // TODO: Enerji aktivitesini veritabanına kaydet
-    _showSuccessMessage('Elektrik', _electricityEmission);
-    _clearElectricityForm();
+    try {
+      await DatabaseService.instance.insertActivity({
+        'category': 'energy',
+        'subcategory': 'electricity',
+        'description': '${_electricityController.text} kWh ${_languageService.isEnglish ? 'electricity consumption' : 'elektrik tüketimi'}',
+        'co2_amount': _electricityEmission,
+        'created_at': DateTime.now().toIso8601String(),
+        'metadata': {
+          'kwh': double.parse(_electricityController.text),
+          'notes': _electricityNotesController.text,
+          'co2_factor': 0.486,
+        }
+      });
+      
+      _showSuccessMessage(_languageService.isEnglish ? 'Electricity' : 'Elektrik', _electricityEmission);
+      _clearElectricityForm();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_languageService.isEnglish ? 'Error saving electricity data' : 'Elektrik verisi kaydedilirken hata oluştu')),
+      );
+    }
   }
 
   Future<void> _saveGas() async {
     if (_gasController.text.isEmpty || _gasEmission <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Lütfen geçerli bir m³ değeri girin')),
+        SnackBar(content: Text(_languageService.isEnglish ? 'Please enter a valid m³ value' : 'Lütfen geçerli bir m³ değeri girin')),
       );
       return;
     }
 
-    // TODO: Enerji aktivitesini veritabanına kaydet
-    _showSuccessMessage('Doğal Gaz', _gasEmission);
-    _clearGasForm();
+    try {
+      await DatabaseService.instance.insertActivity({
+        'category': 'energy',
+        'subcategory': 'natural_gas',
+        'description': '${_gasController.text} m³ ${_languageService.isEnglish ? 'natural gas consumption' : 'doğal gaz tüketimi'}',
+        'co2_amount': _gasEmission,
+        'created_at': DateTime.now().toIso8601String(),
+        'metadata': {
+          'cubic_meters': double.parse(_gasController.text),
+          'notes': _gasNotesController.text,
+          'co2_factor': 2.0,
+        }
+      });
+      
+      _showSuccessMessage(_languageService.isEnglish ? 'Natural Gas' : 'Doğal Gaz', _gasEmission);
+      _clearGasForm();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(_languageService.isEnglish ? 'Error saving gas data' : 'Gaz verisi kaydedilirken hata oluştu')),
+      );
+    }
   }
 
   void _showSuccessMessage(String type, double emission) {

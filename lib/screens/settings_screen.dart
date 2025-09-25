@@ -4,6 +4,7 @@ import '../services/language_service.dart';
 import '../services/theme_service.dart';
 import '../services/database_service.dart';
 import '../services/permission_service.dart';
+import '../services/notification_service.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import 'dart:io';
@@ -25,6 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final LanguageService _languageService = LanguageService.instance;
   final ThemeService _themeService = ThemeService.instance;
   final PermissionService _permissionService = PermissionService.instance;
+  final NotificationService _notificationService = NotificationService.instance;
 
   String _userName = '';
   String _defaultUserName = '';
@@ -43,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     _loadUserSettings();
     _loadUserStats();
+    _loadNotificationSettings();
   }
 
   Future<void> _loadUserSettings() async {
@@ -83,6 +86,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _joinDate = '2024-01-01';
       });
     }
+  }
+
+  Future<void> _loadNotificationSettings() async {
+    setState(() {
+      _notificationsEnabled = _notificationService.notificationsEnabled;
+    });
   }
 
   Future<void> _saveUserSettings() async {
@@ -211,6 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onRefresh: () async {
           await _loadUserSettings();
           await _loadUserStats();
+          await _loadNotificationSettings();
         },
         color: Colors.blue,
         child: SingleChildScrollView(
@@ -352,11 +362,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: Icons.language,
               title: _languageService.isEnglish ? 'Language' : 'Dil',
               subtitle: _languageService.currentLanguageDisplayName,
-              trailing: _languageService.currentLanguageFlag,
-              onTap: () async {
-                await _languageService.toggleLanguage();
-                HapticFeedback.selectionClick();
-              },
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(_languageService.currentLanguageFlag, style: const TextStyle(fontSize: 18)),
+                  const SizedBox(width: 8),
+                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade600),
+                ],
+              ),
+              onTap: () => _showLanguageSettings(),
             ),
 
             const Divider(),
@@ -368,25 +382,67 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: _languageService.isEnglish ? _themeService.themeName : 
                 (_themeService.themeName == 'Light' ? 'Açık' : 
                  _themeService.themeName == 'Dark' ? 'Koyu' : 'Sistem'),
-              onTap: () async {
-                await _themeService.toggleTheme();
-                HapticFeedback.selectionClick();
-              },
+              trailing: Icon(
+                _themeService.themeIcon,
+                color: Theme.of(context).primaryColor,
+                size: 20,
+              ),
+              onTap: () => _showThemeSettings(),
             ),
 
             const Divider(),
 
-            // Notifications
-            _buildSwitchPreference(
-              icon: Icons.notifications,
-              title: _languageService.isEnglish ? 'Notifications' : 'Bildirimler',
-              subtitle: _languageService.isEnglish ? 'Receive carbon tracking reminders' : 'Karbon takip hatırlatıcıları al',
-              value: _notificationsEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
+            // Notifications  
+            MicroCard(
+              onTap: () => _showNotificationSettings(),
+              hapticType: HapticType.light,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.notifications, color: Theme.of(context).primaryColor),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _languageService.isEnglish ? 'Notifications' : 'Bildirimler',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            _notificationsEnabled 
+                              ? (_languageService.isEnglish ? 'Enabled' : 'Etkin')
+                              : (_languageService.isEnglish ? 'Disabled' : 'Devre dışı'),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.grey.shade300
+                                : Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _notificationsEnabled ? Icons.notifications_active : Icons.notifications_off,
+                          color: _notificationsEnabled ? Colors.green : Colors.grey,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(Icons.chevron_right, color: Colors.grey),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
 
             const Divider(),
@@ -539,7 +595,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required IconData icon,
     required String title,
     String? subtitle,
-    String? trailing,
+    Widget? trailing,
     Color? iconColor,
     VoidCallback? onTap,
   }) {
@@ -578,8 +634,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
-            if (trailing != null) Text(trailing, style: const TextStyle(fontSize: 18)),
-            if (onTap != null) const Icon(Icons.chevron_right, color: Colors.grey),
+            if (trailing != null) trailing,
+            if (onTap != null && trailing == null) const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),
       ),
@@ -954,6 +1010,581 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(_languageService.isEnglish ? 'Profile picture removed' : 'Profil fotoğrafı kaldırıldı'),
+      ),
+    );
+  }
+
+  void _showNotificationSettings() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                left: 16,
+                right: 16,
+                top: 16,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.notifications, color: Theme.of(context).primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        _languageService.isEnglish ? 'Notification Settings' : 'Bildirim Ayarları',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Master notification toggle
+                  _buildModalSwitchItem(
+                    title: _languageService.isEnglish ? 'Enable Notifications' : 'Bildirimleri Etkinleştir',
+                    subtitle: _languageService.isEnglish ? 'Turn on/off all notifications' : 'Tüm bildirimleri aç/kapat',
+                    value: _notificationService.notificationsEnabled,
+                    onChanged: (value) async {
+                      await _notificationService.updateSettings(notificationsEnabled: value);
+                      setModalState(() {
+                        _notificationsEnabled = value;
+                      });
+                      setState(() {
+                        _notificationsEnabled = value;
+                      });
+                    },
+                  ),
+                  
+                  const Divider(),
+                  
+                  // Individual notification settings
+                  AnimatedOpacity(
+                    opacity: _notificationService.notificationsEnabled ? 1.0 : 0.5,
+                    duration: const Duration(milliseconds: 200),
+                    child: Column(
+                      children: [
+                        _buildModalSwitchItem(
+                          title: _languageService.isEnglish ? 'Daily Reminders' : 'Günlük Hatırlatıcılar',
+                          subtitle: _languageService.isEnglish ? 'Get daily carbon tracking reminders' : 'Günlük karbon takip hatırlatıcıları al',
+                          value: _notificationService.dailyRemindersEnabled,
+                          enabled: _notificationService.notificationsEnabled,
+                          onChanged: (value) async {
+                            await _notificationService.updateSettings(dailyRemindersEnabled: value);
+                            setModalState(() {});
+                          },
+                        ),
+                        
+                        const Divider(),
+                        
+                        _buildModalSwitchItem(
+                          title: _languageService.isEnglish ? 'Achievement Notifications' : 'Başarı Bildirimleri',
+                          subtitle: _languageService.isEnglish ? 'Get notified when you earn badges' : 'Rozet kazandığınızda bildirim al',
+                          value: _notificationService.achievementNotificationsEnabled,
+                          enabled: _notificationService.notificationsEnabled,
+                          onChanged: (value) async {
+                            await _notificationService.updateSettings(achievementNotificationsEnabled: value);
+                            setModalState(() {});
+                          },
+                        ),
+                        
+                        const Divider(),
+                        
+                        _buildModalSwitchItem(
+                          title: _languageService.isEnglish ? 'Weekly Reports' : 'Haftalık Raporlar',
+                          subtitle: _languageService.isEnglish ? 'Receive weekly carbon footprint summaries' : 'Haftalık karbon ayak izi özetleri al',
+                          value: _notificationService.weeklyReportsEnabled,
+                          enabled: _notificationService.notificationsEnabled,
+                          onChanged: (value) async {
+                            await _notificationService.updateSettings(weeklyReportsEnabled: value);
+                            setModalState(() {});
+                          },
+                        ),
+                        
+                        const Divider(),
+                        
+                        _buildModalSwitchItem(
+                          title: _languageService.isEnglish ? 'Smart Suggestions' : 'Akıllı Öneriler',
+                          subtitle: _languageService.isEnglish ? 'Get personalized eco-friendly tips' : 'Kişiselleştirilmiş çevre dostu ipuçları al',
+                          value: _notificationService.smartSuggestionsEnabled,
+                          enabled: _notificationService.notificationsEnabled,
+                          onChanged: (value) async {
+                            await _notificationService.updateSettings(smartSuggestionsEnabled: value);
+                            setModalState(() {});
+                          },
+                        ),
+                        
+                        const Divider(),
+                        
+                        // Daily reminder time picker
+                        if (_notificationService.dailyRemindersEnabled && _notificationService.notificationsEnabled)
+                          _buildTimePicker(
+                            title: _languageService.isEnglish ? 'Daily Reminder Time' : 'Günlük Hatırlatıcı Zamanı',
+                            time: _notificationService.dailyReminderTime,
+                            onTimeChanged: (time) async {
+                              await _notificationService.updateSettings(dailyReminderTime: time);
+                              setModalState(() {});
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Test notification button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: _notificationService.notificationsEnabled ? () async {
+                        await _notificationService.showSmartSuggestion(
+                          _languageService.isEnglish 
+                            ? 'This is a test notification from Carbon Tracker!' 
+                            : 'Bu Carbon Tracker\'dan bir test bildirimidir!'
+                        );
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(_languageService.isEnglish ? 'Test notification sent!' : 'Test bildirimi gönderildi!'),
+                            ),
+                          );
+                        }
+                      } : null,
+                      icon: const Icon(Icons.send),
+                      label: Text(_languageService.isEnglish ? 'Send Test Notification' : 'Test Bildirimi Gönder'),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
+  Widget _buildModalSwitchItem({
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+    bool enabled = true,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: enabled ? null : Colors.grey,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: enabled 
+                      ? (Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade300 : Colors.grey.shade600)
+                      : Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: enabled ? onChanged : null,
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildTimePicker({
+    required String title,
+    required TimeOfDay time,
+    required ValueChanged<TimeOfDay> onTimeChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () async {
+              final newTime = await showTimePicker(
+                context: context,
+                initialTime: time,
+              );
+              if (newTime != null) {
+                onTimeChanged(newTime);
+              }
+            },
+            icon: const Icon(Icons.access_time),
+            label: Text(_languageService.isEnglish ? 'Change' : 'Değiştir'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showThemeSettings() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.palette, color: Theme.of(context).primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        _languageService.isEnglish ? 'Theme Settings' : 'Tema Ayarları',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Light theme option
+                  _buildThemeOption(
+                    title: _languageService.isEnglish ? 'Light Theme' : 'Açık Tema',
+                    subtitle: _languageService.isEnglish ? 'Bright and clean appearance' : 'Parlak ve temiz görünüm',
+                    icon: Icons.light_mode,
+                    color: Colors.orange,
+                    isSelected: _themeService.themeMode == ThemeMode.light,
+                    onTap: () async {
+                      await _themeService.setTheme(ThemeMode.light);
+                      setModalState(() {});
+                      setState(() {});
+                      HapticFeedback.selectionClick();
+                    },
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  
+                  // Dark theme option
+                  _buildThemeOption(
+                    title: _languageService.isEnglish ? 'Dark Theme' : 'Koyu Tema',
+                    subtitle: _languageService.isEnglish ? 'Easy on the eyes in low light' : 'Az ışıkta gözleri yormuyor',
+                    icon: Icons.dark_mode,
+                    color: Colors.indigo,
+                    isSelected: _themeService.themeMode == ThemeMode.dark,
+                    onTap: () async {
+                      await _themeService.setTheme(ThemeMode.dark);
+                      setModalState(() {});
+                      setState(() {});
+                      HapticFeedback.selectionClick();
+                    },
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  
+                  // System theme option
+                  _buildThemeOption(
+                    title: _languageService.isEnglish ? 'System Theme' : 'Sistem Teması',
+                    subtitle: _languageService.isEnglish ? 'Follow device settings' : 'Cihaz ayarlarını takip et',
+                    icon: Icons.settings_system_daydream,
+                    color: Colors.purple,
+                    isSelected: _themeService.themeMode == ThemeMode.system,
+                    onTap: () async {
+                      await _themeService.setTheme(ThemeMode.system);
+                      setModalState(() {});
+                      setState(() {});
+                      HapticFeedback.selectionClick();
+                    },
+                  ),
+                  
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
+  Widget _buildThemeOption({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? color : Colors.grey.withOpacity(0.3),
+            width: isSelected ? 2 : 1,
+          ),
+          color: isSelected 
+            ? color.withOpacity(0.1) 
+            : Theme.of(context).cardColor,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? color : null,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  void _showLanguageSettings() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.language, color: Theme.of(context).primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        _languageService.isEnglish ? 'Language Settings' : 'Dil Ayarları',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // English option
+                  _buildLanguageOption(
+                    title: 'English',
+                    subtitle: 'English language interface',
+                    flag: '🇺🇸',
+                    isSelected: _languageService.isEnglish,
+                    onTap: () async {
+                      if (!_languageService.isEnglish) {
+                        await _languageService.setLanguage('en');
+                        setModalState(() {});
+                        setState(() {});
+                        HapticFeedback.selectionClick();
+                      }
+                    },
+                  ),
+                  
+                  const SizedBox(height: 12),
+                  
+                  // Turkish option
+                  _buildLanguageOption(
+                    title: 'Türkçe',
+                    subtitle: 'Türkçe dil arabirimi',
+                    flag: '🇹🇷',
+                    isSelected: !_languageService.isEnglish,
+                    onTap: () async {
+                      if (_languageService.isEnglish) {
+                        await _languageService.setLanguage('tr');
+                        setModalState(() {});
+                        setState(() {});
+                        HapticFeedback.selectionClick();
+                      }
+                    },
+                  ),
+                  
+                  const SizedBox(height: 20),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+  
+  Widget _buildLanguageOption({
+    required String title,
+    required String subtitle,
+    required String flag,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? Theme.of(context).primaryColor : Colors.grey.withOpacity(0.3),
+            width: isSelected ? 2 : 1,
+          ),
+          color: isSelected 
+            ? Theme.of(context).primaryColor.withOpacity(0.1) 
+            : Theme.of(context).cardColor,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                flag,
+                style: const TextStyle(fontSize: 20),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? Theme.of(context).primaryColor : null,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

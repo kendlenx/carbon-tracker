@@ -111,7 +111,7 @@ class _HeroDashboardState extends State<HeroDashboard>
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -132,7 +132,9 @@ class _HeroDashboardState extends State<HeroDashboard>
                   painter: ProgressRingPainter(
                     progress: 1.0,
                     strokeWidth: 12,
-                    color: Colors.grey.withOpacity(0.2),
+                    color: Theme.of(context).brightness == Brightness.dark 
+                      ? Colors.grey.withOpacity(0.1) 
+                      : Colors.grey.withOpacity(0.2),
                     isBackground: true,
                   ),
                 ),
@@ -178,7 +180,9 @@ class _HeroDashboardState extends State<HeroDashboard>
                           Text(
                             'kg CO₂',
                             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Colors.grey.shade600,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.grey.shade400 
+                                : Colors.grey.shade600,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -186,7 +190,9 @@ class _HeroDashboardState extends State<HeroDashboard>
                           Text(
                             'Bugün',
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Colors.grey.shade500,
+                              color: Theme.of(context).brightness == Brightness.dark 
+                                ? Colors.grey.shade500 
+                                : Colors.grey.shade500,
                             ),
                           ),
                         ],

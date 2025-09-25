@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Custom launch splash screen for Carbon Tracker -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Green gradient background -->
     <item>
-        <shape>
-            <gradient
-                android:angle="135"
-                android:startColor="#1B5E20"
-                android:endColor="#0D1B0F"
-                android:type="linear" />
-        </shape>
+        <bitmap android:gravity="fill" android:src="@drawable/background"/>
     </item>
 </layer-list>

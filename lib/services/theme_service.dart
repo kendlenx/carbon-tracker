@@ -143,6 +143,11 @@ class ThemeService extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_themeKey, mode.name);
   }
+  
+  /// Alias for setThemeMode - for consistency
+  Future<void> setTheme(ThemeMode mode) async {
+    await setThemeMode(mode);
+  }
 
   /// Kayıtlı tema tercihini yükler
   Future<void> loadThemePreference() async {

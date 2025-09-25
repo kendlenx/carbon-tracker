@@ -87,6 +87,11 @@ class LanguageService extends ChangeNotifier {
     await _saveLanguagePreference(languageCode);
     notifyListeners();
   }
+  
+  /// Alias for changeLanguage - for consistency
+  Future<void> setLanguage(String languageCode) async {
+    await changeLanguage(languageCode);
+  }
 
   /// Toggle between Turkish and English
   Future<void> toggleLanguage() async {

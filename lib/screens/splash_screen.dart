@@ -5,6 +5,7 @@ import '../widgets/carbon_tracker_logo.dart';
 import '../services/language_service.dart';
 import '../services/theme_service.dart';
 import '../services/permission_service.dart';
+import '../services/notification_service.dart';
 import '../main.dart';
 import 'onboarding_screen.dart';
 
@@ -149,6 +150,12 @@ class _SplashScreenState extends State<SplashScreen>
         _statusText = 'İzinleri kontrol ediyoruz...';
       });
       await PermissionService.instance.initialize();
+      await Future.delayed(const Duration(milliseconds: 600));
+
+      setState(() {
+        _statusText = 'Bildirimler ayarlanıyor...';
+      });
+      await NotificationService.instance.initialize();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
