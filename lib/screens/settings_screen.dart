@@ -350,8 +350,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text(
               _languageService.isEnglish ? 'App Preferences' : 'Uygulama Tercihleri',
-              style: const TextStyle(
-                fontSize: 16,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -491,8 +490,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text(
               _languageService.isEnglish ? 'Your Statistics' : 'İstatistikleriniz',
-              style: const TextStyle(
-                fontSize: 16,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -532,8 +530,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text(
               _languageService.isEnglish ? 'Data Management' : 'Veri Yönetimi',
-              style: const TextStyle(
-                fontSize: 16,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -758,9 +755,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
-            color: Colors.grey,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey.shade400
+                : Colors.grey.shade600,
           ),
           textAlign: TextAlign.center,
         ),

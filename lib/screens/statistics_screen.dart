@@ -42,6 +42,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
       CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _loadStatistics();
+    _animationController.forward();
   }
 
   @override
@@ -116,8 +117,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Statistics' : 'İstatistikler'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        elevation: 2,
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -152,20 +153,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         ),
         child: TabBar(
           controller: _tabController,
-          labelColor: Theme.of(context).primaryColor,
-          unselectedLabelColor: Colors.grey,
-          indicatorColor: Theme.of(context).primaryColor,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white,
+          indicatorColor: Colors.transparent,
+          splashFactory: NoSplash.splashFactory,
+          overlayColor: MaterialStateProperty.all(Colors.transparent),
+          labelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+            color: Colors.white,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.normal,
+            fontSize: 12,
+            color: Colors.white,
+          ),
           tabs: [
             Tab(
-              icon: const Icon(Icons.calendar_view_week),
+              icon: const Icon(Icons.calendar_view_week, color: Colors.white),
               text: _languageService.isEnglish ? 'Weekly' : 'Haftalık',
             ),
             Tab(
-              icon: const Icon(Icons.calendar_month),
+              icon: const Icon(Icons.calendar_month, color: Colors.white),
               text: _languageService.isEnglish ? 'Monthly' : 'Aylık',
             ),
             Tab(
-              icon: const Icon(Icons.pie_chart),
+              icon: const Icon(Icons.pie_chart, color: Colors.white),
               text: _languageService.isEnglish ? 'Categories' : 'Kategoriler',
             ),
           ],
@@ -382,9 +395,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Özet kartı
+          // Header with proper theme support
+          Text(
+            _languageService.isEnglish ? 'Monthly Overview' : 'Aylık Özet',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.headlineSmall?.color,
+            ),
+          ),
+          
+          const SizedBox(height: 16),
+          
+          // Monthly summary card
           _buildStatCard(
-            title: 'Aylık Toplam',
+            title: _languageService.isEnglish ? 'Monthly Total' : 'Aylık Toplam',
             value: '${totalMonthCO2.toStringAsFixed(1)} kg CO₂',
             icon: Icons.calendar_month,
             color: Colors.orange,
@@ -394,9 +418,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           const SizedBox(height: 24),
           
           Text(
-            'Son 30 Gün CO₂ Trendi',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+            _languageService.isEnglish ? '30-Day CO₂ Trend' : 'Son 30 Gün CO₂ Trendi',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.titleLarge?.color,
             ),
           ),
           
@@ -430,7 +455,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                               final date = now.subtract(Duration(days: (29 - value.toInt())));
                               return Text(
                                 DateFormat('MM/dd').format(date),
-                                style: const TextStyle(fontSize: 10),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context).brightness == Brightness.dark 
+                                      ? Colors.grey.shade400 
+                                      : Colors.grey.shade600,
+                                ),
                               );
                             }
                             return const Text('');
@@ -473,7 +503,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Ulaşım Türü Dağılımı (Son 7 Gün)',
+            _languageService.isEnglish ? 'Transport Category Distribution (Last 7 Days)' : 'Ulaşım Türü Dağılımı (Son 7 Gün)',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -482,16 +512,28 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           const SizedBox(height: 16),
           
           if (categoryData.isEmpty)
-            const Card(
+            Card(
               child: Padding(
-                padding: EdgeInsets.all(32.0),
+                padding: const EdgeInsets.all(32.0),
                 child: Center(
                   child: Column(
                     children: [
-                      Icon(Icons.bar_chart, size: 48, color: Colors.grey),
-                      SizedBox(height: 16),
-                      Text('Henüz veri yok'),
-                      Text('Aktivite ekleyerek grafiği görüntüleyebilirsiniz.'),
+                      const Icon(Icons.bar_chart, size: 48, color: Colors.grey),
+                      const SizedBox(height: 16),
+                      Text(
+                        _languageService.isEnglish ? 'No data yet' : 'Henüz veri yok',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      Text(
+                        _languageService.isEnglish 
+                            ? 'Add activities to view charts.'
+                            : 'Aktivite ekleyerek grafiği görüntüleyebilirsiniz.',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600,
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -9,6 +9,7 @@ import 'screens/shopping_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/goals_screen.dart';
 import 'screens/permissions_screen.dart';
+import 'screens/activities_hub_screen.dart';
 import 'services/database_service.dart';
 import 'services/carbon_calculator_service.dart';
 import 'services/theme_service.dart';
@@ -109,6 +110,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   double weeklyAverage = 0.0; // kg CO₂
   double monthlyGoal = 400.0; // kg CO₂
   bool isLoading = true;
+  int _currentIndex = 0;
   final LanguageService _languageService = LanguageService.instance;
   final PermissionService _permissionService = PermissionService.instance;
 
@@ -190,7 +192,99 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   }
   
   // Achievement checking temporarily disabled
-
+  
+  Widget _buildHomeBody() {
+    return LiquidPullRefresh(
+      onRefresh: _loadDashboardData,
+      color: Theme.of(context).primaryColor,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Hero Dashboard
+            HeroDashboard(
+              totalCarbonToday: totalCarbonToday,
+              weeklyAverage: weeklyAverage,
+              monthlyGoal: monthlyGoal,
+              isLoading: false,
+            ),
+            const SizedBox(height: 24),
+            // Performance comparison
+            if (weeklyAverage > 0) ...[
+              _buildPerformanceCard(),
+              const SizedBox(height: 24),
+            ],
+            // Tips section
+            _buildTipsSection(),
+            const SizedBox(height: 24),
+            // Achievements section
+            _buildAchievementsSection(),
+            const SizedBox(height: 24),
+            // Categories header
+            Row(
+              children: [
+                Icon(
+                  Icons.grid_view,
+                  color: Theme.of(context).primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  _languageService.isEnglish ? 'Categories' : 'Kategoriler',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.green.shade800.withOpacity(0.3)
+                        : Theme.of(context).primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    _languageService.isEnglish ? 'Track Activities' : 'Aktiviteleri İzle',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.green.shade300
+                          : Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Category cards
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.1,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+              ),
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                final category = categories[index];
+                double todayValue = 0.0;
+                if (category.category == CarbonCategory.transport) {
+                  todayValue = totalCarbonToday;
+                }
+                return _buildCategoryCard(category, todayValue);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
   void _navigateToCategory(CategoryData category) async {
     // Haptic feedback for navigation
     await HapticHelper.trigger(HapticType.selection);
@@ -307,12 +401,6 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                     transition: TransitionType.slideLeft,
                   );
                   break;
-                case 'goals':
-                  context.pushWithTransition(
-                    const GoalsScreen(),
-                    transition: TransitionType.fadeScale,
-                  );
-                  break;
               }
             },
             itemBuilder: (context) => [
@@ -346,198 +434,53 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   ],
                 ),
               ),
-              PopupMenuItem(
-                value: 'goals',
-                child: Row(
-                  children: [
-                    const Icon(Icons.flag, color: Colors.green),
-                    const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Goals' : 'Hedefler'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'settings',
-                child: Row(
-                  children: [
-                    const Icon(Icons.settings, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Settings' : 'Ayarlar'),
-                  ],
-                ),
-              ),
             ],
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : LiquidPullRefresh(
-              onRefresh: _loadDashboardData,
-              color: Theme.of(context).primaryColor,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-            // Hero Dashboard
-            HeroDashboard(
-              totalCarbonToday: totalCarbonToday,
-              weeklyAverage: weeklyAverage,
-              monthlyGoal: monthlyGoal,
-              isLoading: false,
-            ),
-            const SizedBox(height: 24),
-            
-            // Performans karşılaştırması
-            if (weeklyAverage > 0) ...[
-              _buildPerformanceCard(),
-              const SizedBox(height: 24),
-            ],
-            
-            // İpuçları Kısmı
-            _buildTipsSection(),
-            const SizedBox(height: 24),
-            
-            // Başarılar Kısmı
-            _buildAchievementsSection(),
-            const SizedBox(height: 24),
-            
-            // Kategoriler başlığı
-            Row(
-              children: [
-                Icon(
-                  Icons.grid_view,
-                  color: Theme.of(context).primaryColor,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  _languageService.isEnglish ? 'Categories' : 'Kategoriler',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    _languageService.isEnglish ? 'Track Activities' : 'Aktiviteleri İzle',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            
-            // Kategori kartları
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.1,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-              ),
-              itemCount: categories.length,
-              itemBuilder: (context, index) {
-                final category = categories[index];
-                double todayValue = 0.0;
-                
-                // Sadece ulaşım kategorisi için bugünkü değeri göster
-                if (category.category == CarbonCategory.transport) {
-                  todayValue = totalCarbonToday;
-                }
-                
-                return _buildCategoryCard(category, todayValue);
-              },
-            ),
-          ],
-                ),
-              ),
-            ),
-      floatingActionButton: SpeedDialFAB(
-        mainFAB: MorphingFAB(
-          currentAction: FABAction(
-            state: FABState.add,
-            icon: Icons.add,
-            tooltip: _languageService.isEnglish ? 'Quick Actions' : 'Hızlı İşlemler',
-            onPressed: () async {
-              final result = await context.pushWithTransition<bool>(
-                const AddActivityScreen(),
-                transition: TransitionType.fadeScale,
-                duration: const Duration(milliseconds: 350),
-              );
-              if (result == true) {
-                _loadDashboardData();
-              }
-            },
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          // Home (Dashboard)
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _buildHomeBody(),
+          // Activities Hub
+          const ActivitiesHubScreen(),
+          // Goals (replacing Statistics)
+          const GoalsScreen(),
+          // Settings
+          const SettingsScreen(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home_outlined),
+            activeIcon: const Icon(Icons.home),
+            label: _languageService.isEnglish ? 'Home' : 'Ana Sayfa',
           ),
-        ),
-        actions: [
-          SpeedDialAction(
-            icon: Icons.directions_car,
-            label: _languageService.isEnglish ? 'Transport' : 'Ulaşım',
-            backgroundColor: Colors.blue,
-            onPressed: () async {
-              final result = await context.pushWithTransition<bool>(
-                const TransportScreen(),
-                transition: TransitionType.slideLeft,
-                duration: const Duration(milliseconds: 300),
-              );
-              if (result == true) {
-                _loadDashboardData();
-              }
-            },
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.add_circle_outline),
+            activeIcon: const Icon(Icons.add_circle),
+            label: _languageService.isEnglish ? 'Activities' : 'Aktiviteler',
           ),
-          SpeedDialAction(
-            icon: Icons.flash_on,
-            label: _languageService.isEnglish ? 'Energy' : 'Enerji',
-            backgroundColor: Colors.orange,
-            onPressed: () async {
-              final result = await context.pushWithTransition<bool>(
-                const EnergyScreen(),
-                transition: TransitionType.ripple,
-                duration: const Duration(milliseconds: 400),
-              );
-              if (result == true) {
-                _loadDashboardData();
-              }
-            },
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.flag_outlined),
+            activeIcon: const Icon(Icons.flag),
+            label: _languageService.isEnglish ? 'Goals' : 'Hedefler',
           ),
-          SpeedDialAction(
-            icon: Icons.add,
-            label: _languageService.isEnglish ? 'Add General' : 'Genel Ekle',
-            backgroundColor: Colors.green,
-            onPressed: () async {
-              final result = await context.pushWithTransition<bool>(
-                const AddActivityScreen(),
-                transition: TransitionType.morphing,
-                duration: const Duration(milliseconds: 450),
-              );
-              if (result == true) {
-                _loadDashboardData();
-              }
-            },
-          ),
-          SpeedDialAction(
-            icon: Icons.mic_none,
-            label: _languageService.isEnglish ? 'Voice Command' : 'Sesli Komut',
-            backgroundColor: Colors.purple,
-            onPressed: () async {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(_languageService.isEnglish ? 'Voice command feature coming soon!' : 'Sesli komut özelliği yakında!')),
-              );
-            },
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings_outlined),
+            activeIcon: const Icon(Icons.settings),
+            label: _languageService.isEnglish ? 'Settings' : 'Ayarlar',
           ),
         ],
       ),
@@ -571,7 +514,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             Text(
               category.subtitle,
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.grey.shade400
+                    : Colors.grey.shade600,
                 fontSize: 12,
               ),
               textAlign: TextAlign.center,
@@ -696,7 +641,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey.shade400
+                : Colors.grey.shade600,
             fontSize: 10,
           ),
         ),
@@ -727,15 +674,22 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: LinearGradient(
-          colors: [
-            Colors.purple.withOpacity(0.05),
-            Colors.blue.withOpacity(0.03),
-          ],
+          colors: Theme.of(context).brightness == Brightness.dark
+              ? [
+                  Colors.purple.shade800.withOpacity(0.2),
+                  Colors.blue.shade900.withOpacity(0.1),
+                ]
+              : [
+                  Colors.purple.withOpacity(0.05),
+                  Colors.blue.withOpacity(0.03),
+                ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         border: Border.all(
-          color: Colors.grey.withOpacity(0.1),
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700.withOpacity(0.3)
+              : Colors.grey.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -769,13 +723,15 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        _languageService.isEnglish ? 'Your recent milestones' : 'Son kazandığınız rozetler',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade600,
+                        Text(
+                          _languageService.isEnglish ? 'Your recent milestones' : 'Son kazandığınız rozetler',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ],
@@ -888,7 +844,15 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
-            colors: [Colors.blue.withOpacity(0.1), Colors.green.withOpacity(0.1)],
+            colors: Theme.of(context).brightness == Brightness.dark
+                ? [
+                    Colors.blue.shade800.withOpacity(0.2),
+                    Colors.green.shade800.withOpacity(0.2),
+                  ]
+                : [
+                    Colors.blue.withOpacity(0.1),
+                    Colors.green.withOpacity(0.1),
+                  ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -929,7 +893,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                           tip['category'],
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? Colors.grey.shade400
+                                : Colors.grey.shade600,
                           ),
                         ),
                       ],

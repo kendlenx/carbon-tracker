@@ -379,7 +379,9 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                         '${current.toStringAsFixed(1)} / ${target.toStringAsFixed(0)} kg',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey.shade700,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade700,
                         ),
                       ),
                     ],
@@ -390,7 +392,9 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                     builder: (context, child) {
                       return LinearProgressIndicator(
                         value: math.min(progress * _progressAnimationController.value, 1.0),
-                        backgroundColor: Colors.grey.shade200,
+                        backgroundColor: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.grey.shade700
+                            : Colors.grey.shade200,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           progress <= 1.0 ? color : Colors.red,
                         ),
@@ -402,7 +406,9 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                     '${(progress * 100).toStringAsFixed(1)}% ${_languageService.isEnglish ? 'complete' : 'tamamlandı'}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
                     ),
                   ),
                 ],
@@ -422,9 +428,8 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Weekly Trend' : 'Haftalık Trend',
-              style: const TextStyle(
-                fontSize: 16,
+              _languageService.isEnglish ? 'Weekly Progress Trend' : 'Haftalık İlerleme Trendi',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -477,7 +482,9 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                   _languageService.isEnglish ? 'Goal: ${_dailyGoal.toStringAsFixed(0)} kg/day' : 'Hedef: ${_dailyGoal.toStringAsFixed(0)} kg/gün',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.grey.shade400
+                        : Colors.grey.shade600,
                   ),
                 ),
                 Container(
@@ -528,14 +535,12 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
               children: [
                 Text(
                   _languageService.isEnglish ? 'Goal Achievements' : 'Hedef Başarıları',
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigate to full achievements screen
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(_languageService.isEnglish 
@@ -630,8 +635,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
           children: [
             Text(
               _languageService.isEnglish ? 'Tips to Reduce Carbon' : 'Karbonu Azaltma İpuçları',
-              style: const TextStyle(
-                fontSize: 16,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
