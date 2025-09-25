@@ -460,6 +460,7 @@ class SmartFeaturesService extends ChangeNotifier {
     return prefs.getDouble('weekly_co2_goal') ?? 10.0; // Default 10kg reduction per week
   }
 
+
   // Save methods
   Future<void> _saveRecommendations() async {
     try {

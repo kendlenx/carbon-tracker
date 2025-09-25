@@ -382,20 +382,44 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
         position: _slideAnimation,
         child: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                achievement.color.withOpacity(0.1),
-                Colors.white,
-                achievement.color.withOpacity(0.05),
-              ],
-            ),
+            color: theme.brightness == Brightness.dark
+                ? theme.colorScheme.surface
+                : Colors.white,
+            gradient: theme.brightness == Brightness.dark
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      achievement.color.withOpacity(0.1),
+                      theme.colorScheme.surface,
+                      achievement.color.withOpacity(0.05),
+                    ],
+                  )
+                : LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      achievement.color.withOpacity(0.1),
+                      Colors.white,
+                      achievement.color.withOpacity(0.05),
+                    ],
+                  ),
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(
-              color: achievement.color.withOpacity(0.3),
+              color: theme.brightness == Brightness.dark
+                  ? achievement.color.withOpacity(0.5)
+                  : achievement.color.withOpacity(0.3),
               width: 2.0,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.brightness == Brightness.dark
+                    ? Colors.black.withOpacity(0.3)
+                    : Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -425,7 +449,12 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                         Navigator.of(context).pop();
                         widget.onDismiss?.call();
                       },
-                      icon: const Icon(Icons.close),
+                      icon: Icon(
+                        Icons.close,
+                        color: theme.brightness == Brightness.dark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -519,7 +548,9 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                           shape: BoxShape.circle,
                           color: index == _currentIndex
                               ? achievement.color
-                              : Colors.grey.shade300,
+                              : theme.brightness == Brightness.dark
+                                  ? Colors.grey.shade600
+                                  : Colors.grey.shade300,
                         ),
                       ),
                     ),

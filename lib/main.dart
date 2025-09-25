@@ -13,7 +13,8 @@ import 'screens/activities_hub_screen.dart';
 import 'services/database_service.dart';
 import 'services/carbon_calculator_service.dart';
 import 'services/theme_service.dart';
-import 'services/achievement_service.dart';
+import 'services/achievement_service.dart' hide Achievement;
+import 'services/achievement_service.dart' as AchievementServiceLib;
 import 'services/smart_features_service.dart';
 import 'services/notification_service.dart';
 import 'services/goal_service.dart';
@@ -179,7 +180,8 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           isLoading = false;
         });
         
-        // Achievement checking disabled for now
+        // Check for new achievements
+        _checkAchievements();
       }
     } catch (e) {
       print('Error loading dashboard data: $e');
@@ -191,7 +193,38 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
     }
   }
   
-  // Achievement checking temporarily disabled
+  // Achievement checking method
+  Future<void> _checkAchievements() async {
+    try {
+      final achievementService = AchievementServiceLib.AchievementService.instance;
+      
+      // Check daily achievements
+      final dailyAchievements = await achievementService.checkDailyAchievements(totalCarbonToday);
+      
+      // Check level achievements
+      final levelAchievements = await achievementService.checkLevelAchievements();
+      
+      // Show unlock dialogs for new achievements
+      final allNewAchievements = [...dailyAchievements, ...levelAchievements];
+      if (allNewAchievements.isNotEmpty) {
+        _showAchievementUnlockDialog(allNewAchievements);
+      }
+    } catch (e) {
+      print('Error checking achievements: $e');
+    }
+  }
+  
+  void _showAchievementUnlockDialog(List<AchievementServiceLib.Achievement> achievements) {
+    if (achievements.isEmpty || !mounted) return;
+    
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AchievementUnlockDialog(
+        newAchievements: achievements,
+      ),
+    );
+  }
   
   Widget _buildHomeBody() {
     return LiquidPullRefresh(
@@ -217,6 +250,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             ],
             // Tips section
             _buildTipsSection(),
+            const SizedBox(height: 24),
+            // Smart Recommendations section
+            _buildSmartRecommendationsSection(),
             const SizedBox(height: 24),
             // Achievements section
             _buildAchievementsSection(),
@@ -447,7 +483,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               : _buildHomeBody(),
           // Activities Hub
           const ActivitiesHubScreen(),
-          // Goals (replacing Statistics)
+          // Achievements
+          const AchievementsScreen(),
+          // Goals
           const GoalsScreen(),
           // Settings
           const SettingsScreen(),
@@ -461,6 +499,8 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           });
         },
         type: BottomNavigationBarType.fixed,
+        selectedFontSize: 11,
+        unselectedFontSize: 10,
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.home_outlined),
@@ -471,6 +511,11 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             icon: const Icon(Icons.add_circle_outline),
             activeIcon: const Icon(Icons.add_circle),
             label: _languageService.isEnglish ? 'Activities' : 'Aktiviteler',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.emoji_events_outlined),
+            activeIcon: const Icon(Icons.emoji_events),
+            label: _languageService.isEnglish ? 'Achievements' : 'Başarılar',
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.flag_outlined),
@@ -1082,6 +1127,248 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text(_languageService.isEnglish ? 'Close' : 'Kapat'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _buildSmartRecommendationsSection() {
+    final smartService = SmartFeaturesService.instance;
+    final recommendations = smartService.unreadRecommendations.take(3).toList();
+    
+    if (recommendations.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: Theme.of(context).brightness == Brightness.dark
+              ? [
+                  Colors.green.shade800.withOpacity(0.2),
+                  Colors.blue.shade900.withOpacity(0.1),
+                ]
+              : [
+                  Colors.green.withOpacity(0.05),
+                  Colors.blue.withOpacity(0.03),
+                ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700.withOpacity(0.3)
+              : Colors.grey.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.lightbulb,
+                      color: Colors.lightBlue,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _languageService.isEnglish ? 'Smart Tips' : 'Akıllı Öneriler',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _languageService.isEnglish ? 'AI-powered suggestions' : 'Yapay zeka destekli öneriler',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey.shade400
+                              : Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Column(
+            children: recommendations.map((recommendation) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                child: MicroCard(
+                  onTap: () => _showRecommendationDetail(recommendation),
+                  hapticType: HapticType.light,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: recommendation.color.withOpacity(0.05),
+                      border: Border.all(
+                        color: recommendation.color.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: recommendation.color.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            recommendation.icon,
+                            color: recommendation.color,
+                            size: 16,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                recommendation.title,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                recommendation.description,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade600,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '-${recommendation.potentialSaving.toStringAsFixed(1)} kg',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.green.shade700,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  void _showRecommendationDetail(SmartRecommendation recommendation) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              recommendation.icon,
+              color: recommendation.color,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                recommendation.title,
+                style: TextStyle(
+                  color: recommendation.color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(recommendation.description),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.green.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.eco,
+                    color: Colors.green,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _languageService.isEnglish 
+                        ? 'Potential saving: ${recommendation.potentialSaving.toStringAsFixed(1)} kg CO₂'
+                        : 'Potansiyel tasarruf: ${recommendation.potentialSaving.toStringAsFixed(1)} kg CO₂',
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              // Mark as read
+              SmartFeaturesService.instance.markRecommendationAsRead(recommendation.id);
+            },
+            child: Text(_languageService.isEnglish ? 'Got it!' : 'Anladım!'),
           ),
         ],
       ),
