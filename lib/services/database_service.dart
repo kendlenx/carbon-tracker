@@ -324,43 +324,65 @@ class DatabaseService {
   Future<List<TransportActivity>> getAllTransportActivities() async {
     return await getTransportActivities();
   }
-
-  // Get activities by category (for food/shopping screens)
-  Future<List<Map<String, dynamic>>> getActivitiesByCategory(String category) async {
-    // For now, all activities are transport. In future, we'd have separate tables
+  
+  /// Get activity by ID
+  Future<Map<String, dynamic>?> getActivityById(int id) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
+    final results = await db.query(
       _transportActivitiesTable,
-      orderBy: 'timestamp DESC',
+      where: 'id = ?',
+      whereArgs: [id.toString()],
+      limit: 1,
     );
     
-    // Convert transport activities to generic format
-    return maps.map((map) => {
-      'id': map['id'],
-      'category': 'transport',
-      'subcategory': map['type'],
-      'description': 'Transport activity',
-      'co2_amount': map['co2EmissionKg'],
-      'created_at': DateTime.fromMillisecondsSinceEpoch(map['timestamp']).toIso8601String(),
-      'metadata': {
-        'distance': map['distanceKm'],
-        'notes': map['notes'],
-      }
-    }).toList();
+    return results.isNotEmpty ? results.first : null;
+  }
+  
+  /// Get activities by category (for multi-category support)
+  Future<List<Map<String, dynamic>>> getActivitiesByCategory(String category) async {
+    // For now, we only have transport activities
+    // In future, this can be extended for food, shopping, etc.
+    if (category == 'transport') {
+      return await getAllActivities();
+    }
+    return [];
+  }
+  
+  /// Insert generic activity (for Firebase sync)
+  Future<int> insertActivity(Map<String, dynamic> activityData) async {
+    // Convert generic activity to TransportActivity and add
+    final activity = TransportActivity(
+      id: activityData['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
+      type: _parseTransportType(activityData['type'] ?? activityData['subcategory'] ?? 'car'),
+      distanceKm: (activityData['distance'] ?? activityData['distanceKm'] ?? 1.0).toDouble(),
+      durationMinutes: (activityData['duration'] ?? activityData['durationMinutes'] ?? 5).round(),
+      co2EmissionKg: (activityData['co2_amount'] ?? activityData['co2EmissionKg'] ?? 0.0).toDouble(),
+      timestamp: DateTime.tryParse(activityData['created_at'] ?? activityData['timestamp'] ?? '') ?? DateTime.now(),
+      notes: activityData['description'] ?? activityData['notes'] ?? '',
+    );
+    
+    await addActivity(activity);
+    return int.tryParse(activity.id) ?? 0;
+  }
+  
+  /// Parse transport type from string
+  TransportType _parseTransportType(String typeString) {
+    final type = typeString.toLowerCase();
+    if (type.contains('walk') || type.contains('yürü')) {
+      return TransportType.walking;
+    } else if (type.contains('bike') || type.contains('bisiklet')) {
+      return TransportType.bicycle;
+    } else if (type.contains('bus') || type.contains('otobüs')) {
+      return TransportType.bus;
+    } else if (type.contains('train') || type.contains('tren') || type.contains('metro')) {
+      return TransportType.train;
+    } else if (type.contains('taxi')) {
+      return TransportType.taxi;
+    } else {
+      return TransportType.car;
+    }
   }
 
-  // Insert general activity (for food/shopping)
-  Future<void> insertActivity(Map<String, dynamic> activity) async {
-    // For now, convert to transport activity
-    // In future, we'd have separate tables for each category
-    await addGenericActivity({
-      'type': activity['subcategory'] ?? 'car',
-      'distance': 1.0, // default
-      'carbonFootprint': activity['co2_amount'] ?? 0.0,
-      'timestamp': activity['created_at'] ?? DateTime.now().toIso8601String(),
-      'source': activity['category'] ?? 'manual',
-    });
-  }
 
 
   // Close database

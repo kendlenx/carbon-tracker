@@ -7,6 +7,8 @@ import '../services/permission_service.dart';
 import '../services/notification_service.dart';
 import '../services/data_export_service.dart';
 import '../services/security_service.dart';
+import '../services/firebase_service.dart';
+import 'cloud_backup_screen.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import 'dart:io';
@@ -30,6 +32,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final PermissionService _permissionService = PermissionService.instance;
   final NotificationService _notificationService = NotificationService.instance;
   final SecurityService _securityService = SecurityService();
+  final FirebaseService _firebaseService = FirebaseService();
 
   String _userName = '';
   String _defaultUserName = '';
@@ -887,6 +890,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 16),
+
+            _buildPreferenceItem(
+              icon: Icons.cloud,
+              iconColor: Colors.blue,
+              title: _languageService.isEnglish ? 'Cloud Backup' : 'Bulut Yedekleme',
+              subtitle: _firebaseService.isUserSignedIn 
+                ? (_languageService.isEnglish ? 'Manage cloud backup and sync' : 'Bulut yedekleme ve senkronizasyonu yönet')
+                : (_languageService.isEnglish ? 'Sign in to backup your data to the cloud' : 'Verilerinizi buluta yedeklemek için giriş yapın'),
+              trailing: _firebaseService.isUserSignedIn
+                ? Icon(Icons.check_circle, color: Colors.green, size: 20)
+                : Icon(Icons.cloud_off, color: Colors.orange, size: 20),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const CloudBackupScreen()),
+                );
+              },
+            ),
+
+            const Divider(),
 
             _buildPreferenceItem(
               icon: Icons.download,

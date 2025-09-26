@@ -10,6 +10,7 @@ import 'screens/biometric_lock_screen.dart';
 import 'services/onboarding_service.dart';
 import 'services/smart_notification_service.dart';
 import 'services/security_service.dart';
+import 'services/firebase_service.dart';
 import 'services/onboarding_service.dart';
 import 'services/smart_notification_service.dart';
 import 'screens/settings_screen.dart';
@@ -44,13 +45,30 @@ void main() async {
   final securityService = SecurityService();
   await securityService.initializeSecurity();
   
-  runApp(CarbonTrackerApp(securityService: securityService));
+  // Initialize Firebase service
+  final firebaseService = FirebaseService();
+  try {
+    await firebaseService.initialize();
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+    // Continue without Firebase if it fails
+  }
+  
+  runApp(CarbonTrackerApp(
+    securityService: securityService,
+    firebaseService: firebaseService,
+  ));
 }
 
 class CarbonTrackerApp extends StatefulWidget {
   final SecurityService securityService;
+  final FirebaseService firebaseService;
   
-  const CarbonTrackerApp({super.key, required this.securityService});
+  const CarbonTrackerApp({
+    super.key, 
+    required this.securityService,
+    required this.firebaseService,
+  });
 
   @override
   State<CarbonTrackerApp> createState() => _CarbonTrackerAppState();
