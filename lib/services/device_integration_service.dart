@@ -367,11 +367,11 @@ class DeviceIntegrationService extends ChangeNotifier {
       _deviceEventSubscription = _eventChannel.receiveBroadcastStream().listen(
         _handleDeviceEvent,
         onError: (error) {
-          print('Device event stream error: $error');
+          debugPrint('Device event stream error: $error');
         },
       );
     } catch (e) {
-      print('Error setting up device event handlers: $e');
+      debugPrint('Error setting up device event handlers: $e');
     }
   }
 
@@ -395,10 +395,10 @@ class DeviceIntegrationService extends ChangeNotifier {
           _handleHealthDataSync(eventData);
           break;
         default:
-          print('Unknown device event type: $eventType');
+          debugPrint('Unknown device event type: $eventType');
       }
     } catch (e) {
-      print('Error handling device event: $e');
+      debugPrint('Error handling device event: $e');
     }
   }
 
@@ -513,7 +513,7 @@ class DeviceIntegrationService extends ChangeNotifier {
 
       _lastWatchSync = DateTime.now();
     } catch (e) {
-      print('Error syncing with watch: $e');
+      debugPrint('Error syncing with watch: $e');
     }
   }
 
@@ -530,7 +530,7 @@ class DeviceIntegrationService extends ChangeNotifier {
         'Araç modu etkinleştirildi. Sürüş verileriniz otomatik olarak kaydedilecek.',
       );
     } catch (e) {
-      print('Error enabling car mode: $e');
+      debugPrint('Error enabling car mode: $e');
     }
   }
 
@@ -539,7 +539,7 @@ class DeviceIntegrationService extends ChangeNotifier {
     try {
       await _methodChannel.invokeMethod('disableCarMode');
     } catch (e) {
-      print('Error disabling car mode: $e');
+      debugPrint('Error disabling car mode: $e');
     }
   }
 
@@ -556,7 +556,7 @@ class DeviceIntegrationService extends ChangeNotifier {
         });
       }
     } catch (e) {
-      print('Error registering shortcuts: $e');
+      debugPrint('Error registering shortcuts: $e');
     }
   }
 
@@ -583,10 +583,10 @@ class DeviceIntegrationService extends ChangeNotifier {
           await _handleVoiceLogShortcut();
           break;
         default:
-          print('Unknown shortcut action: ${shortcut.actionType}');
+          debugPrint('Unknown shortcut action: ${shortcut.actionType}');
       }
     } catch (e) {
-      print('Error executing shortcut action: $e');
+      debugPrint('Error executing shortcut action: $e');
     }
   }
 
@@ -701,7 +701,7 @@ class DeviceIntegrationService extends ChangeNotifier {
         _integrations = integrationsList.map((json) => DeviceIntegration.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading device integrations: $e');
+      debugPrint('Error loading device integrations: $e');
     }
   }
 
@@ -712,7 +712,7 @@ class DeviceIntegrationService extends ChangeNotifier {
       final integrationsJson = jsonEncode(_integrations.map((i) => i.toJson()).toList());
       await prefs.setString('device_integrations', integrationsJson);
     } catch (e) {
-      print('Error saving device integrations: $e');
+      debugPrint('Error saving device integrations: $e');
     }
   }
 
@@ -727,7 +727,7 @@ class DeviceIntegrationService extends ChangeNotifier {
         _shortcuts = shortcutsList.map((json) => ShortcutAction.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading device shortcuts: $e');
+      debugPrint('Error loading device shortcuts: $e');
     }
   }
 
@@ -738,7 +738,7 @@ class DeviceIntegrationService extends ChangeNotifier {
       final shortcutsJson = jsonEncode(_shortcuts.map((s) => s.toJson()).toList());
       await prefs.setString('device_shortcuts', shortcutsJson);
     } catch (e) {
-      print('Error saving device shortcuts: $e');
+      debugPrint('Error saving device shortcuts: $e');
     }
   }
 
@@ -759,7 +759,7 @@ class DeviceIntegrationService extends ChangeNotifier {
         _lastCarPlaySync = DateTime.parse(lastCarPlaySyncString);
       }
     } catch (e) {
-      print('Error loading device integration statistics: $e');
+      debugPrint('Error loading device integration statistics: $e');
     }
   }
 
@@ -778,7 +778,7 @@ class DeviceIntegrationService extends ChangeNotifier {
         await prefs.setString('last_carplay_sync', _lastCarPlaySync!.toIso8601String());
       }
     } catch (e) {
-      print('Error saving device integration statistics: $e');
+      debugPrint('Error saving device integration statistics: $e');
     }
   }
 

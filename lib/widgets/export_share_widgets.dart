@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
 import '../services/pdf_report_service.dart';
 import '../services/image_export_service.dart';
 import '../services/language_service.dart';
@@ -438,7 +437,7 @@ class ExportShareWidgets {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: color),

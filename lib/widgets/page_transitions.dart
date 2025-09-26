@@ -213,7 +213,7 @@ class _RipplePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.blue.withOpacity(0.3)
+      ..color = Colors.blue.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
@@ -278,7 +278,7 @@ class _FlipTransition extends StatelessWidget {
               ? Container(
                   width: double.infinity,
                   height: double.infinity,
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                 )
               : Transform(
                   alignment: Alignment.center,

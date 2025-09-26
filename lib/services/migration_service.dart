@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'database_service.dart';
@@ -617,15 +615,15 @@ class MigrationService {
 
   /// Improved CO2 calculation (example implementation)
   double _calculateImprovedCO2(TransportType type, double distanceKm) {
-    const Map<TransportType, double> improvedFactors = {
+    final Map<TransportType, double> improvedFactors = {
       TransportType.walking: 0.0,
       TransportType.bicycle: 0.0,
       TransportType.car: 0.21, // Updated factor
       TransportType.bus: 0.089,
       TransportType.metro: 0.041,
       TransportType.train: 0.045,
-      TransportType.airplane: 0.255,
-      TransportType.motorcycle: 0.113,
+      TransportType.plane: 0.255,
+      TransportType.motorbike: 0.113,
     };
     
     final factor = improvedFactors[type] ?? 0.15;

@@ -35,7 +35,6 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Color?> _backgroundGradientEnd;
 
   String _statusText = 'Carbon Tracker\'ı başlatıyoruz...';
-  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -181,7 +180,6 @@ class _SplashScreenState extends State<SplashScreen>
       });
       await Future.delayed(const Duration(milliseconds: 800));
 
-      _isInitialized = true;
       
       // Navigate to main screen with a smooth transition
       if (mounted) {
@@ -261,8 +259,6 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
     return Scaffold(
       body: AnimatedBuilder(
         animation: Listenable.merge([
@@ -304,7 +300,7 @@ class _SplashScreenState extends State<SplashScreen>
                               borderRadius: BorderRadius.circular(25),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.green.withOpacity(0.4),
+                                  color: Colors.green.withValues(alpha: 0.4),
                                   blurRadius: 20,
                                   offset: const Offset(0, 10),
                                 ),
@@ -330,7 +326,7 @@ class _SplashScreenState extends State<SplashScreen>
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white.withOpacity(0.95),
+                                color: Colors.white.withValues(alpha: 0.95),
                                 letterSpacing: 1.2,
                               ),
                             ),
@@ -339,7 +335,7 @@ class _SplashScreenState extends State<SplashScreen>
                               '🌍 Karbon ayak izini takip et',
                               style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.white.withOpacity(0.8),
+                                color: Colors.white.withValues(alpha: 0.8),
                                 fontWeight: FontWeight.w300,
                               ),
                             ),
@@ -359,7 +355,7 @@ class _SplashScreenState extends State<SplashScreen>
                               height: 40,
                               child: CircularProgressIndicator(
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white.withOpacity(0.8),
+                                  Colors.white.withValues(alpha: 0.8),
                                 ),
                                 strokeWidth: 3,
                               ),
@@ -369,7 +365,7 @@ class _SplashScreenState extends State<SplashScreen>
                               _statusText,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                                 fontWeight: FontWeight.w400,
                               ),
                               textAlign: TextAlign.center,
@@ -392,7 +388,7 @@ class _SplashScreenState extends State<SplashScreen>
                       '🌱 Çevre dostu bir gelecek için',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontWeight: FontWeight.w300,
                       ),
                       textAlign: TextAlign.center,

@@ -38,7 +38,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         'microphone': false, // Example additional permission
       };
     } catch (e) {
-      print('Error loading permissions: $e');
+      debugPrint('Error loading permissions: $e');
     }
     
     setState(() => _isLoading = false);
@@ -49,7 +49,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Permissions' : 'İzinler'),
-        backgroundColor: Colors.orange.withOpacity(0.1),
+        backgroundColor: Colors.orange.withValues(alpha: 0.1),
         foregroundColor: Colors.orange,
         actions: [
           IconButton(
@@ -161,7 +161,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   Widget _buildInfoCard() {
     return Card(
-      color: Colors.orange.withOpacity(0.1),
+      color: Colors.orange.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -250,7 +250,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: permission.color.withOpacity(0.1),
+                color: permission.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
@@ -279,7 +279,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.1),
+                            color: Colors.red.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -314,7 +314,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isGranted ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                    color: isGranted ? Colors.green.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -349,7 +349,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   Widget _buildPrivacySection() {
     return Card(
-      color: Colors.blue.withOpacity(0.05),
+      color: Colors.blue.withValues(alpha: 0.05),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -577,7 +577,7 @@ class _PermissionDetailSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: permission.color.withOpacity(0.1),
+              color: permission.color.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -604,7 +604,7 @@ class _PermissionDetailSheet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: isGranted ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+              color: isGranted ? Colors.green.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(

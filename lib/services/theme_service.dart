@@ -164,7 +164,7 @@ class ThemeService extends ChangeNotifier {
       
       notifyListeners();
     } catch (e) {
-      print('Error loading theme preference: $e');
+      debugPrint('Error loading theme preference: $e');
     }
   }
 

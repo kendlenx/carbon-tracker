@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
 import '../data/privacy_policy_content.dart';
 import '../services/gdpr_service.dart';
+import '../services/language_service.dart';
 import '../utils/app_colors.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
@@ -15,17 +14,16 @@ class PrivacyPolicyScreen extends StatefulWidget {
 class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   final ScrollController _scrollController = ScrollController();
   final GDPRService _gdprService = GDPRService();
+  final LanguageService _languageService = LanguageService.instance;
   String? _selectedSection;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        final language = languageProvider.currentLanguage;
-        final policyContent = PrivacyPolicyContent.getPrivacyPolicy(language);
-        final sectionTitles = PrivacyPolicyContent.getSectionTitles(language);
+    final language = _languageService.isEnglish ? 'en' : 'tr';
+    final policyContent = PrivacyPolicyContent.getPrivacyPolicy(language);
+    final sectionTitles = PrivacyPolicyContent.getSectionTitles(language);
         
-        return Scaffold(
+    return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
             title: Text(
@@ -41,7 +39,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             actions: [
               // Language toggle
               IconButton(
-                onPressed: () => _showLanguageDialog(context, languageProvider),
+                onPressed: () => _showLanguageDialog(),
                 icon: const Icon(Icons.language),
                 tooltip: language == 'tr' ? 'Dil Değiştir' : 'Change Language',
               ),
@@ -130,10 +128,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppColors.secondary.withOpacity(0.1),
+                          color: AppColors.secondary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                            color: AppColors.secondary.withOpacity(0.3),
+                            color: AppColors.secondary.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(
@@ -169,9 +167,8 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             ],
           ),
         );
-      },
-    );
   }
+
 
   Widget _buildDataRightChip(
     String label, 
@@ -186,13 +183,13 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isDestructive 
-            ? Colors.red.withOpacity(0.1)
-            : AppColors.primary.withOpacity(0.1),
+            ? Colors.red.withValues(alpha: 0.1)
+            : AppColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDestructive 
-              ? Colors.red.withOpacity(0.3)
-              : AppColors.primary.withOpacity(0.3),
+              ? Colors.red.withValues(alpha: 0.3)
+              : AppColors.primary.withValues(alpha: 0.3),
           ),
         ),
         child: Row(
@@ -234,7 +231,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -250,7 +247,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isSelected 
-                ? AppColors.primary.withOpacity(0.1)
+                ? AppColors.primary.withValues(alpha: 0.1)
                 : Colors.grey.shade50,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(11),
@@ -348,14 +345,14 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     );
   }
 
-  void _showLanguageDialog(BuildContext context, LanguageProvider provider) {
+  void _showLanguageDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          provider.currentLanguage == 'tr' 
-            ? 'Dil Seçin' 
-            : 'Select Language',
+          _languageService.isEnglish 
+            ? 'Select Language' 
+            : 'Dil Seçin',
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -363,22 +360,22 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             ListTile(
               leading: const Text('🇬🇧', style: TextStyle(fontSize: 24)),
               title: const Text('English'),
-              trailing: provider.currentLanguage == 'en' 
+              trailing: _languageService.isEnglish 
                 ? const Icon(Icons.check, color: Colors.green) 
                 : null,
               onTap: () {
-                provider.setLanguage('en');
+                _languageService.setLanguage('en');
                 Navigator.of(context).pop();
               },
             ),
             ListTile(
               leading: const Text('🇹🇷', style: TextStyle(fontSize: 24)),
               title: const Text('Türkçe'),
-              trailing: provider.currentLanguage == 'tr' 
+              trailing: !_languageService.isEnglish 
                 ? const Icon(Icons.check, color: Colors.green) 
                 : null,
               onTap: () {
-                provider.setLanguage('tr');
+                _languageService.setLanguage('tr');
                 Navigator.of(context).pop();
               },
             ),
@@ -401,9 +398,9 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              context.read<LanguageProvider>().currentLanguage == 'tr'
-                ? 'İçindekiler'
-                : 'Table of Contents',
+              _languageService.isEnglish
+                ? 'Table of Contents'
+                : 'İçindekiler',
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -441,7 +438,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   Future<void> _handleDataExport() async {
-    final language = context.read<LanguageProvider>().currentLanguage;
+    final language = _languageService.isEnglish ? 'en' : 'tr';
     
     try {
       showDialog(
@@ -499,7 +496,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   Future<void> _handleAccountDeletion() async {
-    final language = context.read<LanguageProvider>().currentLanguage;
+    final language = _languageService.isEnglish ? 'en' : 'tr';
     
     final confirmed = await showDialog<bool>(
       context: context,
@@ -592,7 +589,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
 
   void _handleConsentManagement() {
     // This will be implemented in the consent management system
-    final language = context.read<LanguageProvider>().currentLanguage;
+    final language = _languageService.isEnglish ? 'en' : 'tr';
     
     showDialog(
       context: context,
@@ -618,7 +615,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   void _handleContactSupport() {
-    final language = context.read<LanguageProvider>().currentLanguage;
+    final language = _languageService.isEnglish ? 'en' : 'tr';
     
     showDialog(
       context: context,

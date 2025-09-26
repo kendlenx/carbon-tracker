@@ -732,7 +732,7 @@ class _CreateBackupDialogState extends State<_CreateBackupDialog> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<BackupType>(
-              value: _selectedType,
+              initialValue: _selectedType,
               decoration: const InputDecoration(
                 labelText: 'Backup Type',
               ),
@@ -754,7 +754,7 @@ class _CreateBackupDialogState extends State<_CreateBackupDialog> {
             if (_selectedType != BackupType.full) ...[
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                value: _selectedParentBackupId,
+                initialValue: _selectedParentBackupId,
                 decoration: const InputDecoration(
                   labelText: 'Parent Backup',
                 ),

@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../services/device_integration_framework.dart';
 
@@ -10,7 +10,6 @@ class TeslaIntegration extends DeviceIntegration {
   static const String _userAgent = 'Carbon Tracker/1.0';
   
   String? _accessToken;
-  String? _refreshToken;
   String? _vehicleId;
   Timer? _pollingTimer;
   Map<String, dynamic>? _lastVehicleData;
@@ -318,7 +317,6 @@ class TeslaIntegration extends DeviceIntegration {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         _accessToken = data['access_token'];
-        _refreshToken = data['refresh_token'];
         return true;
       }
       
@@ -401,7 +399,7 @@ class TeslaIntegration extends DeviceIntegration {
       await syncData();
     } catch (e) {
       // Polling error - continue trying
-      print('Tesla polling error: $e');
+      debugPrint('Tesla polling error: $e');
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
 import '../models/transport_activity.dart';
 
 class DatabaseService {
@@ -83,7 +84,7 @@ class DatabaseService {
           ON $_transportActivitiesTable(timestamp)
         ''');
       } catch (e) {
-        print('Migration error, recreating table: $e');
+        debugPrint('Migration error, recreating table: $e');
         // If migration fails, recreate the table
         await db.execute('DROP TABLE IF EXISTS $_transportActivitiesTable');
         await _onCreate(db, newVersion);
@@ -273,7 +274,7 @@ class DatabaseService {
       
       return await addActivity(activity);
     } catch (e) {
-      print('Error adding activity: $e');
+      debugPrint('Error adding activity: $e');
       return '';
     }
   }

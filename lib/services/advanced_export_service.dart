@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:csv/csv.dart';
@@ -367,7 +366,7 @@ class AdvancedExportService {
       activity.distanceKm.toString(),
       activity.durationMinutes.toString(),
       activity.co2EmissionKg.toString(),
-      activity.notes,
+      activity.notes ?? '',
       DateFormat('EEEE').format(activity.timestamp),
       DateFormat('MMMM').format(activity.timestamp),
       activity.timestamp.year.toString(),
@@ -404,7 +403,7 @@ class AdvancedExportService {
       activity.durationMinutes.toString(),
       activity.co2EmissionKg.toStringAsFixed(3),
       _getEnvironmentalImpactCategory(activity.co2EmissionKg),
-      activity.notes.replaceAll(',', ';'), // Escape commas for CSV
+      (activity.notes ?? '').replaceAll(',', ';'), // Escape commas for CSV
       DateFormat('EEEE').format(activity.timestamp),
       DateFormat('MMMM').format(activity.timestamp),
       activity.timestamp.year.toString(),
@@ -467,8 +466,20 @@ class AdvancedExportService {
         return 'Train';
       case TransportType.metro:
         return 'Metro';
+      case TransportType.plane:
+        return 'Plane';
+      case TransportType.boat:
+        return 'Boat';
+      case TransportType.motorbike:
+        return 'Motorbike';
+      case TransportType.scooter:
+        return 'Scooter';
+      case TransportType.rideshare:
+        return 'Rideshare';
       case TransportType.taxi:
         return 'Taxi';
+      case TransportType.other:
+        return 'Other';
     }
   }
 

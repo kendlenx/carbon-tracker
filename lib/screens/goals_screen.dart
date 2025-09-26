@@ -85,7 +85,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
       _progressAnimationController.forward();
       _chartAnimationController.forward();
     } catch (e) {
-      print('Error loading progress: $e');
+      debugPrint('Error loading progress: $e');
     }
   }
 
@@ -143,7 +143,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Carbon Goals' : 'Karbon Hedefleri'),
-        backgroundColor: Colors.green.withOpacity(0.1),
+        backgroundColor: Colors.green.withValues(alpha: 0.1),
         foregroundColor: Colors.green,
         actions: [
           IconButton(
@@ -274,7 +274,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: dailyProgress <= 1.0 ? Colors.green.withOpacity(0.1) : Colors.orange.withOpacity(0.1),
+                color: dailyProgress <= 1.0 ? Colors.green.withValues(alpha: 0.1) : Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -355,7 +355,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: 24),
@@ -490,7 +490,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
@@ -564,8 +564,8 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
                       color: achievement.isUnlocked 
-                        ? achievement.color.withOpacity(0.1)
-                        : Colors.grey.withOpacity(0.1),
+                        ? achievement.color.withValues(alpha: 0.1)
+                        : Colors.grey.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(

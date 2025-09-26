@@ -167,22 +167,22 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
                 gradient: _voiceService.isListening
                     ? RadialGradient(
                         colors: [
-                          Colors.red.withOpacity(0.8),
-                          Colors.red.withOpacity(0.4),
-                          Colors.red.withOpacity(0.1),
+                          Colors.red.withValues(alpha: 0.8),
+                          Colors.red.withValues(alpha: 0.4),
+                          Colors.red.withValues(alpha: 0.1),
                         ],
                       )
                     : RadialGradient(
                         colors: [
-                          Colors.blue.withOpacity(0.8),
-                          Colors.blue.withOpacity(0.4),
-                          Colors.blue.withOpacity(0.1),
+                          Colors.blue.withValues(alpha: 0.8),
+                          Colors.blue.withValues(alpha: 0.4),
+                          Colors.blue.withValues(alpha: 0.1),
                         ],
                       ),
                 boxShadow: [
                   BoxShadow(
                     color: (_voiceService.isListening ? Colors.red : Colors.blue)
-                        .withOpacity(0.3),
+                        .withValues(alpha: 0.3),
                     blurRadius: _voiceService.isListening ? 20 : 10,
                     spreadRadius: _voiceService.isListening ? 5 : 2,
                   ),
@@ -268,7 +268,7 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Colors.blue.withOpacity(0.3),
+          color: Colors.blue.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -433,7 +433,7 @@ class WavePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
@@ -445,7 +445,7 @@ class WavePainter extends CustomPainter {
       final waveRadius = (radius * (animationValue + i * 0.3)) % radius;
       final opacity = 1.0 - (waveRadius / radius);
       
-      paint.color = Colors.white.withOpacity(opacity * 0.5);
+      paint.color = Colors.white.withValues(alpha: opacity * 0.5);
       canvas.drawCircle(center, waveRadius, paint);
     }
   }
@@ -480,8 +480,8 @@ class _VoiceCommandDialogState extends State<VoiceCommandDialog> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Colors.blue.withOpacity(0.1),
-              Colors.purple.withOpacity(0.1),
+              Colors.blue.withValues(alpha: 0.1),
+              Colors.purple.withValues(alpha: 0.1),
             ],
           ),
         ),

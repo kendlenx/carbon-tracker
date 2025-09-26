@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:convert';
 import 'dart:async';
 import '../firebase_options.dart';
 import 'database_service.dart';
@@ -75,7 +74,7 @@ class FirebaseService {
       );
 
       _isInitialized = true;
-      print('Firebase services initialized successfully');
+      debugPrint('Firebase services initialized successfully');
 
       // Start auto-sync if user is signed in
       if (isUserSignedIn) {
@@ -83,7 +82,7 @@ class FirebaseService {
       }
 
     } catch (e) {
-      print('Error initializing Firebase: $e');
+      debugPrint('Error initializing Firebase: $e');
       await _crashlytics.recordError(e, StackTrace.current);
       rethrow;
     }
@@ -201,9 +200,9 @@ class FirebaseService {
       // Start data sync
       await syncDataToCloud();
       
-      print('User signed in successfully: ${user.email}');
+      debugPrint('User signed in successfully: ${user.email}');
     } catch (e) {
-      print('Error in sign in success handler: $e');
+      debugPrint('Error in sign in success handler: $e');
     }
   }
 
@@ -280,10 +279,10 @@ class FirebaseService {
         parameters: {'activities_count': activities.length},
       );
       
-      print('Data synced to cloud successfully: ${activities.length} activities');
+      debugPrint('Data synced to cloud successfully: ${activities.length} activities');
       
     } catch (e) {
-      print('Error syncing data to cloud: $e');
+      debugPrint('Error syncing data to cloud: $e');
       await _crashlytics.recordError(e, StackTrace.current);
       rethrow;
     } finally {
@@ -321,7 +320,7 @@ class FirebaseService {
             await _databaseService.insertActivity(decryptedData);
           }
         } catch (e) {
-          print('Error processing activity ${doc.id}: $e');
+          debugPrint('Error processing activity ${doc.id}: $e');
         }
       }
       
@@ -330,10 +329,10 @@ class FirebaseService {
         parameters: {'activities_count': snapshot.docs.length},
       );
       
-      print('Data restored from cloud: ${snapshot.docs.length} activities');
+      debugPrint('Data restored from cloud: ${snapshot.docs.length} activities');
       
     } catch (e) {
-      print('Error syncing data from cloud: $e');
+      debugPrint('Error syncing data from cloud: $e');
       await _crashlytics.recordError(e, StackTrace.current);
       rethrow;
     }

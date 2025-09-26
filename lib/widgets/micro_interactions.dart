@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:math' as math;
 
 // Haptic feedback types
 enum HapticType {
@@ -174,7 +173,7 @@ class _MicroButtonState extends State<MicroButton>
                       child: Container(
                         decoration: BoxDecoration(
                           color: (widget.rippleColor ?? Theme.of(context).primaryColor)
-                              .withOpacity(0.1 * _rippleAnimation.value),
+                              .withValues(alpha: 0.1 * _rippleAnimation.value),
                           borderRadius: widget.borderRadius ?? BorderRadius.circular(8),
                         ),
                       ),
@@ -294,7 +293,7 @@ class _MicroCardState extends State<MicroCard>
                     borderRadius: widget.borderRadius,
                     boxShadow: [
                       BoxShadow(
-                        color: (widget.shadowColor ?? Colors.black).withOpacity(0.1),
+                        color: (widget.shadowColor ?? Colors.black).withValues(alpha: 0.1),
                         blurRadius: _elevationAnimation.value,
                         offset: Offset(0, _elevationAnimation.value / 2),
                       ),
@@ -308,8 +307,8 @@ class _MicroCardState extends State<MicroCard>
                         borderRadius: widget.borderRadius,
                         border: Border.all(
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white.withOpacity(0.1)
-                              : Colors.black.withOpacity(0.1),
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : Colors.black.withValues(alpha: 0.1),
                           width: 0.5,
                         ),
                       ),

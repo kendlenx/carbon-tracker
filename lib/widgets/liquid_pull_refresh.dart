@@ -178,7 +178,7 @@ class _LiquidPullRefreshState extends State<LiquidPullRefresh>
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: widget.color.withOpacity(0.3),
+                            color: widget.color.withValues(alpha: 0.3),
                             blurRadius: 10,
                             spreadRadius: 2,
                           ),
@@ -277,8 +277,8 @@ class LiquidPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          color.withOpacity(0.8),
-          color.withOpacity(0.4),
+          color.withValues(alpha: 0.8),
+          color.withValues(alpha: 0.4),
         ],
       );
       
@@ -292,7 +292,7 @@ class LiquidPainter extends CustomPainter {
     // Draw droplets effect
     if (isRefreshing && dropScale > 0.5) {
       final dropletPaint = Paint()
-        ..color = color.withOpacity(0.6)
+        ..color = color.withValues(alpha: 0.6)
         ..style = PaintingStyle.fill;
 
       for (int i = 0; i < 5; i++) {

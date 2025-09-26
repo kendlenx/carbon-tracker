@@ -111,7 +111,7 @@ class GDPRService {
         try {
           await _firebaseService.signOut();
         } catch (e) {
-          print('Error signing out: $e');
+          debugPrint('Error signing out: $e');
         }
       }
       

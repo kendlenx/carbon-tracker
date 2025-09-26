@@ -431,7 +431,7 @@ class AchievementService extends ChangeNotifier {
       
       notifyListeners();
     } catch (e) {
-      print('Error loading achievements: $e');
+      debugPrint('Error loading achievements: $e');
       _achievements = List.from(_defaultAchievements);
     }
   }
@@ -444,7 +444,7 @@ class AchievementService extends ChangeNotifier {
       );
       await prefs.setString(_achievementsKey, achievementsJson);
     } catch (e) {
-      print('Error saving achievements: $e');
+      debugPrint('Error saving achievements: $e');
     }
   }
 

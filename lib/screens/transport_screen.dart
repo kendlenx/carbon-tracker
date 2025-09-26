@@ -272,8 +272,8 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Colors.blue.withOpacity(0.1),
-                      Colors.blue.withOpacity(0.05),
+                      Colors.blue.withValues(alpha: 0.1),
+                      Colors.blue.withValues(alpha: 0.05),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -356,18 +356,18 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
                         color: isSelected 
-                            ? Colors.blue.withOpacity(0.1)
+                            ? Colors.blue.withValues(alpha: 0.1)
                             : Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isSelected 
                               ? Colors.blue
-                              : Colors.grey.withOpacity(0.2),
+                              : Colors.grey.withValues(alpha: 0.2),
                           width: isSelected ? 2 : 1,
                         ),
                         boxShadow: isSelected ? [
                           BoxShadow(
-                            color: Colors.blue.withOpacity(0.2),
+                            color: Colors.blue.withValues(alpha: 0.2),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -488,15 +488,15 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Colors.green.withOpacity(0.1),
-                                Colors.green.withOpacity(0.05),
+                                Colors.green.withValues(alpha: 0.1),
+                                Colors.green.withValues(alpha: 0.05),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                              color: Colors.green.withOpacity(0.3),
+                              color: Colors.green.withValues(alpha: 0.3),
                             ),
                           ),
                           child: Column(

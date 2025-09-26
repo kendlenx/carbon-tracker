@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import '../services/firebase_service.dart';
 import '../services/language_service.dart';
-import '../widgets/micro_interactions.dart';
 import 'dart:async';
 
 class AuthScreen extends StatefulWidget {
@@ -213,9 +212,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.green.withOpacity(0.1),
+              Colors.green.withValues(alpha: 0.1),
               Colors.black,
-              Colors.blue.withOpacity(0.05),
+              Colors.blue.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -283,11 +282,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.green.withOpacity(0.2),
+            color: Colors.green.withValues(alpha: 0.2),
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.green.withOpacity(0.3),
+                color: Colors.green.withValues(alpha: 0.3),
                 blurRadius: 20,
                 spreadRadius: 5,
               ),
@@ -325,7 +324,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 ? 'Welcome back to Carbon Tracker'
                 : 'Carbon Tracker\'a tekrar hoş geldiniz'),
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
           textAlign: TextAlign.center,
         ),
@@ -369,7 +368,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             suffixIcon: IconButton(
               icon: Icon(
                 _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
               onPressed: () {
                 setState(() {
@@ -391,7 +390,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
               suffixIcon: IconButton(
                 icon: Icon(
                   _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
                 onPressed: () {
                   setState(() {
@@ -423,11 +422,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white.withOpacity(0.8)),
+        labelStyle: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
         prefixIcon: Icon(icon, color: Colors.green),
         suffixIcon: suffixIcon,
         filled: true,
-        fillColor: Colors.white.withOpacity(0.1),
+        fillColor: Colors.white.withValues(alpha: 0.1),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -460,7 +459,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(28),
           ),
           elevation: 8,
-          shadowColor: Colors.green.withOpacity(0.4),
+          shadowColor: Colors.green.withValues(alpha: 0.4),
         ),
         child: _isLoading
           ? const CircularProgressIndicator(
@@ -499,7 +498,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             ? (_languageService.isEnglish ? 'Already have an account? ' : 'Zaten hesabınız var mı? ')
             : (_languageService.isEnglish ? 'Don\'t have an account? ' : 'Hesabınız yok mu? '),
           style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
             fontSize: 16,
           ),
           children: [
@@ -524,7 +523,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       child: Text(
         _languageService.isEnglish ? 'Forgot Password?' : 'Şifremi Unuttum?',
         style: TextStyle(
-          color: Colors.blue.withOpacity(0.8),
+          color: Colors.blue.withValues(alpha: 0.8),
           fontSize: 14,
         ),
       ),
@@ -535,9 +534,9 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.2),
+        color: Colors.red.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withOpacity(0.5)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.5)),
       ),
       child: Row(
         children: [

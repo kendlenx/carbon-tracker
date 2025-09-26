@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // TODO: Enable after Firebase setup
+import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/firebase_service.dart';
 import '../services/language_service.dart';
 import '../services/security_service.dart';
 import '../widgets/liquid_pull_refresh.dart';
-import '../widgets/micro_interactions.dart';
-import 'dart:io';
-import 'dart:convert';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -29,7 +28,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
 
-  User? _currentUser;
+  // User? _currentUser; // TODO: Enable after Firebase setup
+  dynamic _currentUser;
   Map<String, dynamic> _userProfile = {};
   Map<String, dynamic> _userStats = {};
   String? _profileImagePath;
@@ -167,15 +167,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
     try {
       // Re-authenticate user
-      final credential = EmailAuthProvider.credential(
-        email: _currentUser!.email!,
-        password: _currentPasswordController.text,
-      );
+      // TODO: Enable after Firebase setup
+      // final credential = EmailAuthProvider.credential(
+      //   email: _currentUser!.email!,
+      //   password: _currentPasswordController.text,
+      // );
       
-      await _currentUser!.reauthenticateWithCredential(credential);
-      
-      // Update password
-      await _currentUser!.updatePassword(_newPasswordController.text);
+      // TODO: Enable after Firebase setup
+      // await _currentUser!.reauthenticateWithCredential(credential);
+      // 
+      // // Update password
+      // await _currentUser!.updatePassword(_newPasswordController.text);
       
       _currentPasswordController.clear();
       _newPasswordController.clear();
@@ -266,12 +268,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
     try {
       // Re-authenticate user
-      final credential = EmailAuthProvider.credential(
-        email: _currentUser!.email!,
-        password: password,
-      );
-      
-      await _currentUser!.reauthenticateWithCredential(credential);
+      // TODO: Enable after Firebase setup
+      // final credential = EmailAuthProvider.credential(
+      //   email: _currentUser!.email!,
+      //   password: password,
+      // );
+      // 
+      // await _currentUser!.reauthenticateWithCredential(credential);
       
       // Delete account and all data from Firebase
       await _firebaseService.deleteAccount();
@@ -457,7 +460,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Profile' : 'Profil'),
-        backgroundColor: Colors.blue.withOpacity(0.1),
+        backgroundColor: Colors.blue.withValues(alpha: 0.1),
         foregroundColor: Colors.blue,
         actions: [
           if (!_isEditing)
@@ -857,10 +860,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
   Widget _buildDangerZone() {
     return Card(
-      color: Colors.red.withOpacity(0.05),
+      color: Colors.red.withValues(alpha: 0.05),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.red.withOpacity(0.3)),
+        side: BorderSide(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),

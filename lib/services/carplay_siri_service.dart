@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:flutter/services.dart';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'carplay_service.dart';
 import 'language_service.dart';
 import 'database_service.dart';
@@ -27,9 +28,9 @@ class CarPlaySiriService {
       // Donate shortcuts to Siri
       await _donateShortcuts();
       
-      print('CarPlay Siri service initialized');
+      debugPrint('CarPlay Siri service initialized');
     } catch (e) {
-      print('Failed to initialize CarPlay Siri service: $e');
+      debugPrint('Failed to initialize CarPlay Siri service: $e');
     }
   }
 
@@ -117,9 +118,9 @@ class CarPlaySiriService {
         'language': isEnglish ? 'en' : 'tr',
       });
       
-      print('Donated ${shortcuts.length} shortcuts to Siri');
+      debugPrint('Donated ${shortcuts.length} shortcuts to Siri');
     } catch (e) {
-      print('Failed to donate shortcuts: $e');
+      debugPrint('Failed to donate shortcuts: $e');
     }
   }
 
@@ -129,7 +130,7 @@ class CarPlaySiriService {
       final intentType = call.arguments['intentType'] as String?;
       final parameters = call.arguments['parameters'] as Map<String, dynamic>? ?? {};
       
-      print('Received Siri intent: $intentType with parameters: $parameters');
+      debugPrint('Received Siri intent: $intentType with parameters: $parameters');
       
       switch (intentType) {
         case 'start_trip':
@@ -148,7 +149,7 @@ class CarPlaySiriService {
           return _createErrorResponse('Unknown intent: $intentType');
       }
     } catch (e) {
-      print('Error handling Siri intent: $e');
+      debugPrint('Error handling Siri intent: $e');
       return _createErrorResponse('Failed to process voice command: $e');
     }
   }
@@ -454,7 +455,7 @@ class CarPlaySiriService {
     try {
       await _donateShortcuts();
     } catch (e) {
-      print('Failed to update shortcuts: $e');
+      debugPrint('Failed to update shortcuts: $e');
     }
   }
 
@@ -504,7 +505,7 @@ class CarPlaySiriService {
       });
 
     } catch (e) {
-      print('Failed to setup contextual shortcuts: $e');
+      debugPrint('Failed to setup contextual shortcuts: $e');
     }
   }
 

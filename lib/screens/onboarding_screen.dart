@@ -216,7 +216,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
             height: 280,
             child: page.animation ?? Container(
               decoration: BoxDecoration(
-                color: page.color.withOpacity(0.1),
+                color: page.color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -322,7 +322,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     elevation: 4,
-                    shadowColor: _pages[_currentPage].color.withOpacity(0.4),
+                    shadowColor: _pages[_currentPage].color.withValues(alpha: 0.4),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -370,7 +370,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.green.withOpacity(0.3 * (1 - value)),
+                  color: Colors.green.withValues(alpha: 0.3 * (1 - value)),
                   width: 2,
                 ),
               ),
@@ -382,7 +382,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.green.withOpacity(0.5 * (1 - value)),
+                  color: Colors.green.withValues(alpha: 0.5 * (1 - value)),
                   width: 2,
                 ),
               ),
@@ -392,7 +392,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
               width: 120,
               height: 120,
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -433,7 +433,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -456,7 +456,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
         width: 50,
         height: 50,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -508,7 +508,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -545,7 +545,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   width: 4,
                   height: animatedHeight,
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.8),
+                    color: Colors.purple.withValues(alpha: 0.8),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 );
@@ -583,7 +583,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
         width: 50,
         height: 50,
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         ),
         child: Icon(
@@ -616,7 +616,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   width: 12,
                   height: barHeight * progress,
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.7),
+                    color: Colors.purple.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 );
@@ -630,7 +630,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
+                  color: Colors.purple.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -682,7 +682,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: Colors.teal.withOpacity(0.1),
+                    color: Colors.teal.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -789,13 +789,8 @@ class ConnectionLinesPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.grey.withOpacity(0.5)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
     final dashedPaint = Paint()
-      ..color = Colors.purple.withOpacity(0.7)
+      ..color = Colors.purple.withValues(alpha: 0.7)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 

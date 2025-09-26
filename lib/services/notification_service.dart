@@ -69,7 +69,7 @@ class NotificationService extends ChangeNotifier {
       await _loadSettings();
       await _scheduleDefaultNotifications();
     } catch (e) {
-      print('Error initializing notifications: $e');
+      debugPrint('Error initializing notifications: $e');
       // Don't throw - continue app startup even if notifications fail
       _notificationsEnabled = false;
     }
@@ -95,7 +95,7 @@ class NotificationService extends ChangeNotifier {
   /// Handle notification tap
   void _onNotificationTapped(NotificationResponse response) {
     // Handle different notification types
-    print('Notification tapped: ${response.payload}');
+    debugPrint('Notification tapped: ${response.payload}');
     // TODO: Navigate to appropriate screen based on payload
   }
 
@@ -117,7 +117,7 @@ class NotificationService extends ChangeNotifier {
       
       notifyListeners();
     } catch (e) {
-      print('Error loading notification settings: $e');
+      debugPrint('Error loading notification settings: $e');
     }
   }
 
@@ -135,7 +135,7 @@ class NotificationService extends ChangeNotifier {
       await prefs.setInt('daily_reminder_hour', _dailyReminderTime.hour);
       await prefs.setInt('daily_reminder_minute', _dailyReminderTime.minute);
     } catch (e) {
-      print('Error saving notification settings: $e');
+      debugPrint('Error saving notification settings: $e');
     }
   }
 
@@ -221,7 +221,7 @@ class NotificationService extends ChangeNotifier {
         payload: payload,
       );
     } catch (e) {
-      print('Error showing notification: $e');
+      debugPrint('Error showing notification: $e');
     }
   }
 

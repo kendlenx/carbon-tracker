@@ -179,7 +179,7 @@ class SmartFeaturesService extends ChangeNotifier {
         _recommendations = data.map((item) => SmartRecommendation.fromJson(item)).toList();
       }
     } catch (e) {
-      print('Error loading recommendations: $e');
+      debugPrint('Error loading recommendations: $e');
     }
   }
 
@@ -470,7 +470,7 @@ class SmartFeaturesService extends ChangeNotifier {
       );
       await prefs.setString(_recommendationsKey, recommendationsJson);
     } catch (e) {
-      print('Error saving recommendations: $e');
+      debugPrint('Error saving recommendations: $e');
     }
   }
 

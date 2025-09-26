@@ -1,9 +1,8 @@
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
 
 class SecurityService {
   static final SecurityService _instance = SecurityService._internal();
@@ -30,7 +29,7 @@ class SecurityService {
       final bool isDeviceSupported = await _localAuth.isDeviceSupported();
       return isAvailable && isDeviceSupported;
     } catch (e) {
-      print('Error checking biometric availability: $e');
+      debugPrint('Error checking biometric availability: $e');
       return false;
     }
   }
@@ -40,7 +39,7 @@ class SecurityService {
     try {
       return await _localAuth.getAvailableBiometrics();
     } catch (e) {
-      print('Error getting available biometrics: $e');
+      debugPrint('Error getting available biometrics: $e');
       return [];
     }
   }
@@ -63,7 +62,7 @@ class SecurityService {
       }
       return false;
     } catch (e) {
-      print('Error enabling biometric auth: $e');
+      debugPrint('Error enabling biometric auth: $e');
       return false;
     }
   }
@@ -94,7 +93,7 @@ class SecurityService {
         ),
       );
     } catch (e) {
-      print('Error authenticating with biometrics: $e');
+      debugPrint('Error authenticating with biometrics: $e');
       return false;
     }
   }
@@ -143,7 +142,7 @@ class SecurityService {
 
       return base64.encode(encrypted);
     } catch (e) {
-      print('Error encrypting data: $e');
+      debugPrint('Error encrypting data: $e');
       return data; // Return original data if encryption fails
     }
   }
@@ -162,7 +161,7 @@ class SecurityService {
 
       return utf8.decode(decrypted);
     } catch (e) {
-      print('Error decrypting data: $e');
+      debugPrint('Error decrypting data: $e');
       return encryptedData; // Return original data if decryption fails
     }
   }
@@ -227,9 +226,9 @@ class SecurityService {
       await getUserDataEncryptionKey();
       await getDatabasePassword();
       
-      print('Security service initialized successfully');
+      debugPrint('Security service initialized successfully');
     } catch (e) {
-      print('Error initializing security service: $e');
+      debugPrint('Error initializing security service: $e');
     }
   }
 }

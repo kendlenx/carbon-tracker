@@ -86,7 +86,7 @@ class _BadgeWidgetState extends State<BadgeWidget>
         gradient: isUnlocked
             ? RadialGradient(
                 colors: [
-                  widget.achievement.color.withOpacity(0.8),
+                  widget.achievement.color.withValues(alpha: 0.8),
                   widget.achievement.color,
                 ],
               )
@@ -103,7 +103,7 @@ class _BadgeWidgetState extends State<BadgeWidget>
         boxShadow: isUnlocked
             ? [
                 BoxShadow(
-                  color: widget.achievement.color.withOpacity(0.3),
+                  color: widget.achievement.color.withValues(alpha: 0.3),
                   blurRadius: 8.0,
                   spreadRadius: 2.0,
                 ),
@@ -209,7 +209,7 @@ class AchievementCard extends StatelessWidget {
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: isUnlocked 
                                   ? theme.colorScheme.onSurface
-                                  : theme.colorScheme.onSurface.withOpacity(0.6),
+                                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               fontWeight: isUnlocked ? FontWeight.bold : FontWeight.normal,
                             ),
                           ),
@@ -221,7 +221,7 @@ class AchievementCard extends StatelessWidget {
                               vertical: 4.0,
                             ),
                             decoration: BoxDecoration(
-                              color: achievement.color.withOpacity(0.2),
+                              color: achievement.color.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             child: Text(
@@ -240,7 +240,7 @@ class AchievementCard extends StatelessWidget {
                     Text(
                       achievement.description,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                     if (showProgress && !isUnlocked) ...[
@@ -279,13 +279,13 @@ class AchievementCard extends StatelessWidget {
             Text(
               'İlerleme',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
             Text(
               '${achievement.currentProgress.toStringAsFixed(1)}/${achievement.targetValue.toStringAsFixed(1)} ${achievement.unit}',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.6),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -390,32 +390,32 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      achievement.color.withOpacity(0.1),
+                      achievement.color.withValues(alpha: 0.1),
                       theme.colorScheme.surface,
-                      achievement.color.withOpacity(0.05),
+                      achievement.color.withValues(alpha: 0.05),
                     ],
                   )
                 : LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      achievement.color.withOpacity(0.1),
+                      achievement.color.withValues(alpha: 0.1),
                       Colors.white,
-                      achievement.color.withOpacity(0.05),
+                      achievement.color.withValues(alpha: 0.05),
                     ],
                   ),
             borderRadius: BorderRadius.circular(20.0),
             border: Border.all(
               color: theme.brightness == Brightness.dark
-                  ? achievement.color.withOpacity(0.5)
-                  : achievement.color.withOpacity(0.3),
+                  ? achievement.color.withValues(alpha: 0.5)
+                  : achievement.color.withValues(alpha: 0.3),
               width: 2.0,
             ),
             boxShadow: [
               BoxShadow(
                 color: theme.brightness == Brightness.dark
-                    ? Colors.black.withOpacity(0.3)
-                    : Colors.black.withOpacity(0.1),
+                    ? Colors.black.withValues(alpha: 0.3)
+                    : Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),
@@ -477,7 +477,7 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                               shape: BoxShape.circle,
                               gradient: RadialGradient(
                                 colors: [
-                                  achievement.color.withOpacity(0.1),
+                                  achievement.color.withValues(alpha: 0.1),
                                   Colors.transparent,
                                 ],
                               ),
@@ -508,7 +508,7 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                 Text(
                   achievement.description,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -521,7 +521,7 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                     vertical: 8.0,
                   ),
                   decoration: BoxDecoration(
-                    color: achievement.color.withOpacity(0.2),
+                    color: achievement.color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Text(
@@ -633,15 +633,15 @@ class LevelProgressWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(isDark ? 0.1 : 0.9),
+        color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.9),
         borderRadius: BorderRadius.circular(20.0),
         border: Border.all(
-          color: Colors.white.withOpacity(0.3),
+          color: Colors.white.withValues(alpha: 0.3),
           width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -666,7 +666,7 @@ class LevelProgressWidget extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.amber.withOpacity(0.4),
+                      color: Colors.amber.withValues(alpha: 0.4),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -711,10 +711,10 @@ class LevelProgressWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: Colors.blue.withOpacity(0.3),
+                    color: Colors.blue.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(

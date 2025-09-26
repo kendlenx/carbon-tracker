@@ -7,15 +7,21 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'package:carbon_tracker/main.dart';
-import 'package:carbon_tracker/l10n/app_localizations.dart';
+import 'package:carbon_tracker/services/security_service.dart';
+import 'package:carbon_tracker/services/firebase_service.dart';
 
 void main() {
   testWidgets('Carbon Tracker app smoke test', (WidgetTester tester) async {
+    // Create mock services
+    final securityService = SecurityService();
+    final firebaseService = FirebaseService();
+    
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const CarbonTrackerApp());
+    await tester.pumpWidget(CarbonTrackerApp(
+      securityService: securityService,
+      firebaseService: firebaseService,
+    ));
     
     // Wait for localization to load
     await tester.pumpAndSettle();

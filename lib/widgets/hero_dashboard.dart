@@ -105,13 +105,13 @@ class _HeroDashboardState extends State<HeroDashboard>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(context).colorScheme.primary.withOpacity(0.1),
-            Theme.of(context).colorScheme.secondary.withOpacity(0.05),
+            Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.secondary.withValues(alpha: 0.05),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
+            color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.1),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -133,8 +133,8 @@ class _HeroDashboardState extends State<HeroDashboard>
                     progress: 1.0,
                     strokeWidth: 12,
                     color: Theme.of(context).brightness == Brightness.dark 
-                      ? Colors.grey.withOpacity(0.1) 
-                      : Colors.grey.withOpacity(0.2),
+                      ? Colors.grey.withValues(alpha: 0.1) 
+                      : Colors.grey.withValues(alpha: 0.2),
                     isBackground: true,
                   ),
                 ),
@@ -212,7 +212,7 @@ class _HeroDashboardState extends State<HeroDashboard>
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.green.withOpacity(0.3),
+                            color: Colors.green.withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -271,7 +271,7 @@ class _HeroDashboardState extends State<HeroDashboard>
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(

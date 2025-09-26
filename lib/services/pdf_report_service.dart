@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +7,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import 'package:screenshot/screenshot.dart';
 import 'advanced_reporting_service.dart';
 import 'language_service.dart';
 import 'chart_to_image_service.dart';
@@ -79,7 +76,7 @@ class PdfReportService {
       
       return file.path;
     } catch (e) {
-      print('Error generating PDF report: $e');
+      debugPrint('Error generating PDF report: $e');
       throw Exception('Failed to generate PDF report: $e');
     }
   }

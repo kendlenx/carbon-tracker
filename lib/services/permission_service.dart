@@ -191,7 +191,7 @@ class PermissionService extends ChangeNotifier {
       notifyListeners();
       return status;
     } catch (e) {
-      print('Error requesting permission $permission: $e');
+      debugPrint('Error requesting permission $permission: $e');
       status = PermissionStatus.denied;
       _permissionStatuses[permission] = status;
       notifyListeners();
@@ -247,7 +247,7 @@ class PermissionService extends ChangeNotifier {
     try {
       return await permission_handler.openAppSettings();
     } catch (e) {
-      print('Error opening app settings: $e');
+      debugPrint('Error opening app settings: $e');
       return false;
     }
   }
@@ -317,7 +317,7 @@ class PermissionService extends ChangeNotifier {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Row(
@@ -389,7 +389,7 @@ class PermissionService extends ChangeNotifier {
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: permissionInfo.isRequired ? Colors.red.withOpacity(0.1) : Colors.blue.withOpacity(0.1),
+                                  color: permissionInfo.isRequired ? Colors.red.withValues(alpha: 0.1) : Colors.blue.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -468,7 +468,7 @@ class PermissionService extends ChangeNotifier {
       _requestedPermissions = requestedList.map((name) => 
           AppPermission.values.firstWhere((p) => p.name == name)).toSet();
     } catch (e) {
-      print('Error loading requested permissions: $e');
+      debugPrint('Error loading requested permissions: $e');
     }
   }
 
@@ -479,7 +479,7 @@ class PermissionService extends ChangeNotifier {
       final requestedList = _requestedPermissions.map((p) => p.name).toList();
       await prefs.setStringList('requested_permissions', requestedList);
     } catch (e) {
-      print('Error saving requested permissions: $e');
+      debugPrint('Error saving requested permissions: $e');
     }
   }
 

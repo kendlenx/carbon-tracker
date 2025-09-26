@@ -3,8 +3,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../services/database_service.dart';
 import '../services/language_service.dart';
-import '../widgets/micro_interactions.dart';
-import '../widgets/liquid_pull_refresh.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -16,7 +14,6 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
   final LanguageService _languageService = LanguageService.instance;
   bool isLoading = true;
   
@@ -37,9 +34,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
     _loadStatistics();
     _animationController.forward();
@@ -64,7 +58,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         });
       }
     } catch (e) {
-      print('Error loading statistics: $e');
+      debugPrint('Error loading statistics: $e');
       if (mounted) {
         setState(() {
           isLoading = false;
@@ -145,7 +139,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, -5),
             ),
@@ -161,10 +155,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           overlayColor: WidgetStateProperty.resolveWith<Color?>(
             (Set<WidgetState> states) {
               if (states.contains(WidgetState.pressed)) {
-                return Colors.green.withOpacity(0.1);
+                return Colors.green.withValues(alpha: 0.1);
               }
               if (states.contains(WidgetState.hovered)) {
-                return Colors.green.withOpacity(0.05);
+                return Colors.green.withValues(alpha: 0.05);
               }
               return null;
             },
@@ -262,7 +256,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05),
+                  color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 5),
                 ),
@@ -375,9 +369,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                             show: true,
                             gradient: LinearGradient(
                               colors: [
-                                Colors.green.withOpacity(0.3),
-                                Colors.green.withOpacity(0.1),
-                                Colors.green.withOpacity(0.05),
+                                Colors.green.withValues(alpha: 0.3),
+                                Colors.green.withValues(alpha: 0.1),
+                                Colors.green.withValues(alpha: 0.05),
                               ],
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
@@ -489,7 +483,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                         dotData: const FlDotData(show: false),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: Colors.orange.withOpacity(0.1),
+                          color: Colors.orange.withValues(alpha: 0.1),
                         ),
                       ),
                     ],
@@ -615,12 +609,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         color: isDark ? Theme.of(context).cardColor : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: isDark ? Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1,
         ) : null,
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.black).withOpacity(isDark ? 0.3 : 0.05),
+            color: (isDark ? Colors.black : Colors.black).withValues(alpha: isDark ? 0.3 : 0.05),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -634,7 +628,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -643,7 +637,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(isDark ? 0.2 : 0.1),
+                  color: Colors.green.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -713,9 +707,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -727,7 +721,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Icon(Icons.trending_up, color: color, size: 12),
@@ -788,7 +782,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: isDark ? Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1,
           ) : null,
         ),
@@ -862,7 +856,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           border: isDark ? Border.all(
-            color: (isGoodPerformance ? Colors.green : Colors.orange).withOpacity(0.3),
+            color: (isGoodPerformance ? Colors.green : Colors.orange).withValues(alpha: 0.3),
             width: 1,
           ) : null,
         ),

@@ -480,7 +480,7 @@ class DeviceIntegrationService {
         try {
           await addDevice(deviceType, deviceConfig);
         } catch (e) {
-          print('Failed to restore device ${entry.key}: $e');
+          debugPrint('Failed to restore device ${entry.key}: $e');
         }
       }
     }

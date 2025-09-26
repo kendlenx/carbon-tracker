@@ -24,7 +24,7 @@ void main() async {
       ),
       boxShadow: [
         BoxShadow(
-          color: const Color(0xFF4CAF50).withOpacity(0.3),
+          color: const Color(0xFF4CAF50).withValues(alpha: 0.3),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),
@@ -117,7 +117,7 @@ class _ContainerPainter {
     
     // Leaf vein
     final veinPaint = Paint()
-      ..color = Colors.white.withOpacity(0.8)
+      ..color = Colors.white.withValues(alpha: 0.8)
       ..strokeWidth = 4
       ..style = PaintingStyle.stroke;
     

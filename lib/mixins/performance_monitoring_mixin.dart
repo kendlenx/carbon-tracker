@@ -190,7 +190,7 @@ mixin PerformanceMonitoringMixin<T extends StatefulWidget> on State<T> {
       // Return error widget
       return Container(
         padding: const EdgeInsets.all(16),
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         child: Text(
           'Error building $widgetName',
           style: const TextStyle(color: Colors.red),

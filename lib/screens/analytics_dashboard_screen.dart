@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
 import '../services/error_handler_service.dart';
+import '../services/language_service.dart';
 import '../utils/app_colors.dart';
 
 class AnalyticsDashboardScreen extends StatefulWidget {
@@ -12,6 +11,7 @@ class AnalyticsDashboardScreen extends StatefulWidget {
 }
 
 class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
+  final LanguageService _languageService = LanguageService.instance;
   List<ErrorInfo> _errorHistory = [];
   bool _isLoading = true;
 
@@ -47,11 +47,9 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        final language = languageProvider.currentLanguage;
+    final language = _languageService.isEnglish ? 'en' : 'tr';
         
-        return Scaffold(
+    return Scaffold(
           backgroundColor: AppColors.background,
           appBar: AppBar(
             title: Text(
@@ -85,10 +83,9 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
                   ],
                 ),
               ),
-        );
-      },
     );
   }
+
 
   Widget _buildSummarySection(String language) {
     final totalErrors = _errorHistory.length;
@@ -151,7 +148,7 @@ class _AnalyticsDashboardScreenState extends State<AnalyticsDashboardScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),

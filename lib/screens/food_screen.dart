@@ -147,7 +147,7 @@ class _FoodScreenState extends State<FoodScreen> {
         });
       }
     } catch (e) {
-      print('Error loading food data: $e');
+      debugPrint('Error loading food data: $e');
       if (mounted) {
         setState(() => isLoading = false);
       }
@@ -196,7 +196,7 @@ class _FoodScreenState extends State<FoodScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Food Carbon' : 'Yemek Karbonu'),
-        backgroundColor: Colors.green.withOpacity(0.1),
+        backgroundColor: Colors.green.withValues(alpha: 0.1),
         foregroundColor: Colors.green,
       ),
       body: LiquidPullRefresh(
@@ -248,7 +248,7 @@ class _FoodScreenState extends State<FoodScreen> {
 
   Widget _buildInfoCard() {
     return Card(
-      color: Colors.green.withOpacity(0.1),
+      color: Colors.green.withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -495,7 +495,7 @@ class _FoodScreenState extends State<FoodScreen> {
         return Card(
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.green.withOpacity(0.1),
+              backgroundColor: Colors.green.withValues(alpha: 0.1),
               child: const Icon(Icons.restaurant, color: Colors.green),
             ),
             title: Text(activity['description'] ?? 'Food Item'),

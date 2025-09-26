@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/language_provider.dart';
 import '../services/gdpr_service.dart';
+import '../services/language_service.dart';
 import '../utils/app_colors.dart';
 
 class ConsentDialog extends StatefulWidget {
@@ -18,6 +17,7 @@ class ConsentDialog extends StatefulWidget {
 
 class _ConsentDialogState extends State<ConsentDialog> {
   final GDPRService _gdprService = GDPRService();
+  final LanguageService _languageService = LanguageService.instance;
   Map<String, bool> _consents = {};
   bool _isLoading = true;
   bool _acceptAll = false;
@@ -45,11 +45,9 @@ class _ConsentDialogState extends State<ConsentDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        final language = languageProvider.currentLanguage;
-        
-        return AlertDialog(
+    final language = _languageService.isEnglish ? 'en' : 'tr';
+    
+    return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -100,10 +98,10 @@ class _ConsentDialogState extends State<ConsentDialog> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: AppColors.primary.withOpacity(0.3),
+                          color: AppColors.primary.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -196,8 +194,6 @@ class _ConsentDialogState extends State<ConsentDialog> {
             ),
           ],
         );
-      },
-    );
   }
 
   List<Widget> _buildConsentOptions(String language) {
@@ -215,7 +211,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isGranted 
-              ? AppColors.primary.withOpacity(0.3)
+              ? AppColors.primary.withValues(alpha: 0.3)
               : Colors.grey.shade300,
           ),
         ),
@@ -409,9 +405,9 @@ All data is GDPR compliant and you can delete it anytime.''',
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              context.read<LanguageProvider>().currentLanguage == 'tr'
-                ? 'İzin ayarlarınız kaydedildi'
-                : 'Your consent preferences have been saved',
+              LanguageService.instance.isEnglish
+                ? 'Your consent preferences have been saved'
+                : 'İzin ayarlarınız kaydedildi',
             ),
             backgroundColor: Colors.green,
           ),
@@ -422,9 +418,9 @@ All data is GDPR compliant and you can delete it anytime.''',
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              context.read<LanguageProvider>().currentLanguage == 'tr'
-                ? 'Ayarlar kaydedilemedi: ${e.toString()}'
-                : 'Failed to save settings: ${e.toString()}',
+              LanguageService.instance.isEnglish
+                ? 'Failed to save settings: ${e.toString()}'
+                : 'Ayarlar kaydedilemedi: ${e.toString()}',
             ),
             backgroundColor: Colors.red,
           ),
@@ -440,18 +436,17 @@ class ConsentBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        final language = languageProvider.currentLanguage;
+    final _languageService = LanguageService.instance;
+    final language = _languageService.isEnglish ? 'en' : 'tr';
         
-        return Container(
+    return Container(
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.3),
+              color: AppColors.primary.withValues(alpha: 0.3),
             ),
           ),
           child: Column(
@@ -512,8 +507,6 @@ class ConsentBanner extends StatelessWidget {
             ],
           ),
         );
-      },
-    );
   }
 
   void _showConsentDialog(BuildContext context) {

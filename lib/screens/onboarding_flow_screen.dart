@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/onboarding_service.dart';
 import '../services/language_service.dart';
-import '../widgets/page_transitions.dart';
 
 class OnboardingFlowScreen extends StatefulWidget {
   const OnboardingFlowScreen({super.key});
@@ -112,8 +111,8 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    theme.colorScheme.primary.withOpacity(0.05),
-                    theme.colorScheme.secondary.withOpacity(0.05),
+                    theme.colorScheme.primary.withValues(alpha: 0.05),
+                    theme.colorScheme.secondary.withValues(alpha: 0.05),
                   ],
                 ),
               ),
@@ -154,7 +153,7 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
                           borderRadius: BorderRadius.circular(4),
                           color: index == _currentPage
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.onSurface.withOpacity(0.2),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.2),
                         ),
                       ),
                     ),
@@ -191,9 +190,9 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
                                   margin: const EdgeInsets.only(bottom: 32),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: theme.colorScheme.primary.withOpacity(0.1),
+                                    color: theme.colorScheme.primary.withValues(alpha: 0.1),
                                     border: Border.all(
-                                      color: theme.colorScheme.primary.withOpacity(0.2),
+                                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
                                       width: 2,
                                     ),
                                   ),

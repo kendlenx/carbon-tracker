@@ -655,7 +655,7 @@ class SmartHomeService extends ChangeNotifier {
       _autoDataCollection = prefs.getBool('auto_data_collection') ?? true;
       _dataCollectionIntervalMinutes = prefs.getInt('data_collection_interval') ?? 15;
     } catch (e) {
-      print('Error loading smart home settings: $e');
+      debugPrint('Error loading smart home settings: $e');
     }
   }
 
@@ -668,7 +668,7 @@ class SmartHomeService extends ChangeNotifier {
       await prefs.setBool('auto_data_collection', _autoDataCollection);
       await prefs.setInt('data_collection_interval', _dataCollectionIntervalMinutes);
     } catch (e) {
-      print('Error saving smart home settings: $e');
+      debugPrint('Error saving smart home settings: $e');
     }
   }
 
@@ -683,7 +683,7 @@ class SmartHomeService extends ChangeNotifier {
         _devices = devicesList.map((json) => SmartDevice.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading smart devices: $e');
+      debugPrint('Error loading smart devices: $e');
     }
   }
 
@@ -694,7 +694,7 @@ class SmartHomeService extends ChangeNotifier {
       final devicesJson = jsonEncode(_devices.map((d) => d.toJson()).toList());
       await prefs.setString('smart_devices', devicesJson);
     } catch (e) {
-      print('Error saving smart devices: $e');
+      debugPrint('Error saving smart devices: $e');
     }
   }
 
@@ -709,7 +709,7 @@ class SmartHomeService extends ChangeNotifier {
         _automations = automationsList.map((json) => SmartHomeAutomation.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading smart automations: $e');
+      debugPrint('Error loading smart automations: $e');
     }
   }
 
@@ -720,7 +720,7 @@ class SmartHomeService extends ChangeNotifier {
       final automationsJson = jsonEncode(_automations.map((a) => a.toJson()).toList());
       await prefs.setString('smart_automations', automationsJson);
     } catch (e) {
-      print('Error saving smart automations: $e');
+      debugPrint('Error saving smart automations: $e');
     }
   }
 }

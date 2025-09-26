@@ -57,7 +57,7 @@ class LanguageService extends ChangeNotifier {
         await _saveLanguagePreference(_currentLocale.languageCode);
       }
     } catch (e) {
-      print('Error loading language preference: $e');
+      debugPrint('Error loading language preference: $e');
       _currentLocale = const Locale('tr', 'TR'); // Fallback to Turkish
     }
   }
@@ -105,7 +105,7 @@ class LanguageService extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('selected_language', languageCode);
     } catch (e) {
-      print('Error saving language preference: $e');
+      debugPrint('Error saving language preference: $e');
     }
   }
 

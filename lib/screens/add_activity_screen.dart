@@ -64,8 +64,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      Theme.of(context).primaryColor.withOpacity(0.1),
-                      Theme.of(context).primaryColor.withOpacity(0.05),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.05),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -224,7 +224,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
                   ),
                 ),
                 child: Column(
@@ -309,10 +309,10 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
+          color: color.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: color.withOpacity(0.2),
+            color: color.withValues(alpha: 0.2),
             width: 1,
           ),
         ),
@@ -379,7 +379,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
           color: Theme.of(context).colorScheme.primaryContainer,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
           ),
         ),
         child: Text(
@@ -393,25 +393,6 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
     );
   }
 
-  void _showComingSoon(BuildContext context, String category) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('🚧 $category ${_languageService.isEnglish ? 'Category' : 'Kategorisi'}'),
-        content: Text(
-          _languageService.isEnglish
-              ? '$category category is under development. Coming soon!\n\nCurrently only Transport and Energy categories are active.'
-              : '$category kategorisi henüz geliştirme aşamasında. Yakında kullanıma sunulacak!\n\nŞu anda sadece Ulaşım ve Enerji kategorileri aktif.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'OK' : 'Tamam'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _quickAddTransport(BuildContext context, String transportTypeId, double distance) async {
     await HapticHelper.trigger(HapticType.selection);

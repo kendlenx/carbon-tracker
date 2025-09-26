@@ -137,10 +137,10 @@ class _AchievementsScreenState extends State<AchievementsScreen>
       child: Container(
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             width: 1.0,
           ),
         ),
@@ -289,7 +289,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
             Text(
               achievement.description,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -297,7 +297,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
             Container(
               padding: const EdgeInsets.all(12.0),
               decoration: BoxDecoration(
-                color: achievement.color.withOpacity(0.1),
+                color: achievement.color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: Column(

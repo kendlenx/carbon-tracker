@@ -63,7 +63,7 @@ class DataExportService extends ChangeNotifier {
 
       return exportData;
     } catch (e) {
-      print('Error exporting data: $e');
+      debugPrint('Error exporting data: $e');
       rethrow;
     } finally {
       _isExporting = false;
@@ -109,7 +109,7 @@ class DataExportService extends ChangeNotifier {
       
       return csvData.toString();
     } catch (e) {
-      print('Error exporting CSV: $e');
+      debugPrint('Error exporting CSV: $e');
       rethrow;
     } finally {
       _isExporting = false;
@@ -169,11 +169,11 @@ class DataExportService extends ChangeNotifier {
       );
       
       if (result.status == ShareResultStatus.success) {
-        print('Export shared successfully');
+        debugPrint('Export shared successfully');
       }
       
     } catch (e) {
-      print('Error in exportAndShare: $e');
+      debugPrint('Error in exportAndShare: $e');
       rethrow;
     }
   }
@@ -202,7 +202,7 @@ class DataExportService extends ChangeNotifier {
           try {
             await DatabaseService.instance.insertActivity(activity as Map<String, dynamic>);
           } catch (e) {
-            print('Error importing activity: $e');
+            debugPrint('Error importing activity: $e');
             // Continue with next activity
           }
         }
@@ -212,13 +212,13 @@ class DataExportService extends ChangeNotifier {
       if (data.containsKey('achievements')) {
         final achievements = data['achievements'] as List;
         // This would require extending AchievementService with import functionality
-        print('Achievement import not fully implemented yet');
+        debugPrint('Achievement import not fully implemented yet');
       }
 
-      print('Data import completed successfully');
+      debugPrint('Data import completed successfully');
       
     } catch (e) {
-      print('Error importing data: $e');
+      debugPrint('Error importing data: $e');
       rethrow;
     } finally {
       _isImporting = false;
@@ -248,7 +248,7 @@ class DataExportService extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error picking/importing file: $e');
+      debugPrint('Error picking/importing file: $e');
       rethrow;
     }
   }
@@ -278,7 +278,7 @@ class DataExportService extends ChangeNotifier {
         'newestActivity': allActivities.isNotEmpty ? allActivities.first['created_at'] : null,
       };
     } catch (e) {
-      print('Error getting export statistics: $e');
+      debugPrint('Error getting export statistics: $e');
       return {};
     }
   }
@@ -288,9 +288,9 @@ class DataExportService extends ChangeNotifier {
     try {
       await DatabaseService.instance.clearAllData();
       // Reset achievements would need to be implemented in AchievementService
-      print('All data cleared successfully');
+      debugPrint('All data cleared successfully');
     } catch (e) {
-      print('Error clearing data: $e');
+      debugPrint('Error clearing data: $e');
       rethrow;
     }
   }

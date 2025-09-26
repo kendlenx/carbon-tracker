@@ -185,7 +185,7 @@ class _MorphingFABState extends State<MorphingFAB>
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: _getBackgroundColor(context).withOpacity(0.3),
+            color: _getBackgroundColor(context).withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -203,7 +203,7 @@ class _MorphingFABState extends State<MorphingFAB>
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  _getBackgroundColor(context).withOpacity(0.8),
+                  _getBackgroundColor(context).withValues(alpha: 0.8),
                   _getBackgroundColor(context),
                 ],
               ),
@@ -244,7 +244,7 @@ class _MorphingFABState extends State<MorphingFAB>
         borderRadius: BorderRadius.circular(widget.size / 2),
         boxShadow: [
           BoxShadow(
-            color: _getBackgroundColor(context).withOpacity(0.3),
+            color: _getBackgroundColor(context).withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -261,7 +261,7 @@ class _MorphingFABState extends State<MorphingFAB>
               borderRadius: BorderRadius.circular(widget.size / 2),
               gradient: LinearGradient(
                 colors: [
-                  _getBackgroundColor(context).withOpacity(0.8),
+                  _getBackgroundColor(context).withValues(alpha: 0.8),
                   _getBackgroundColor(context),
                 ],
               ),
@@ -353,7 +353,7 @@ class _MultiStateFABState extends State<MultiStateFAB> {
                   decoration: BoxDecoration(
                     color: isActive 
                         ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                        : Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 );

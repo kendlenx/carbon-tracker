@@ -53,9 +53,9 @@ class CarPlayService {
       // Initialize CarPlay templates on native side
       await _setupCarPlayTemplates();
       
-      print('CarPlay service initialized');
+      debugPrint('CarPlay service initialized');
     } catch (e) {
-      print('Failed to initialize CarPlay service: $e');
+      debugPrint('Failed to initialize CarPlay service: $e');
     }
   }
 
@@ -87,7 +87,7 @@ class CarPlayService {
         }
       });
     } catch (e) {
-      print('Failed to setup CarPlay templates: $e');
+      debugPrint('Failed to setup CarPlay templates: $e');
     }
   }
 
@@ -143,7 +143,7 @@ class CarPlayService {
   /// CarPlay connection established
   Future<void> _onCarPlayConnected() async {
     _isCarPlayConnected = true;
-    print('CarPlay connected');
+    debugPrint('CarPlay connected');
     
     // Start automatic location monitoring
     await _startLocationMonitoring();
@@ -164,7 +164,7 @@ class CarPlayService {
   /// CarPlay disconnected
   Future<void> _onCarPlayDisconnected() async {
     _isCarPlayConnected = false;
-    print('CarPlay disconnected');
+    debugPrint('CarPlay disconnected');
     
     // End trip if active
     if (_isTripActive) {
@@ -185,7 +185,7 @@ class CarPlayService {
   /// Start automatic trip tracking
   Future<void> _startTrip() async {
     if (_isTripActive) {
-      print('Trip already active');
+      debugPrint('Trip already active');
       return;
     }
 
@@ -201,7 +201,7 @@ class CarPlayService {
       _tripDistance = 0.0;
       _tripPositions = [position];
       
-      print('Trip started at ${_tripStartTime}');
+      debugPrint('Trip started at ${_tripStartTime}');
       
       // Start continuous location tracking
       await _startContinuousLocationTracking();
@@ -213,7 +213,7 @@ class CarPlayService {
       notifyListeners();
       
     } catch (e) {
-      print('Failed to start trip: $e');
+      debugPrint('Failed to start trip: $e');
     }
   }
 
@@ -230,7 +230,7 @@ class CarPlayService {
   /// End current trip and save to database
   Future<void> _endTrip() async {
     if (!_isTripActive) {
-      print('No active trip to end');
+      debugPrint('No active trip to end');
       return;
     }
 
@@ -277,7 +277,7 @@ class CarPlayService {
       // Save to database
       await _databaseService.addActivity(activity);
       
-      print('Trip ended: ${_tripDistance.toStringAsFixed(2)} km, ${durationMinutes} minutes');
+      debugPrint('Trip ended: ${_tripDistance.toStringAsFixed(2)} km, ${durationMinutes} minutes');
       
       // Reset trip state
       _isTripActive = false;
@@ -296,7 +296,7 @@ class CarPlayService {
       notifyListeners();
       
     } catch (e) {
-      print('Failed to end trip: $e');
+      debugPrint('Failed to end trip: $e');
     }
   }
 
@@ -311,7 +311,7 @@ class CarPlayService {
 
       if (permission == LocationPermission.deniedForever ||
           permission == LocationPermission.denied) {
-        print('Location permissions denied');
+        debugPrint('Location permissions denied');
         return;
       }
 
@@ -324,7 +324,7 @@ class CarPlayService {
       ).listen(_onLocationUpdate);
       
     } catch (e) {
-      print('Failed to start location monitoring: $e');
+      debugPrint('Failed to start location monitoring: $e');
     }
   }
 
@@ -413,7 +413,7 @@ class CarPlayService {
       try {
         listener();
       } catch (e) {
-        print('Error in listener: $e');
+        debugPrint('Error in listener: $e');
       }
     }
   }
@@ -533,25 +533,25 @@ class CarPlayService {
         'stats': statsData,
       });
     } catch (e) {
-      print('Failed to update CarPlay UI: $e');
+      debugPrint('Failed to update CarPlay UI: $e');
     }
   }
 
   /// Handle template appearance
   void _onTemplateDidAppear(String? templateId) {
-    print('Template appeared: $templateId');
+    debugPrint('Template appeared: $templateId');
     // Trigger data refresh for the active template
     _updateCarPlayUI();
   }
 
   /// Handle template disappearance
   void _onTemplateDidDisappear(String? templateId) {
-    print('Template disappeared: $templateId');
+    debugPrint('Template disappeared: $templateId');
   }
 
   /// Handle button presses
   void _onButtonPressed(String? buttonId) {
-    print('Button pressed: $buttonId');
+    debugPrint('Button pressed: $buttonId');
     
     switch (buttonId) {
       case 'startTrip':
@@ -568,7 +568,7 @@ class CarPlayService {
 
   /// Handle list item selection
   void _onListItemSelected(String? itemId) {
-    print('List item selected: $itemId');
+    debugPrint('List item selected: $itemId');
   }
 
   /// Check if CarPlay is currently connected

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'database_service.dart';
 import 'achievement_service.dart';
 import 'language_service.dart';
@@ -34,9 +33,9 @@ class WidgetDataProvider extends ChangeNotifier {
       await updateWidgetData();
       
       _isInitialized = true;
-      print('WidgetDataProvider initialized successfully');
+      debugPrint('WidgetDataProvider initialized successfully');
     } catch (e) {
-      print('Error initializing WidgetDataProvider: $e');
+      debugPrint('Error initializing WidgetDataProvider: $e');
     }
   }
 
@@ -124,9 +123,9 @@ class WidgetDataProvider extends ChangeNotifier {
         await _platformChannel.invokeMethod('updateWidgetData', widgetData);
       }
 
-      print('Widget data updated: ${widgetData['todayCO2']} kg CO₂');
+      debugPrint('Widget data updated: ${widgetData['todayCO2']} kg CO₂');
     } catch (e) {
-      print('Error updating widget data: $e');
+      debugPrint('Error updating widget data: $e');
     }
   }
 
@@ -169,10 +168,10 @@ class WidgetDataProvider extends ChangeNotifier {
         'category': _getCategoryDisplayName(category),
       });
       
-      print('Live Activity started: $result');
+      debugPrint('Live Activity started: $result');
       return result as bool? ?? false;
     } catch (e) {
-      print('Error starting Live Activity: $e');
+      debugPrint('Error starting Live Activity: $e');
       return false;
     }
   }
@@ -196,7 +195,7 @@ class WidgetDataProvider extends ChangeNotifier {
       
       return result as bool? ?? false;
     } catch (e) {
-      print('Error updating Live Activity: $e');
+      debugPrint('Error updating Live Activity: $e');
       return false;
     }
   }
@@ -207,10 +206,10 @@ class WidgetDataProvider extends ChangeNotifier {
     
     try {
       final result = await _platformChannel.invokeMethod('stopLiveActivity');
-      print('Live Activity stopped: $result');
+      debugPrint('Live Activity stopped: $result');
       return result as bool? ?? false;
     } catch (e) {
-      print('Error stopping Live Activity: $e');
+      debugPrint('Error stopping Live Activity: $e');
       return false;
     }
   }
@@ -223,7 +222,7 @@ class WidgetDataProvider extends ChangeNotifier {
       final result = await _platformChannel.invokeMethod('isLiveActivityActive');
       return result as bool? ?? false;
     } catch (e) {
-      print('Error checking Live Activity status: $e');
+      debugPrint('Error checking Live Activity status: $e');
       return false;
     }
   }

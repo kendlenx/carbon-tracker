@@ -43,11 +43,11 @@ class GlassContainer extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
           child: Container(
             decoration: BoxDecoration(
-              color: color?.withOpacity(opacity) ?? 
-                     Colors.white.withOpacity(opacity),
+              color: color?.withValues(alpha: opacity) ?? 
+                     Colors.white.withValues(alpha: opacity),
               borderRadius: borderRadius ?? BorderRadius.circular(16),
               border: border ?? Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 width: 1.5,
               ),
               gradient: gradient,
@@ -100,24 +100,24 @@ class NeumorphicContainer extends StatelessWidget {
         boxShadow: isPressed
             ? [
                 BoxShadow(
-                  color: baseColor.withOpacity(0.5),
+                  color: baseColor.withValues(alpha: 0.5),
                   offset: Offset(-depth / 2, -depth / 2),
                   blurRadius: depth,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withValues(alpha: 0.2),
                   offset: Offset(depth / 2, depth / 2),
                   blurRadius: depth,
                 ),
               ]
             : [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   offset: Offset(-depth, -depth),
                   blurRadius: depth * 2,
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   offset: Offset(depth, depth),
                   blurRadius: depth * 2,
                 ),
@@ -219,8 +219,8 @@ class _ModernCardState extends State<ModernCard>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Theme.of(context).primaryColor.withOpacity(0.1),
-                  Theme.of(context).primaryColor.withOpacity(0.05),
+                  Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                  Theme.of(context).primaryColor.withValues(alpha: 0.05),
                 ],
               ));
 
@@ -243,7 +243,7 @@ class _ModernCardState extends State<ModernCard>
                   borderRadius: BorderRadius.circular(widget.borderRadius),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: _isHovering ? 20 : 10,
                       offset: Offset(0, _isHovering ? 10 : 5),
                     ),
@@ -463,7 +463,7 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
             child: Container(
               width: double.infinity,
               height: double.infinity,
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
             ),
           ),
         

@@ -130,9 +130,9 @@ class WidgetService extends ChangeNotifier {
       await _setupQuickStatsWidget();
       await _setupLevelProgressWidget();
       
-      print('Home screen widgets configured successfully');
+      debugPrint('Home screen widgets configured successfully');
     } catch (e) {
-      print('Error setting up widgets: $e');
+      debugPrint('Error setting up widgets: $e');
     }
   }
 
@@ -340,7 +340,7 @@ class WidgetService extends ChangeNotifier {
       
       notifyListeners();
     } catch (e) {
-      print('Error updating widgets: $e');
+      debugPrint('Error updating widgets: $e');
     }
   }
 
@@ -376,7 +376,7 @@ class WidgetService extends ChangeNotifier {
   void scheduleWidgetUpdates() {
     // This would typically use a background service or work manager
     // For now, it's a placeholder for the scheduling logic
-    print('Widget updates scheduled every $_updateIntervalMinutes minutes');
+    debugPrint('Widget updates scheduled every $_updateIntervalMinutes minutes');
   }
 
   /// Get widget configuration options
@@ -489,7 +489,7 @@ class WidgetService extends ChangeNotifier {
       _autoUpdateEnabled = prefs.getBool('widget_auto_update') ?? true;
       _updateIntervalMinutes = prefs.getInt('widget_update_interval') ?? 30;
     } catch (e) {
-      print('Error loading widget settings: $e');
+      debugPrint('Error loading widget settings: $e');
     }
   }
 
@@ -500,7 +500,7 @@ class WidgetService extends ChangeNotifier {
       await prefs.setBool('widget_auto_update', _autoUpdateEnabled);
       await prefs.setInt('widget_update_interval', _updateIntervalMinutes);
     } catch (e) {
-      print('Error saving widget settings: $e');
+      debugPrint('Error saving widget settings: $e');
     }
   }
 
@@ -515,7 +515,7 @@ class WidgetService extends ChangeNotifier {
         _widgets = widgetsList.map((json) => WidgetData.fromJson(json)).toList();
       }
     } catch (e) {
-      print('Error loading widgets: $e');
+      debugPrint('Error loading widgets: $e');
     }
   }
 
@@ -526,7 +526,7 @@ class WidgetService extends ChangeNotifier {
       final widgetsJson = jsonEncode(_widgets.map((w) => w.toJson()).toList());
       await prefs.setString('widgets_data', widgetsJson);
     } catch (e) {
-      print('Error saving widgets: $e');
+      debugPrint('Error saving widgets: $e');
     }
   }
 

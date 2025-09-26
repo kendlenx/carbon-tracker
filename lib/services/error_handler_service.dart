@@ -86,7 +86,7 @@ class ErrorHandlerService {
           details.stack,
           fatal: false,
           context: {
-            'widget': details.context?.widget.toString(),
+            'widget': details.context?.toString(),
             'library': details.library,
           },
         );
@@ -254,7 +254,7 @@ class ErrorHandlerService {
     try {
       final trace = _traces[traceName];
       if (trace != null) {
-        trace.putMetric(metric, value);
+        trace.setMetric(metric, value);
         log('Added metric to trace $traceName: $metric = $value', LogLevel.debug);
       }
     } catch (e) {
@@ -278,7 +278,7 @@ class ErrorHandlerService {
     Map<String, dynamic> parameters = const {},
   }) async {
     try {
-      await _analytics?.logEvent(name: eventName, parameters: parameters);
+      await _analytics?.logEvent(name: eventName, parameters: Map<String, Object>.from(parameters));
       log('Event tracked: $eventName with parameters: $parameters', LogLevel.debug);
     } catch (e) {
       log('Failed to track event $eventName: $e', LogLevel.warning);

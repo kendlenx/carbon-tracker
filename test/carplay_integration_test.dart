@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../lib/services/carplay_service.dart';
 import '../lib/services/carplay_siri_service.dart';
-import '../lib/models/transport_activity.dart';
 
 void main() {
   group('CarPlay Integration Tests', () {
@@ -180,7 +179,7 @@ void main() {
         };
 
         expect(response['success'], isTrue);
-        expect(response['data']?['todayCO2'], isA<double>());
+        expect((response['data'] as Map?)?['todayCO2'], isA<double>());
         expect(response['speakableText'], contains('carbon emissions'));
       });
 

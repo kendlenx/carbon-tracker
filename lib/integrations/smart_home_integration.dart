@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../services/device_integration_framework.dart';
 
@@ -33,7 +34,7 @@ abstract class SmartHomeIntegration extends DeviceIntegration {
     try {
       await syncData();
     } catch (e) {
-      print('Smart home polling error for $deviceName: $e');
+      debugPrint('Smart home polling error for $deviceName: $e');
     }
   }
 

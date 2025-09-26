@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import '../services/security_service.dart';
 import '../services/language_service.dart';
-import '../widgets/micro_interactions.dart';
 
 class BiometricLockScreen extends StatefulWidget {
   const BiometricLockScreen({super.key});
@@ -148,9 +147,9 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.green.withOpacity(0.1),
+              Colors.green.withValues(alpha: 0.1),
               Colors.black,
-              Colors.green.withOpacity(0.05),
+              Colors.green.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -165,7 +164,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.2),
+                        color: Colors.green.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(
@@ -188,7 +187,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                         Text(
                           _languageService.isEnglish ? 'Secure Access' : 'Güvenli Erişim',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.green.withOpacity(0.8),
+                            color: Colors.green.withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -215,13 +214,13 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                Colors.green.withOpacity(0.3),
-                                Colors.green.withOpacity(0.1),
+                                Colors.green.withValues(alpha: 0.3),
+                                Colors.green.withValues(alpha: 0.1),
                                 Colors.transparent,
                               ],
                             ),
                             border: Border.all(
-                              color: Colors.green.withOpacity(0.5),
+                              color: Colors.green.withValues(alpha: 0.5),
                               width: 2,
                             ),
                           ),
@@ -256,7 +255,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                   _getInstructionText(),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                   ),
                 ),
               ),
@@ -294,7 +293,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                           borderRadius: BorderRadius.circular(25),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.green.withOpacity(0.3),
+                              color: Colors.green.withValues(alpha: 0.3),
                               blurRadius: 20,
                               offset: const Offset(0, 10),
                             ),
@@ -327,7 +326,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                       child: Text(
                         _languageService.isEnglish ? 'Cancel' : 'İptal',
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.6),
+                          color: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -345,7 +344,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                     Icon(
                       Icons.security,
                       size: 16,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -353,7 +352,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                         ? 'Your data is protected with end-to-end encryption'
                         : 'Verileriniz uçtan uca şifreleme ile korunmaktadır',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                       ),
                     ),
                   ],

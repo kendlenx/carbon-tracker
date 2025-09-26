@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'dart:math';
 import 'notification_service.dart';
 
 enum GoalType {
@@ -170,7 +169,7 @@ class GoalService extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      print('Error loading goals: $e');
+      debugPrint('Error loading goals: $e');
     }
   }
 
@@ -181,7 +180,7 @@ class GoalService extends ChangeNotifier {
       final goalsJson = jsonEncode(_goals.map((goal) => goal.toJson()).toList());
       await prefs.setString('carbon_goals', goalsJson);
     } catch (e) {
-      print('Error saving goals: $e');
+      debugPrint('Error saving goals: $e');
     }
   }
 

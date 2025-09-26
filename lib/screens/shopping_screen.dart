@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
-import '../services/carbon_calculator_service.dart';
 import '../services/language_service.dart';
-import '../widgets/liquid_pull_refresh.dart';
-import '../widgets/page_transitions.dart';
 import '../widgets/micro_interactions.dart';
-import 'add_activity_screen.dart';
+import '../widgets/liquid_pull_refresh.dart';
 
 class ShoppingScreen extends StatefulWidget {
   const ShoppingScreen({super.key});
@@ -126,7 +123,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
         });
       }
     } catch (e) {
-      print('Error loading shopping data: $e');
+      debugPrint('Error loading shopping data: $e');
       if (mounted) {
         setState(() => isLoading = false);
       }
@@ -174,7 +171,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Shopping Carbon' : 'Alışveriş Karbonu'),
-        backgroundColor: Colors.purple.withOpacity(0.1),
+        backgroundColor: Colors.purple.withValues(alpha: 0.1),
         foregroundColor: Colors.purple,
       ),
       body: LiquidPullRefresh(
@@ -422,7 +419,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
         return Card(
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: Colors.purple.withOpacity(0.1),
+              backgroundColor: Colors.purple.withValues(alpha: 0.1),
               child: const Icon(Icons.shopping_bag, color: Colors.purple),
             ),
             title: Text(activity['description'] ?? 'Shopping Item'),

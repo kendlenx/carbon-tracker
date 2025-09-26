@@ -5,9 +5,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 import 'database_service.dart';
-import 'language_service.dart';
 import '../models/transport_activity.dart';
 import 'notification_service.dart';
 import 'goal_service.dart';
@@ -121,10 +119,10 @@ class VoiceService extends ChangeNotifier {
       );
       
       if (_speechEnabled) {
-        print('Voice commands initialized successfully');
+        debugPrint('Voice commands initialized successfully');
       }
     } catch (e) {
-      print('Error initializing speech: $e');
+      debugPrint('Error initializing speech: $e');
       _speechEnabled = false;
     }
   }
@@ -139,7 +137,7 @@ class VoiceService extends ChangeNotifier {
       
       _ttsEnabled = true;
     } catch (e) {
-      print('Error initializing TTS: $e');
+      debugPrint('Error initializing TTS: $e');
       _ttsEnabled = false;
     }
   }
@@ -163,7 +161,7 @@ class VoiceService extends ChangeNotifier {
       _isListening = true;
       notifyListeners();
     } catch (e) {
-      print('Error starting voice recognition: $e');
+      debugPrint('Error starting voice recognition: $e');
     }
   }
 
@@ -176,7 +174,7 @@ class VoiceService extends ChangeNotifier {
       _isListening = false;
       notifyListeners();
     } catch (e) {
-      print('Error stopping voice recognition: $e');
+      debugPrint('Error stopping voice recognition: $e');
     }
   }
 
@@ -194,7 +192,7 @@ class VoiceService extends ChangeNotifier {
 
   /// Handle speech errors
   void _onSpeechError(error) {
-    print('Speech error: $error');
+    debugPrint('Speech error: $error');
     _isListening = false;
     notifyListeners();
   }
@@ -294,7 +292,7 @@ class VoiceService extends ChangeNotifier {
     } catch (e) {
       response = 'Komut işlenirken beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
       isSuccessful = false;
-      print('Error executing voice command: $e');
+      debugPrint('Error executing voice command: $e');
     }
 
     // Update command with response
@@ -395,7 +393,7 @@ class VoiceService extends ChangeNotifier {
       
       return responseText;
     } catch (e) {
-      print('Error in _executeAddActivity: $e');
+      debugPrint('Error in _executeAddActivity: $e');
       return 'Aktivite eklenirken bir hata oluştu. Lütfen tekrar deneyin.';
     }
   }
@@ -616,7 +614,7 @@ class VoiceService extends ChangeNotifier {
     try {
       await _tts.speak(text);
     } catch (e) {
-      print('TTS error: $e');
+      debugPrint('TTS error: $e');
     }
   }
   
@@ -630,7 +628,7 @@ class VoiceService extends ChangeNotifier {
     try {
       await _tts.stop();
     } catch (e) {
-      print('Error stopping TTS: $e');
+      debugPrint('Error stopping TTS: $e');
     }
   }
 
@@ -728,7 +726,7 @@ class VoiceService extends ChangeNotifier {
       _speechPitch = prefs.getDouble('speech_pitch') ?? 1.0;
       _speechLanguage = prefs.getString('speech_language') ?? 'tr-TR';
     } catch (e) {
-      print('Error loading voice settings: $e');
+      debugPrint('Error loading voice settings: $e');
     }
   }
 
@@ -742,7 +740,7 @@ class VoiceService extends ChangeNotifier {
       await prefs.setDouble('speech_pitch', _speechPitch);
       await prefs.setString('speech_language', _speechLanguage);
     } catch (e) {
-      print('Error saving voice settings: $e');
+      debugPrint('Error saving voice settings: $e');
     }
   }
 
@@ -764,7 +762,7 @@ class VoiceService extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error loading command history: $e');
+      debugPrint('Error loading command history: $e');
     }
   }
 
@@ -777,7 +775,7 @@ class VoiceService extends ChangeNotifier {
       );
       await prefs.setString('voice_command_history', historyJson);
     } catch (e) {
-      print('Error saving command history: $e');
+      debugPrint('Error saving command history: $e');
     }
   }
 

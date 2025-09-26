@@ -633,8 +633,9 @@ class BackupManagementService {
           skipped++;
         }
       } catch (e) {
+        final currentActivity = i < activities.length ? activities[i] : null;
         errors++;
-        errorMessages.add('Error processing activity ${activity.id}: $e');
+        errorMessages.add('Error processing activity ${currentActivity?.id ?? 'unknown'}: $e');
       }
     }
 
@@ -672,8 +673,9 @@ class BackupManagementService {
         await _databaseService.addActivity(activity);
         restored++;
       } catch (e) {
+        final currentActivity = i < missingActivities.length ? missingActivities[i] : null;
         errors++;
-        errorMessages.add('Error restoring activity ${activity.id}: $e');
+        errorMessages.add('Error restoring activity ${currentActivity?.id ?? 'unknown'}: $e');
       }
     }
 

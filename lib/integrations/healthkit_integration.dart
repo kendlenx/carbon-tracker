@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import '../services/device_integration_framework.dart';
 
@@ -265,7 +266,7 @@ class HealthKitIntegration extends DeviceIntegration {
         }
       }
     } catch (e) {
-      print('Error syncing steps data: $e');
+      debugPrint('Error syncing steps data: $e');
     }
   }
 
@@ -303,7 +304,7 @@ class HealthKitIntegration extends DeviceIntegration {
         }
       }
     } catch (e) {
-      print('Error syncing cycling data: $e');
+      debugPrint('Error syncing cycling data: $e');
     }
   }
 
@@ -341,7 +342,7 @@ class HealthKitIntegration extends DeviceIntegration {
         }
       }
     } catch (e) {
-      print('Error syncing walking/running data: $e');
+      debugPrint('Error syncing walking/running data: $e');
     }
   }
 
@@ -382,7 +383,7 @@ class HealthKitIntegration extends DeviceIntegration {
         }
       }
     } catch (e) {
-      print('Error syncing workout data: $e');
+      debugPrint('Error syncing workout data: $e');
     }
   }
 
@@ -419,7 +420,7 @@ class HealthKitIntegration extends DeviceIntegration {
         }
       }
     } catch (e) {
-      print('Error syncing active energy data: $e');
+      debugPrint('Error syncing active energy data: $e');
     }
   }
 
@@ -435,7 +436,7 @@ class HealthKitIntegration extends DeviceIntegration {
     try {
       await syncData();
     } catch (e) {
-      print('HealthKit periodic sync error: $e');
+      debugPrint('HealthKit periodic sync error: $e');
     }
   }
 

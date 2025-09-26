@@ -269,7 +269,7 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
+                      color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -407,9 +407,9 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
+        color: statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withOpacity(0.3)),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
       ),
       child: Text(
         statusText,
@@ -461,7 +461,7 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: deviceInfo['color'].withOpacity(0.1),
+                  color: deviceInfo['color'].withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(

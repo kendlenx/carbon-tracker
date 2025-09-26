@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
 
 /// Carbon Tracker Logo Generator
 /// Creates a beautiful eco-friendly logo with green and dark theme
@@ -44,8 +42,8 @@ class CarbonTrackerLogoPainter extends CustomPainter {
     final backgroundPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          primaryGreen.withOpacity(0.1),
-          darkColor.withOpacity(0.8),
+          primaryGreen.withValues(alpha: 0.1),
+          darkColor.withValues(alpha: 0.8),
         ],
         stops: const [0.3, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
@@ -96,7 +94,7 @@ class CarbonTrackerLogoPainter extends CustomPainter {
 
     // Leaf vein
     final veinPaint = Paint()
-      ..color = primary.withOpacity(0.6)
+      ..color = primary.withValues(alpha: 0.6)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
 
@@ -128,7 +126,7 @@ class CarbonTrackerLogoPainter extends CustomPainter {
 
   void _drawProgressRing(Canvas canvas, Offset center, double radius, Color color) {
     final ringPaint = Paint()
-      ..color = color.withOpacity(0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 3
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -145,7 +143,7 @@ class CarbonTrackerLogoPainter extends CustomPainter {
 
   void _drawSparkles(Canvas canvas, Offset center, Size size, Color color) {
     final sparklePaint = Paint()
-      ..color = color.withOpacity(0.8)
+      ..color = color.withValues(alpha: 0.8)
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
@@ -201,7 +199,7 @@ class CarbonTrackerIcon extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withOpacity(0.3),
+            color: Colors.green.withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

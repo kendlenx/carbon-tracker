@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math' as math;
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'notification_service.dart';
 import 'goal_service.dart';
 
@@ -248,7 +245,7 @@ class LocationService extends ChangeNotifier {
     ).listen(
       _onLocationUpdate,
       onError: (error) {
-        print('Location tracking error: $error');
+        debugPrint('Location tracking error: $error');
         _isTracking = false;
         notifyListeners();
       },
@@ -605,7 +602,7 @@ class LocationService extends ChangeNotifier {
       _suggestionsEnabled = prefs.getBool('suggestions_enabled') ?? true;
       _trackingInterval = prefs.getInt('tracking_interval') ?? 30;
     } catch (e) {
-      print('Error loading location settings: $e');
+      debugPrint('Error loading location settings: $e');
     }
   }
 
@@ -618,7 +615,7 @@ class LocationService extends ChangeNotifier {
       await prefs.setBool('suggestions_enabled', _suggestionsEnabled);
       await prefs.setInt('tracking_interval', _trackingInterval);
     } catch (e) {
-      print('Error saving location settings: $e');
+      debugPrint('Error saving location settings: $e');
     }
   }
 
@@ -640,7 +637,7 @@ class LocationService extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error loading location history: $e');
+      debugPrint('Error loading location history: $e');
     }
   }
 
@@ -653,7 +650,7 @@ class LocationService extends ChangeNotifier {
       );
       await prefs.setString('location_history', historyJson);
     } catch (e) {
-      print('Error saving location history: $e');
+      debugPrint('Error saving location history: $e');
     }
   }
 
@@ -673,7 +670,7 @@ class LocationService extends ChangeNotifier {
         }
       }
     } catch (e) {
-      print('Error loading trips: $e');
+      debugPrint('Error loading trips: $e');
     }
   }
 
@@ -686,7 +683,7 @@ class LocationService extends ChangeNotifier {
       );
       await prefs.setString('trips', tripsJson);
     } catch (e) {
-      print('Error saving trips: $e');
+      debugPrint('Error saving trips: $e');
     }
   }
 

@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
 import '../services/language_service.dart';
 import '../widgets/liquid_pull_refresh.dart';
-import '../widgets/micro_interactions.dart';
 import 'auth_screen.dart';
 import 'dart:async';
 
@@ -87,7 +86,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
       _currentUser = _firebaseService.currentUser;
       await _loadBackupStatus();
     } catch (e) {
-      print('Error loading data: $e');
+      debugPrint('Error loading data: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -111,7 +110,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
         });
       }
     } catch (e) {
-      print('Error loading backup status: $e');
+      debugPrint('Error loading backup status: $e');
     }
   }
 
@@ -292,7 +291,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Cloud Backup' : 'Bulut Yedekleme'),
-        backgroundColor: Colors.blue.withOpacity(0.1),
+        backgroundColor: Colors.blue.withValues(alpha: 0.1),
         foregroundColor: Colors.blue,
         actions: [
           if (_currentUser != null)
@@ -344,7 +343,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.blue.withOpacity(0.1), Colors.green.withOpacity(0.1)],
+              colors: [Colors.blue.withValues(alpha: 0.1), Colors.green.withValues(alpha: 0.1)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -475,7 +474,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.blue.withOpacity(0.1),
+                      color: Colors.blue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
