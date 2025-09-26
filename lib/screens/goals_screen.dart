@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/language_service.dart';
 import '../services/database_service.dart';
-import '../widgets/micro_interactions.dart';
+import '../services/achievement_service.dart' show Achievement, AchievementType;
 import '../widgets/liquid_pull_refresh.dart';
 import 'dart:math' as math;
 
@@ -93,47 +93,47 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
     _achievements.addAll([
       Achievement(
         id: 'daily_green',
-        titleEn: 'Daily Green Champion',
-        titleTr: 'Günlük Yeşil Şampiyon',
-        descriptionEn: 'Stay under daily goal for 7 days',
-        descriptionTr: '7 gün boyunca günlük hedefin altında kal',
-        icon: Icons.eco,
+        title: _languageService.isEnglish ? 'Daily Green Champion' : 'Günlük Yeşil Şampiyon',
+        description: _languageService.isEnglish ? 'Stay under daily goal for 7 days' : '7 gün boyunca günlük hedefin altında kal',
+        icon: '🌱',
         color: Colors.green,
-        threshold: 7,
-        isUnlocked: false,
+        type: AchievementType.daily,
+        targetValue: 7,
+        unit: 'gün',
+        points: 50,
       ),
       Achievement(
         id: 'weekly_warrior',
-        titleEn: 'Weekly Warrior',
-        titleTr: 'Haftalık Savaşçı',
-        descriptionEn: 'Achieve weekly goal 4 times',
-        descriptionTr: '4 kez haftalık hedefe ulaş',
-        icon: Icons.military_tech,
+        title: _languageService.isEnglish ? 'Weekly Warrior' : 'Haftalık Savaşçı',
+        description: _languageService.isEnglish ? 'Achieve weekly goal 4 times' : '4 kez haftalık hedefe ulaş',
+        icon: '🏆',
         color: Colors.blue,
-        threshold: 4,
-        isUnlocked: false,
+        type: AchievementType.weekly,
+        targetValue: 4,
+        unit: 'hafta',
+        points: 75,
       ),
       Achievement(
         id: 'monthly_master',
-        titleEn: 'Monthly Master',
-        titleTr: 'Aylık Usta',
-        descriptionEn: 'Beat monthly goal',
-        descriptionTr: 'Aylık hedefi geç',
-        icon: Icons.star,
+        title: _languageService.isEnglish ? 'Monthly Master' : 'Aylık Usta',
+        description: _languageService.isEnglish ? 'Beat monthly goal' : 'Aylık hedefi geç',
+        icon: '⭐',
         color: Colors.amber,
-        threshold: 1,
-        isUnlocked: false,
+        type: AchievementType.monthly,
+        targetValue: 1,
+        unit: 'hedef',
+        points: 100,
       ),
       Achievement(
         id: 'carbon_crusher',
-        titleEn: 'Carbon Crusher',
-        titleTr: 'Karbon Ezici',
-        descriptionEn: 'Reduce emissions by 50%',
-        descriptionTr: 'Emisyonları %50 azalt',
-        icon: Icons.trending_down,
+        title: _languageService.isEnglish ? 'Carbon Crusher' : 'Karbon Ezici',
+        description: _languageService.isEnglish ? 'Reduce emissions by 50%' : 'Emisyonları %50 azalt',
+        icon: '📉',
         color: Colors.red,
-        threshold: 50,
-        isUnlocked: false,
+        type: AchievementType.milestone,
+        targetValue: 50,
+        unit: '%',
+        points: 200,
       ),
     ]);
   }
@@ -568,18 +568,20 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                         : Colors.grey.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
+                    child: Text(
                       achievement.icon,
-                      color: achievement.isUnlocked 
-                        ? achievement.color
-                        : Colors.grey,
-                      size: 16,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: achievement.isUnlocked 
+                          ? achievement.color
+                          : Colors.grey,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      achievement.getTitle(_languageService.isEnglish),
+                      achievement.title,
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -683,17 +685,19 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(achievement.getTitle(_languageService.isEnglish)),
+        title: Text(achievement.title),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            Text(
               achievement.icon,
-              size: 48,
-              color: achievement.isUnlocked ? achievement.color : Colors.grey,
+              style: TextStyle(
+                fontSize: 48,
+                color: achievement.isUnlocked ? achievement.color : Colors.grey,
+              ),
             ),
             const SizedBox(height: 16),
-            Text(achievement.getDescription(_languageService.isEnglish)),
+            Text(achievement.description),
             const SizedBox(height: 16),
             if (!achievement.isUnlocked)
               LinearProgressIndicator(
@@ -840,29 +844,3 @@ class _GoalEditDialogState extends State<_GoalEditDialog> {
   }
 }
 
-class Achievement {
-  final String id;
-  final String titleEn;
-  final String titleTr;
-  final String descriptionEn;
-  final String descriptionTr;
-  final IconData icon;
-  final Color color;
-  final int threshold;
-  bool isUnlocked;
-
-  Achievement({
-    required this.id,
-    required this.titleEn,
-    required this.titleTr,
-    required this.descriptionEn,
-    required this.descriptionTr,
-    required this.icon,
-    required this.color,
-    required this.threshold,
-    required this.isUnlocked,
-  });
-
-  String getTitle(bool isEnglish) => isEnglish ? titleEn : titleTr;
-  String getDescription(bool isEnglish) => isEnglish ? descriptionEn : descriptionTr;
-}

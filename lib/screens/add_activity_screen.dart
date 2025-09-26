@@ -5,7 +5,6 @@ import '../screens/food_screen.dart';
 import '../screens/shopping_screen.dart';
 import '../services/language_service.dart';
 import '../widgets/micro_interactions.dart';
-import '../widgets/page_transitions.dart';
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key});

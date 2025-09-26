@@ -81,12 +81,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
         animation: _buildGoalsAnimation(),
       ),
       OnboardingPage(
+        titleEn: 'Smart Features',
+        titleTr: 'Akıllı Özellikler',
+        subtitleEn: 'Voice commands, CarPlay, and Siri shortcuts for easy tracking',
+        subtitleTr: 'Kolay takip için sesli komutlar, CarPlay ve Siri kısayolları',
+        icon: Icons.mic,
+        color: Colors.purple,
+        animation: _buildSmartFeaturesAnimation(),
+      ),
+      OnboardingPage(
         titleEn: 'Get Insights',
         titleTr: 'İçgörüler Edinin',
         subtitleEn: 'View statistics, achievements, and personalized tips',
         subtitleTr: 'İstatistikleri, başarıları ve kişiselleştirilmiş ipuçlarını görüntüleyin',
         icon: Icons.insights,
-        color: Colors.purple,
+        color: Colors.indigo,
         animation: _buildInsightsAnimation(),
       ),
       OnboardingPage(
@@ -515,6 +524,77 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     );
   }
 
+  Widget _buildSmartFeaturesAnimation() {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 2200),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Voice animation (sound waves)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (index) {
+                final waveHeight = [15.0, 25.0, 35.0, 25.0, 15.0][index];
+                final delay = index * 0.1;
+                final progress = ((value - delay) * 2).clamp(0.0, 1.0);
+                final animatedHeight = waveHeight * (0.3 + 0.7 * (1 - ((progress * 2 - 1).abs())));
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  width: 4,
+                  height: animatedHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.purple.withOpacity(0.8),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 30),
+            
+            // Smart features icons
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildSmartFeatureIcon(Icons.mic, Colors.purple, value, 0.0),
+                _buildSmartFeatureIcon(Icons.car_rental, Colors.blue, value, 0.3),
+                _buildSmartFeatureIcon(Icons.shortcut, Colors.orange, value, 0.6),
+              ],
+            ),
+            const SizedBox(height: 20),
+            
+            // Connection lines
+            CustomPaint(
+              size: const Size(200, 40),
+              painter: ConnectionLinesPainter(value),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildSmartFeatureIcon(IconData icon, Color color, double globalProgress, double delay) {
+    final progress = (globalProgress - delay).clamp(0.0, 1.0);
+    return Transform.scale(
+      scale: progress,
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          size: 24,
+          color: color,
+        ),
+      ),
+    );
+  }
+
   Widget _buildInsightsAnimation() {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 2000),
@@ -700,4 +780,39 @@ class OnboardingPage {
 
   String getTitle(bool isEnglish) => isEnglish ? titleEn : titleTr;
   String getSubtitle(bool isEnglish) => isEnglish ? subtitleEn : subtitleTr;
+}
+
+class ConnectionLinesPainter extends CustomPainter {
+  final double progress;
+
+  ConnectionLinesPainter(this.progress);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.grey.withOpacity(0.5)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    final dashedPaint = Paint()
+      ..color = Colors.purple.withOpacity(0.7)
+      ..strokeWidth = 2
+      ..style = PaintingStyle.stroke;
+
+    // Draw connecting lines
+    final lineLength = size.width * progress;
+    const dashWidth = 5.0;
+    const dashSpace = 3.0;
+    
+    for (double i = 0; i < lineLength; i += dashWidth + dashSpace) {
+      canvas.drawLine(
+        Offset(i, size.height / 2),
+        Offset((i + dashWidth).clamp(0, lineLength), size.height / 2),
+        dashedPaint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

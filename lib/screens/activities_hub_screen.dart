@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/language_service.dart';
 import '../widgets/micro_interactions.dart';
-import '../widgets/page_transitions.dart';
+import '../widgets/voice_command_widget.dart';
 import 'transport_screen.dart';
 import 'energy_screen.dart';
 import 'food_screen.dart';
@@ -121,22 +121,15 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
             ),
             const SizedBox(height: 24),
 
-            // Coming Soon Section
+            // Voice Commands Section
             Text(
-              _languageService.isEnglish ? 'Coming Soon' : 'Yakında',
+              _languageService.isEnglish ? 'Voice Commands' : 'Sesli Komutlar',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 16),
-            _buildComingSoonCard(
-              title: _languageService.isEnglish ? 'Voice Commands' : 'Sesli Komutlar',
-              subtitle: _languageService.isEnglish 
-                  ? 'Add activities with voice' 
-                  : 'Aktiviteleri sesle ekle',
-              icon: Icons.mic_none,
-              color: Colors.purple.shade300,
-            ),
+            const VoiceCommandWidget(),
           ],
         ),
       ),
@@ -261,71 +254,6 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
     );
   }
 
-  Widget _buildComingSoonCard({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: Colors.white, size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey.shade400
-                        : Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              _languageService.isEnglish ? 'Soon' : 'Yakında',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Future<void> _navigateToScreen(Widget screen) async {
     await HapticHelper.trigger(HapticType.selection);

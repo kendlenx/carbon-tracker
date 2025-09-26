@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/transport_screen.dart';
-import 'screens/add_activity_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/energy_screen.dart';
 import 'screens/achievements_screen.dart';
@@ -10,26 +9,22 @@ import 'screens/settings_screen.dart';
 import 'screens/goals_screen.dart';
 import 'screens/permissions_screen.dart';
 import 'screens/activities_hub_screen.dart';
+import 'screens/analytics_dashboard_screen.dart';
 import 'services/database_service.dart';
 import 'services/carbon_calculator_service.dart';
 import 'services/theme_service.dart';
-import 'services/achievement_service.dart' hide Achievement;
-import 'services/achievement_service.dart' as AchievementServiceLib;
+import 'services/achievement_service.dart' show AchievementService, Achievement;
 import 'services/smart_features_service.dart';
 import 'services/notification_service.dart';
-import 'services/goal_service.dart';
-import 'services/location_service.dart';
-import 'services/voice_service.dart';
-import 'services/smart_home_service.dart';
-import 'services/device_integration_service.dart';
 import 'services/language_service.dart';
 import 'services/permission_service.dart';
+import 'services/advanced_reporting_service.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/achievement_widgets.dart';
+import 'widgets/voice_command_widget.dart';
 import 'widgets/liquid_pull_refresh.dart';
 import 'widgets/hero_dashboard.dart';
-import 'widgets/morphing_fab.dart';
 import 'widgets/page_transitions.dart';
 import 'widgets/micro_interactions.dart';
 import 'widgets/carbon_tracker_logo.dart';
@@ -196,7 +191,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   // Achievement checking method
   Future<void> _checkAchievements() async {
     try {
-      final achievementService = AchievementServiceLib.AchievementService.instance;
+      final achievementService = AchievementService.instance;
       
       // Check daily achievements
       final dailyAchievements = await achievementService.checkDailyAchievements(totalCarbonToday);
@@ -205,8 +200,16 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       final levelAchievements = await achievementService.checkLevelAchievements();
       
       // Show unlock dialogs for new achievements
-      final allNewAchievements = [...dailyAchievements, ...levelAchievements];
+      final allNewAchievements = <Achievement>[...dailyAchievements, ...levelAchievements];
       if (allNewAchievements.isNotEmpty) {
+        // Send notifications for achievements
+        for (final achievement in allNewAchievements) {
+          await NotificationService.instance.showAchievementNotification(
+            achievement.title,
+            achievement.description,
+            achievement.points,
+          );
+        }
         _showAchievementUnlockDialog(allNewAchievements);
       }
     } catch (e) {
@@ -214,7 +217,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
     }
   }
   
-  void _showAchievementUnlockDialog(List<AchievementServiceLib.Achievement> achievements) {
+  void _showAchievementUnlockDialog(List<Achievement> achievements) {
     if (achievements.isEmpty || !mounted) return;
     
     showDialog(
@@ -425,6 +428,14 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                     transition: TransitionType.slideUp,
                   );
                   break;
+                case 'advanced_analytics':
+                  // Ensure reporting service is initialized before opening
+                  await AdvancedReportingService.instance.initialize();
+                  context.pushWithTransition(
+                    const AnalyticsDashboardScreen(),
+                    transition: TransitionType.slideLeft,
+                  );
+                  break;
                 case 'permissions':
                   context.pushWithTransition(
                     const PermissionsScreen(),
@@ -457,6 +468,16 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                     const Icon(Icons.bar_chart, color: Colors.blue),
                     const SizedBox(width: 8),
                     Text(_languageService.isEnglish ? 'Statistics' : 'İstatistikler'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'advanced_analytics',
+                child: Row(
+                  children: [
+                    const Icon(Icons.auto_graph, color: Colors.purple),
+                    const SizedBox(width: 8),
+                    Text(_languageService.isEnglish ? 'Advanced Analytics' : 'Gelişmiş Analitik'),
                   ],
                 ),
               ),
@@ -528,6 +549,23 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             label: _languageService.isEnglish ? 'Settings' : 'Ayarlar',
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: VoiceCommandWidget(),
+            ),
+          );
+        },
+        heroTag: "voice_command_fab",
+        child: const Icon(Icons.mic),
+        tooltip: _languageService.isEnglish ? 'Voice Commands' : 'Ses Komutları',
+        backgroundColor: Theme.of(context).primaryColor,
       ),
     );
   }

@@ -194,6 +194,196 @@ class NotificationService extends ChangeNotifier {
     );
   }
 
+  /// Send achievement notification
+  Future<void> showAchievementNotification(String title, String description, int points) async {
+    if (!_achievementNotificationsEnabled || !_notificationsEnabled) return;
+    
+    await _notifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
+      '🏆 Başarı Kazandın!',
+      '$title - +$points XP',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'achievements',
+          'Başarılar',
+          channelDescription: 'Başarı bildirimleri',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon',
+          color: Colors.amber,
+          playSound: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          categoryIdentifier: 'achievement',
+          presentSound: true,
+        ),
+      ),
+      payload: 'achievement|$title',
+    );
+  }
+  
+  /// Send smart suggestion notification
+  Future<void> showSmartSuggestionNotification(String title, String description, double potentialSaving) async {
+    if (!_smartSuggestionsEnabled || !_notificationsEnabled) return;
+    
+    await _notifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
+      '💡 Akıllı Öneri',
+      '$description\n🌱 -${potentialSaving.toStringAsFixed(1)} kg CO₂',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'smart_suggestions',
+          'Akıllı Öneriler',
+          channelDescription: 'Yapay zeka destekli öneriler',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+          icon: '@mipmap/launcher_icon',
+          color: Colors.blue,
+        ),
+        iOS: DarwinNotificationDetails(
+          categoryIdentifier: 'smart_suggestion',
+        ),
+      ),
+      payload: 'smart_suggestion|$title',
+    );
+  }
+  
+  /// Send goal milestone notification
+  Future<void> showGoalMilestoneNotification(String milestone, double currentValue, double goalValue) async {
+    if (!_achievementNotificationsEnabled || !_notificationsEnabled) return;
+    
+    final progress = (currentValue / goalValue * 100).round();
+    
+    await _notifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      '🎆 Hedefe Ulaştın!',
+      '$milestone\n📊 $progress% tamamlandı!',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'goal_milestones',
+          'Hedef Kilometre Taşları',
+          channelDescription: 'Hedef ilerlemesi bildirimleri',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/launcher_icon',
+          color: Colors.green,
+          playSound: true,
+        ),
+        iOS: DarwinNotificationDetails(
+          categoryIdentifier: 'goal_milestone',
+          presentSound: true,
+        ),
+      ),
+      payload: 'goal_milestone|$milestone',
+    );
+  }
+  
+  /// Schedule smart reminders based on user patterns
+  Future<void> scheduleSmartReminders(Map<String, dynamic> userPatterns) async {
+    if (!_notificationsEnabled) return;
+    
+    // Cancel existing smart reminders
+    for (int i = 100; i <= 110; i++) {
+      await _notifications.cancel(i);
+    }
+    
+    final now = DateTime.now();
+    
+    // Morning transport reminder (if user often forgets)
+    if (userPatterns['forgetsTransport'] == true) {
+      final morningTime = DateTime(
+        now.year, now.month, now.day + 1, 8, 30
+      );
+      
+      await _notifications.zonedSchedule(
+        100,
+        '🚌 Ulaşım Planını Yaptın mı?',
+        'Bugün hangi ulaşım türlerini kullanacağını planla ve kaydet!',
+        tz.TZDateTime.from(morningTime, tz.local),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'smart_reminders',
+            'Akıllı Hatırlatmalar',
+            channelDescription: 'Kişiselleştirilmiş hatırlatmalar',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            icon: '@mipmap/launcher_icon',
+          ),
+        ),
+        payload: 'smart_reminder|transport_morning',
+        matchDateTimeComponents: DateTimeComponents.time,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
+    
+    // Evening energy reminder (if user uses a lot of energy)
+    if (userPatterns['highEnergyUser'] == true) {
+      final eveningTime = DateTime(
+        now.year, now.month, now.day + 1, 19, 0
+      );
+      
+      await _notifications.zonedSchedule(
+        101,
+        '⚡ Enerji Tasarrufu Zamanı',
+        'Bugün enerji tüketimini azaltmak için neler yaptın? Kayıtlarını güncelle!',
+        tz.TZDateTime.from(eveningTime, tz.local),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'smart_reminders',
+            'Akıllı Hatırlatmalar',
+            channelDescription: 'Kişiselleştirilmiş hatırlatmalar',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            icon: '@mipmap/launcher_icon',
+          ),
+        ),
+        payload: 'smart_reminder|energy_evening',
+        matchDateTimeComponents: DateTimeComponents.time,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    }
+  }
+  
+  /// Send weekly summary notification
+  Future<void> sendWeeklySummary(Map<String, dynamic> weeklyStats) async {
+    if (!_weeklyReportsEnabled || !_notificationsEnabled) return;
+    
+    final totalCO2 = weeklyStats['totalCO2'] ?? 0.0;
+    final improvement = weeklyStats['improvement'] ?? 0.0;
+    final bestDay = weeklyStats['bestDay'] ?? 'Pazartesi';
+    
+    String message;
+    if (improvement > 0) {
+      message = 'Bu hafta geçen haftaya göre ${improvement.toStringAsFixed(1)} kg daha az CO₂ üretti!';
+    } else if (improvement < 0) {
+      message = 'Bu hafta ${improvement.abs().toStringAsFixed(1)} kg daha fazla CO₂ ürettin. Gelecek hafta daha iyi olacak!';
+    } else {
+      message = 'Bu hafta sabit bir performans gösterdin!';
+    }
+    
+    await _notifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      '📈 Haftalık Karbon Raporu',
+      'Toplam: ${totalCO2.toStringAsFixed(1)} kg CO₂\n$message\n🌟 En iyi gün: $bestDay',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'weekly_reports',
+          'Haftalık Raporlar',
+          channelDescription: 'Haftalık karbon raporu bildirimleri',
+          importance: Importance.defaultImportance,
+          priority: Priority.defaultPriority,
+          icon: '@mipmap/launcher_icon',
+          color: Colors.purple,
+          styleInformation: BigTextStyleInformation(''),
+        ),
+        iOS: DarwinNotificationDetails(
+          categoryIdentifier: 'weekly_report',
+        ),
+      ),
+      payload: 'weekly_report',
+    );
+  }
+
   /// Schedule weekly carbon report
   Future<void> _scheduleWeeklyReport() async {
     await _notifications.cancel(2); // Cancel existing
@@ -235,34 +425,6 @@ class NotificationService extends ChangeNotifier {
     );
   }
 
-  /// Show immediate notification for achievements
-  Future<void> showAchievementNotification(String title, String body, {String? payload}) async {
-    if (!_achievementNotificationsEnabled || !_notificationsEnabled) return;
-    
-    await _notifications.show(
-      DateTime.now().millisecondsSinceEpoch.remainder(100000),
-      '🏆 $title',
-      body,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'achievements',
-          'Başarılar',
-          channelDescription: 'Başarı bildirimleri',
-          importance: Importance.high,
-          priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
-          color: Colors.green,
-          playSound: true,
-          enableVibration: true,
-        ),
-        iOS: DarwinNotificationDetails(
-          categoryIdentifier: 'achievement',
-          sound: 'default',
-        ),
-      ),
-      payload: payload ?? 'achievement',
-    );
-  }
 
   /// Show smart suggestion notification
   Future<void> showSmartSuggestion(String suggestion, {String? payload}) async {

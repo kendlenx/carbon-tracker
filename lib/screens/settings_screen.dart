@@ -5,6 +5,7 @@ import '../services/theme_service.dart';
 import '../services/database_service.dart';
 import '../services/permission_service.dart';
 import '../services/notification_service.dart';
+import '../services/data_export_service.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import 'dart:io';
@@ -116,33 +117,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _exportData() async {
+  Future<void> _exportData(ExportFormat format) async {
     try {
-      final activities = await DatabaseService.instance.getAllActivities();
-      final exportData = {
-        'export_date': DateTime.now().toIso8601String(),
-        'total_activities': activities.length,
-        'activities': activities,
-        'user_info': {
-          'name': _userName,
-          'email': _userEmail,
-          'join_date': _joinDate,
-        }
-      };
-
-      final directory = await getApplicationDocumentsDirectory();
-      final file = File('${directory.path}/carbon_tracker_export.json');
-      await file.writeAsString(exportData.toString());
-
-      await Share.shareXFiles([XFile(file.path)], text: _languageService.isEnglish 
-        ? 'Carbon Tracker Data Export'
-        : 'Carbon Tracker Veri Aktarımı');
-
+      await DataExportService.instance.exportAndShare(format);
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(_languageService.isEnglish 
             ? 'Data exported successfully!'
             : 'Veriler başarıyla aktarıldı!'),
+          backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
@@ -151,6 +135,91 @@ class _SettingsScreenState extends State<SettingsScreen> {
           content: Text(_languageService.isEnglish 
             ? 'Export failed: $e'
             : 'Aktarım başarısız: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  
+  Future<void> _showExportOptions() async {
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(_languageService.isEnglish ? 'Export Data' : 'Veri Aktar'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(_languageService.isEnglish 
+              ? 'Choose export format:'
+              : 'Aktarım formatını seçin:'),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _exportData(ExportFormat.json);
+                    },
+                    icon: const Icon(Icons.code),
+                    label: Text('JSON\n${_languageService.isEnglish ? "(Complete backup)" : "(Tam yedek)"}'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _exportData(ExportFormat.csv);
+                    },
+                    icon: const Icon(Icons.table_chart),
+                    label: Text('CSV\n${_languageService.isEnglish ? "(Spreadsheet)" : "(Tablo)"}'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> _importData() async {
+    try {
+      await DataExportService.instance.pickAndImportBackup();
+      
+      // Refresh stats after import
+      await _loadUserStats();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_languageService.isEnglish 
+            ? 'Data imported successfully!'
+            : 'Veriler başarıyla içe aktarıldı!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_languageService.isEnglish 
+            ? 'Import failed: $e'
+            : 'İçe aktarım başarısız: $e'),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -539,8 +608,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.download,
               title: _languageService.isEnglish ? 'Export Data' : 'Verileri Aktar',
-              subtitle: _languageService.isEnglish ? 'Download your carbon tracking data' : 'Karbon takip verilerinizi indirin',
-              onTap: _exportData,
+              subtitle: _languageService.isEnglish ? 'Download your carbon tracking data (JSON/CSV)' : 'Karbon takip verilerinizi indirin (JSON/CSV)',
+              onTap: _showExportOptions,
             ),
 
             const Divider(),
@@ -548,14 +617,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.upload,
               title: _languageService.isEnglish ? 'Import Data' : 'Verileri İçe Aktar',
-              subtitle: _languageService.isEnglish ? 'Restore from backup file' : 'Yedekleme dosyasından geri yükle',
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(_languageService.isEnglish ? 'Import feature coming soon!' : 'İçe aktarma özelliği yakında!'),
-                  ),
-                );
-              },
+              subtitle: _languageService.isEnglish ? 'Restore from JSON backup file' : 'JSON yedek dosyasından geri yükle',
+              onTap: _importData,
             ),
 
             const Divider(),

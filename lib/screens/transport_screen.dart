@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/transport_model.dart';
+import '../models/transport_activity.dart';
 import '../services/database_service.dart';
 import '../services/language_service.dart';
 import '../widgets/micro_interactions.dart';
@@ -65,10 +65,14 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
     if (widget.isQuickAdd) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.preSelectedTransportType != null) {
-          // Find the transport type by ID
-          final transportType = TransportData.getTransportTypeById(widget.preSelectedTransportType!);
-          if (transportType != null) {
+          // Find the transport type by name
+          try {
+            final transportType = TransportType.values.firstWhere(
+              (type) => type.name == widget.preSelectedTransportType,
+            );
             _selectTransportType(transportType);
+          } catch (e) {
+            // Transport type not found, ignore
           }
         }
         
@@ -105,7 +109,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
       final distance = double.tryParse(distanceController.text);
       if (distance != null && distance > 0) {
         setState(() {
-          calculatedCO2 = selectedTransportType!.co2FactorPerKm * distance;
+          calculatedCO2 = TransportActivity.getCO2Factor(selectedTransportType!) * distance;
           if (!showResult) {
             showResult = true;
             _resultAnimationController.forward();
@@ -169,8 +173,9 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
 
     try {
       final activity = TransportActivity.create(
-        transportType: selectedTransportType!,
+        type: selectedTransportType!,
         distanceKm: distance,
+        durationMinutes: 0, // Default duration - could be estimated
         notes: notesController.text.isEmpty ? null : notesController.text,
       );
 
@@ -183,8 +188,8 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
           SnackBar(
             content: Text(
               _languageService.isEnglish
-                  ? '✅ Transport activity saved! ${activity.co2Emission.toStringAsFixed(2)} kg CO₂'
-                  : '✅ Ulaşım aktivitesi kaydedildi! ${activity.co2Emission.toStringAsFixed(2)} kg CO₂',
+                  ? '✅ Transport activity saved! ${activity.co2EmissionKg.toStringAsFixed(2)} kg CO₂'
+                  : '✅ Ulaşım aktivitesi kaydedildi! ${activity.co2EmissionKg.toStringAsFixed(2)} kg CO₂',
             ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
@@ -331,10 +336,10 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
-                itemCount: TransportData.transportTypes.length,
+                itemCount: TransportType.values.length,
                 itemBuilder: (context, index) {
-                  final transportType = TransportData.transportTypes[index];
-                  final isSelected = selectedTransportType?.id == transportType.id;
+                  final transportType = TransportType.values[index];
+                  final isSelected = selectedTransportType == transportType;
                   
                   return MicroCard(
                     onTap: () => _selectTransportType(transportType),
@@ -365,14 +370,17 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            transportType.icon,
+                            TransportActivity.getTransportTypeIcon(transportType),
                             style: TextStyle(
                               fontSize: isSelected ? 36 : 32,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            transportType.name,
+                            TransportActivity.getTransportTypeDisplayName(
+                              transportType, 
+                              isEnglish: _languageService.isEnglish
+                            ),
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isSelected ? Colors.blue : null,
@@ -383,7 +391,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${transportType.co2FactorPerKm.toStringAsFixed(2)} kg CO₂/km',
+                            '${TransportActivity.getCO2Factor(transportType).toStringAsFixed(2)} kg CO₂/km',
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: isSelected 
                                   ? Colors.blue.shade700
@@ -519,7 +527,12 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        selectedTransportType?.name ?? '',
+                                        selectedTransportType != null 
+                                            ? TransportActivity.getTransportTypeDisplayName(
+                                                selectedTransportType!, 
+                                                isEnglish: _languageService.isEnglish
+                                              )
+                                            : '',
                                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                           color: Colors.grey.shade700,
                                         ),

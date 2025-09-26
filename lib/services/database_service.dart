@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import '../models/transport_model.dart';
+import '../models/transport_activity.dart';
 
 class DatabaseService {
   static Database? _database;
@@ -36,18 +36,22 @@ class DatabaseService {
     await db.execute('''
       CREATE TABLE $_transportActivitiesTable (
         id TEXT PRIMARY KEY,
-        transport_type_id TEXT NOT NULL,
-        distance_km REAL NOT NULL,
-        co2_emission REAL NOT NULL,
-        created_at INTEGER NOT NULL,
-        notes TEXT
+        type TEXT NOT NULL,
+        distanceKm REAL NOT NULL,
+        durationMinutes INTEGER NOT NULL,
+        co2EmissionKg REAL NOT NULL,
+        timestamp INTEGER NOT NULL,
+        fromLocation TEXT,
+        toLocation TEXT,
+        notes TEXT,
+        metadata TEXT
       )
     ''');
 
     // Create indices for better performance
     await db.execute('''
-      CREATE INDEX idx_transport_created_at 
-      ON $_transportActivitiesTable(created_at)
+      CREATE INDEX idx_transport_timestamp 
+      ON $_transportActivitiesTable(timestamp)
     ''');
   }
 
@@ -62,23 +66,21 @@ class DatabaseService {
 
   // Transport Activities CRUD operations
 
-  Future<String> insertTransportActivity(TransportActivity activity) async {
+  Future<String> addActivity(TransportActivity activity) async {
     final db = await database;
     
     await db.insert(
       _transportActivitiesTable,
-      {
-        'id': activity.id,
-        'transport_type_id': activity.transportType.id,
-        'distance_km': activity.distanceKm,
-        'co2_emission': activity.co2Emission,
-        'created_at': activity.createdAt.millisecondsSinceEpoch,
-        'notes': activity.notes,
-      },
+      activity.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
     
     return activity.id;
+  }
+  
+  // Alias for backward compatibility
+  Future<String> insertTransportActivity(TransportActivity activity) async {
+    return addActivity(activity);
   }
 
   Future<List<TransportActivity>> getTransportActivities({
@@ -92,7 +94,7 @@ class DatabaseService {
     List<dynamic> whereArgs = [];
     
     if (startDate != null) {
-      whereClause += 'created_at >= ?';
+      whereClause += 'timestamp >= ?';
       whereArgs.add(startDate.millisecondsSinceEpoch);
     }
     
@@ -100,7 +102,7 @@ class DatabaseService {
       if (whereClause.isNotEmpty) {
         whereClause += ' AND ';
       }
-      whereClause += 'created_at <= ?';
+      whereClause += 'timestamp <= ?';
       whereArgs.add(endDate.millisecondsSinceEpoch);
     }
     
@@ -108,11 +110,11 @@ class DatabaseService {
       _transportActivitiesTable,
       where: whereClause.isNotEmpty ? whereClause : null,
       whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
-      orderBy: 'created_at DESC',
+      orderBy: 'timestamp DESC',
       limit: limit,
     );
 
-    return maps.map((map) => _mapToTransportActivity(map)).toList();
+    return maps.map((map) => TransportActivity.fromMap(map)).toList();
   }
 
   Future<List<TransportActivity>> getTransportActivitiesForDate(DateTime date) async {
@@ -125,9 +127,31 @@ class DatabaseService {
     );
   }
 
+  /// Get transport activities in a specific date range (alias for getTransportActivities)
+  Future<List<TransportActivity>> getTransportActivitiesInDateRange(
+    DateTime startDate, 
+    DateTime endDate,
+  ) async {
+    return getTransportActivities(
+      startDate: startDate,
+      endDate: endDate,
+    );
+  }
+  
+  /// Get activities in date range (CarPlay compatibility)
+  Future<List<TransportActivity>> getActivitiesInDateRange(
+    DateTime startDate, 
+    DateTime endDate,
+  ) async {
+    return getTransportActivities(
+      startDate: startDate,
+      endDate: endDate,
+    );
+  }
+
   Future<double> getTotalCO2ForDate(DateTime date) async {
     final activities = await getTransportActivitiesForDate(date);
-    return activities.fold<double>(0.0, (sum, activity) => sum + activity.co2Emission);
+    return activities.fold<double>(0.0, (sum, activity) => sum + activity.co2EmissionKg);
   }
 
   Future<double> getTotalCO2ForDateRange(DateTime startDate, DateTime endDate) async {
@@ -135,7 +159,7 @@ class DatabaseService {
       startDate: startDate,
       endDate: endDate,
     );
-    return activities.fold<double>(0.0, (sum, activity) => sum + activity.co2Emission);
+    return activities.fold<double>(0.0, (sum, activity) => sum + activity.co2EmissionKg);
   }
 
   Future<Map<String, double>> getCO2ByTransportType({
@@ -149,8 +173,8 @@ class DatabaseService {
 
     final Map<String, double> result = {};
     for (final activity in activities) {
-      final typeName = activity.transportType.name;
-      result[typeName] = (result[typeName] ?? 0.0) + activity.co2Emission;
+      final typeName = activity.type.name;
+      result[typeName] = (result[typeName] ?? 0.0) + activity.co2EmissionKg;
     }
 
     return result;
@@ -170,60 +194,54 @@ class DatabaseService {
     await db.delete(_transportActivitiesTable);
   }
 
-  TransportActivity _mapToTransportActivity(Map<String, dynamic> map) {
-    final transportType = TransportData.getTransportTypeById(map['transport_type_id']);
-    
-    if (transportType == null) {
-      throw Exception('Transport type not found: ${map['transport_type_id']}');
-    }
-
-    return TransportActivity(
-      id: map['id'],
-      transportType: transportType,
-      distanceKm: map['distance_km'],
-      co2Emission: map['co2_emission'],
-      createdAt: DateTime.fromMillisecondsSinceEpoch(map['created_at']),
-      notes: map['notes'],
+  // Database version management
+  Future<void> clearAllData() async {
+    await deleteAllTransportActivities();
+  }
+  
+  Future<int> getActivityCount() async {
+    final db = await database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM $_transportActivitiesTable'
     );
+    return result.first['count'] as int;
   }
 
-  // General activity methods
-  Future<String> addActivity(Map<String, dynamic> activityData) async {
-    // This is a simplified implementation that converts general activity data to transport activity
-    // In a real app, you might have separate tables for different activity types
-    
+  // Generic activity addition - converts to TransportActivity
+  Future<String> addGenericActivity(Map<String, dynamic> activityData) async {
     try {
       final id = DateTime.now().millisecondsSinceEpoch.toString();
-      final type = activityData['type'] as String? ?? 'Araba';
+      final type = activityData['type'] as String? ?? 'car';
       final distance = activityData['distance'] as double? ?? 1.0;
       final carbonFootprint = activityData['carbonFootprint'] as double? ?? 0.2;
       final timestamp = activityData['timestamp'] as String? ?? DateTime.now().toIso8601String();
       final source = activityData['source'] as String? ?? 'manual';
       
-      // Convert to TransportType (simplified)
-      TransportType? transportType;
-      if (type.toLowerCase().contains('yürü')) {
-        transportType = TransportData.getTransportTypeById('walking');
-      } else if (type.toLowerCase().contains('bisiklet')) {
-        transportType = TransportData.getTransportTypeById('cycling');
+      // Convert to TransportType
+      TransportType transportType;
+      if (type.toLowerCase().contains('walk') || type.toLowerCase().contains('yürü')) {
+        transportType = TransportType.walking;
+      } else if (type.toLowerCase().contains('bike') || type.toLowerCase().contains('bisiklet')) {
+        transportType = TransportType.bicycle;
+      } else if (type.toLowerCase().contains('bus')) {
+        transportType = TransportType.bus;
+      } else if (type.toLowerCase().contains('train')) {
+        transportType = TransportType.train;
       } else {
-        transportType = TransportData.getTransportTypeById('car'); // default
-      }
-      
-      if (transportType == null) {
-        transportType = TransportData.transportTypes.first; // fallback
+        transportType = TransportType.car; // default
       }
       
       final activity = TransportActivity(
         id: id,
-        transportType: transportType,
+        type: transportType,
         distanceKm: distance,
-        co2Emission: carbonFootprint.abs(), // Make sure it's positive
-        createdAt: DateTime.tryParse(timestamp) ?? DateTime.now(),
-        notes: 'Added via ${source}',
+        durationMinutes: (distance * 3).round(), // estimate 3 min per km
+        co2EmissionKg: carbonFootprint.abs(),
+        timestamp: DateTime.tryParse(timestamp) ?? DateTime.now(),
+        notes: 'Added via $source',
       );
       
-      return await insertTransportActivity(activity);
+      return await addActivity(activity);
     } catch (e) {
       print('Error adding activity: $e');
       return '';
@@ -245,7 +263,7 @@ class DatabaseService {
 
     final weeklyAverage = weekTotal / 7;
     final allActivities = await getTransportActivities();
-    final totalCarbon = allActivities.fold<double>(0.0, (sum, activity) => sum + activity.co2Emission);
+    final totalCarbon = allActivities.fold<double>(0.0, (sum, activity) => sum + activity.co2EmissionKg);
 
     return {
       'todayTotal': todayTotal,
@@ -267,9 +285,14 @@ class DatabaseService {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       _transportActivitiesTable,
-      orderBy: 'created_at DESC',
+      orderBy: 'timestamp DESC',
     );
     return maps;
+  }
+  
+  // Get all transport activities as objects
+  Future<List<TransportActivity>> getAllTransportActivities() async {
+    return await getTransportActivities();
   }
 
   // Get activities by category (for food/shopping screens)
@@ -278,19 +301,19 @@ class DatabaseService {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db.query(
       _transportActivitiesTable,
-      orderBy: 'created_at DESC',
+      orderBy: 'timestamp DESC',
     );
     
     // Convert transport activities to generic format
     return maps.map((map) => {
       'id': map['id'],
       'category': 'transport',
-      'subcategory': map['transport_type_id'],
+      'subcategory': map['type'],
       'description': 'Transport activity',
-      'co2_amount': map['co2_emission'],
-      'created_at': DateTime.fromMillisecondsSinceEpoch(map['created_at']).toIso8601String(),
+      'co2_amount': map['co2EmissionKg'],
+      'created_at': DateTime.fromMillisecondsSinceEpoch(map['timestamp']).toIso8601String(),
       'metadata': {
-        'distance': map['distance_km'],
+        'distance': map['distanceKm'],
         'notes': map['notes'],
       }
     }).toList();
@@ -300,7 +323,7 @@ class DatabaseService {
   Future<void> insertActivity(Map<String, dynamic> activity) async {
     // For now, convert to transport activity
     // In future, we'd have separate tables for each category
-    await addActivity({
+    await addGenericActivity({
       'type': activity['subcategory'] ?? 'car',
       'distance': 1.0, // default
       'carbonFootprint': activity['co2_amount'] ?? 0.0,
@@ -309,11 +332,6 @@ class DatabaseService {
     });
   }
 
-  // Clear all data
-  Future<void> clearAllData() async {
-    final db = await database;
-    await db.delete(_transportActivitiesTable);
-  }
 
   // Close database
   Future<void> close() async {

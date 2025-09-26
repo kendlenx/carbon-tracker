@@ -7,6 +7,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'database_service.dart';
+import 'language_service.dart';
+import '../models/transport_activity.dart';
 import 'notification_service.dart';
 import 'goal_service.dart';
 
@@ -212,17 +214,17 @@ class VoiceService extends ChangeNotifier {
     VoiceCommandType type = VoiceCommandType.unknown;
     Map<String, dynamic> parameters = {};
     
-    // Activity logging commands
+      // Activity logging commands (daha kapsamlı kelimeler)
     if (_containsAnyKeyword(normalizedCommand, [
-      'ekle', 'kaydett', 'girdim', 'kullandım', 'tükettim', 'yaptım'
-    ])) {
+      'ekle', 'kaydet', 'girdim', 'kullandım', 'tükettim', 'yaptım', 'gittim', 'aldım'
+    ]) || normalizedCommand.contains('kilometre') || normalizedCommand.contains('km') || normalizedCommand.contains('saat') || normalizedCommand.contains('litre')) {
       type = VoiceCommandType.addActivity;
       parameters = await _extractActivityParameters(normalizedCommand);
     }
     
-    // Statistics commands
+    // Statistics commands (daha kapsamlı)
     else if (_containsAnyKeyword(normalizedCommand, [
-      'istatistik', 'rapor', 'durum', 'ne kadar', 'toplam', 'bugün', 'bu hafta'
+      'istatistik', 'rapor', 'durum', 'ne kadar', 'toplam', 'bugün', 'bu hafta', 'karbon', 'emisyon', 'ayak izi', 'göster', 'nedir'
     ])) {
       type = VoiceCommandType.getStats;
       parameters = await _extractStatsParameters(normalizedCommand);
@@ -261,26 +263,38 @@ class VoiceService extends ChangeNotifier {
   /// Execute voice command
   Future<void> _executeVoiceCommand(VoiceCommand command) async {
     String response = '';
+    bool isSuccessful = false;
 
-    switch (command.type) {
-      case VoiceCommandType.addActivity:
-        response = await _executeAddActivity(command.parameters);
-        break;
-      
-      case VoiceCommandType.getStats:
-        response = await _executeGetStats(command.parameters);
-        break;
-      
-      case VoiceCommandType.setGoal:
-        response = await _executeSetGoal(command.parameters);
-        break;
-      
-      case VoiceCommandType.askQuestion:
-        response = await _executeQuestion(command.parameters);
-        break;
-      
-      default:
-        response = 'Üzgünüm, bu komutu anlayamadım. Tekrar deneyin.';
+    try {
+      switch (command.type) {
+        case VoiceCommandType.addActivity:
+          response = await _executeAddActivity(command.parameters);
+          isSuccessful = !response.contains('hata') && !response.contains('sorun');
+          break;
+        
+        case VoiceCommandType.getStats:
+          response = await _executeGetStats(command.parameters);
+          isSuccessful = !response.contains('hata');
+          break;
+        
+        case VoiceCommandType.setGoal:
+          response = await _executeSetGoal(command.parameters);
+          isSuccessful = !response.contains('hata');
+          break;
+        
+        case VoiceCommandType.askQuestion:
+          response = await _executeQuestion(command.parameters);
+          isSuccessful = true; // Questions always succeed
+          break;
+        
+        default:
+          response = 'Üzgünüm, bu komutu anlayamadım. Şunları deneyebilirsiniz: aktivite ekle, istatistik göster, hedef belirle.';
+          isSuccessful = false;
+      }
+    } catch (e) {
+      response = 'Komut işlenirken beklenmeyen bir hata oluştu. Lütfen tekrar deneyin.';
+      isSuccessful = false;
+      print('Error executing voice command: $e');
     }
 
     // Update command with response
@@ -289,7 +303,7 @@ class VoiceService extends ChangeNotifier {
       type: command.type,
       parameters: command.parameters,
       timestamp: command.timestamp,
-      isExecuted: true,
+      isExecuted: isSuccessful,
       response: response,
     );
 
@@ -297,14 +311,19 @@ class VoiceService extends ChangeNotifier {
     if (index != -1) {
       _commandHistory[index] = updatedCommand;
     }
+    await _saveCommandHistory();
 
     // Provide voice feedback
     if (_voiceFeedbackEnabled && _ttsEnabled) {
       await _speak(response);
     }
 
-    // Show notification
-    await _notificationService.showSmartSuggestion('Sesli komut: $response');
+    // Show notification with appropriate type
+    if (isSuccessful) {
+      await _notificationService.showSmartSuggestion('✅ $response');
+    } else {
+      await _notificationService.showSmartSuggestion('❌ $response');
+    }
     
     notifyListeners();
   }
@@ -316,24 +335,67 @@ class VoiceService extends ChangeNotifier {
         return 'Hangi aktiviteyi eklemek istiyorsunuz? Örnek: "5 kilometre araç kullandım"';
       }
 
-      // Note: Using a string-based approach since CarbonCategory is in main.dart
       final categoryName = parameters['category'] as String?;
       final amount = parameters['amount'] as double?;
       final description = parameters['description'] as String?;
+      final originalAmount = parameters['originalAmount'] as double?;
+      final unit = parameters['unit'] as String?;
 
       if (categoryName == null || amount == null) {
         return 'Aktivite bilgilerini tam olarak anlayamadım. Lütfen kategori ve miktarı belirtin.';
       }
 
-      // Store in database (simplified approach for now)
-      // In a real implementation, this would use proper database models
+      // Prepare activity data for database
+      final activityData = {
+        'type': _getCategoryTransportType(categoryName),
+        'distance': originalAmount ?? 1.0, // Use original amount for distance
+        'carbonFootprint': amount, // CO2 amount
+        'timestamp': DateTime.now().toIso8601String(),
+        'source': 'voice_command',
+      };
+
+      // Save to database using DatabaseService
+      // Create proper TransportActivity from voice data  
+      final distanceValue = originalAmount ?? 1.0;
+      final activity = TransportActivity.create(
+        type: _parseTransportType(categoryName),
+        distanceKm: distanceValue,
+        durationMinutes: (distanceValue * 60 / 30).round(), // Estimate based on 30 km/h average
+        notes: description ?? 'Added via voice command',
+        metadata: {
+          'source': 'voice_command',
+          'category': categoryName,
+          'unit': unit ?? 'km',
+          'co2_calculated': amount,
+        },
+      );
       
-      // Update goals (simplified approach)
+      final activityId = await _databaseService.addActivity(activity);
+      
+      if (activityId.isEmpty) {
+        return 'Aktivite kaydedilirken bir sorun oluştu.';
+      }
+
+      // Update goals
       final goalCategory = _convertCategoryNameToGoalCategory(categoryName);
       await _goalService.updateAllGoalsProgress(amount, goalCategory);
 
-      return 'Tamam! ${amount.toStringAsFixed(1)} kg CO₂ $categoryName aktivitesi kaydedildi.';
+      // Format response with original amount and unit if available
+      String responseAmount = amount.toStringAsFixed(1);
+      String responseText = 'Tamam! ';
+      
+      if (originalAmount != null && unit != null) {
+        responseText += '${originalAmount.toStringAsFixed(originalAmount == originalAmount.toInt() ? 0 : 1)} $unit ';
+        responseText += '($responseAmount kg CO₂) ';
+      } else {
+        responseText += '$responseAmount kg CO₂ ';
+      }
+      
+      responseText += '$categoryName aktivitesi başarıyla kaydedildi.';
+      
+      return responseText;
     } catch (e) {
+      print('Error in _executeAddActivity: $e');
       return 'Aktivite eklenirken bir hata oluştu. Lütfen tekrar deneyin.';
     }
   }
@@ -444,48 +506,56 @@ class VoiceService extends ChangeNotifier {
     final numberMatch = numberRegex.firstMatch(command);
     
     if (numberMatch != null) {
-      double amount = double.tryParse(numberMatch.group(1)!) ?? 0;
+      double originalAmount = double.tryParse(numberMatch.group(1)!) ?? 0;
       String? unit = numberMatch.group(2);
+      double co2Amount = originalAmount; // Default to original amount
       
-      // Convert units if needed
+      // Store original amount and unit for response formatting
+      params['originalAmount'] = originalAmount;
+      params['unit'] = unit ?? '';
+      
+      // Convert units to CO2 if needed
       if (unit != null) {
         if (unit.contains('km') || unit.contains('kilometre')) {
           // Assume car transport for km
           params['category'] = 'ulaşım';
           // Simple calculation: 1km by car = ~0.2kg CO2
-          amount = amount * 0.2;
+          co2Amount = originalAmount * 0.2;
         } else if (unit.contains('litre') || unit.contains('lt')) {
           // Assume fuel consumption
           params['category'] = 'ulaşım';
           // Simple calculation: 1L fuel = ~2.3kg CO2
-          amount = amount * 2.3;
+          co2Amount = originalAmount * 2.3;
         } else if (unit.contains('saat') || unit.contains('dakika')) {
           // Assume energy usage
           params['category'] = 'enerji';
           // Convert to hours if minutes
+          double hours = originalAmount;
           if (unit.contains('dakika')) {
-            amount = amount / 60;
+            hours = originalAmount / 60;
           }
           // Simple calculation: 1 hour electricity = ~0.5kg CO2
-          amount = amount * 0.5;
+          co2Amount = hours * 0.5;
         }
       }
       
-      params['amount'] = amount;
+      params['amount'] = co2Amount;
     }
     
-    // Extract category from keywords
+      // Extract category from keywords (geliştirilmiş)
     if (params['category'] == null) {
-      if (_containsAnyKeyword(command, ['araç', 'araba', 'otobüs', 'tren', 'uçak', 'motor'])) {
+      if (_containsAnyKeyword(command, ['araç', 'araba', 'otobüs', 'tren', 'uçak', 'motor', 'kullandım', 'gittim', 'ulaşım', 'metro', 'taksi', 'bisiklet', 'yürüdüm', 'koştum'])) {
         params['category'] = 'ulaşım';
-      } else if (_containsAnyKeyword(command, ['elektrik', 'enerji', 'ısıtma', 'klima'])) {
+      } else if (_containsAnyKeyword(command, ['elektrik', 'enerji', 'ısıtma', 'klima', 'ampul', 'cihaz', 'doğalgaz', 'kömür', 'petrol'])) {
         params['category'] = 'enerji';
-      } else if (_containsAnyKeyword(command, ['yemek', 'et', 'sebze', 'meyve'])) {
+      } else if (_containsAnyKeyword(command, ['yemek', 'et', 'sebze', 'meyve', 'yedim', 'içtim', 'beslenme', 'kahvaltı', 'öğle', 'akşam'])) {
         params['category'] = 'yemek';
-      } else if (_containsAnyKeyword(command, ['çöp', 'atık', 'geri dönüşüm'])) {
+      } else if (_containsAnyKeyword(command, ['çöp', 'atık', 'geri dönüşüm', 'attım', 'çöpe', 'plastik', 'kağıt'])) {
         params['category'] = 'atık';
+      } else if (_containsAnyKeyword(command, ['kilometre', 'km', 'mesafe', 'yol'])) {
+        params['category'] = 'ulaşım'; // Default for distance-based commands
       } else {
-        params['category'] = 'diğer';
+        params['category'] = 'ulaşım'; // Default to transport for better UX
       }
     }
     
@@ -567,6 +637,22 @@ class VoiceService extends ChangeNotifier {
   /// Check if command contains any of the keywords
   bool _containsAnyKeyword(String text, List<String> keywords) {
     return keywords.any((keyword) => text.contains(keyword));
+  }
+
+  /// Convert category name to transport type for database
+  String _getCategoryTransportType(String categoryName) {
+    switch (categoryName) {
+      case 'ulaşım':
+        return 'Araba'; // Default transport type
+      case 'enerji':
+        return 'Elektrik'; // For energy, we'll use a generic type
+      case 'yemek':
+        return 'Beslenme';
+      case 'atık':
+        return 'Atık';
+      default:
+        return 'Diğer';
+    }
   }
 
   /// Convert category name to GoalCategory
@@ -703,18 +789,54 @@ class VoiceService extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Process text command manually (for UI testing)
+  Future<void> processTextCommand(String command) async {
+    await _processVoiceCommand(command);
+  }
+
   /// Get voice command suggestions
   List<String> getVoiceCommandSuggestions() {
     return [
       'Bugün 5 kilometre araç kullandım',
       'Bu hafta ne kadar karbon tükettim?',
       'Günlük 12 kilogram hedef belirle',
-      'Dün 2 saat elektrik kullandım',
+      '2 saat elektrik kullandım',
       'Bu ay toplam karbon miktarım nedir?',
       'Haftalık 80 kilogram hedef koy',
       'Karbon ayak izi nasıl azaltılır?',
-      'Aktif hedeflerim neler?',
+      'Bugünkü istatistiklerimi göster',
+      '10 kilometre bisiklet sürdüm',
+      'Metro ile 5 kilometre gittim',
+      'Günlük karbon durumum nedir?',
+      'Bu hafta hedefime ne kadar yakınım?',
     ];
+  }
+
+  // Helper method to parse transport type from voice input
+  TransportType _parseTransportType(String? transportType) {
+    if (transportType == null) return TransportType.other;
+    
+    final lowerType = transportType.toLowerCase();
+    
+    if (lowerType.contains('car') || lowerType.contains('araba')) {
+      return TransportType.car;
+    } else if (lowerType.contains('bus') || lowerType.contains('otobüs')) {
+      return TransportType.bus;
+    } else if (lowerType.contains('train') || lowerType.contains('tren')) {
+      return TransportType.train;
+    } else if (lowerType.contains('metro') || lowerType.contains('tramvay')) {
+      return TransportType.metro;
+    } else if (lowerType.contains('bike') || lowerType.contains('bisiklet')) {
+      return TransportType.bicycle;
+    } else if (lowerType.contains('walk') || lowerType.contains('yürü')) {
+      return TransportType.walking;
+    } else if (lowerType.contains('plane') || lowerType.contains('uçak')) {
+      return TransportType.plane;
+    } else if (lowerType.contains('taxi') || lowerType.contains('taksi')) {
+      return TransportType.taxi;
+    } else {
+      return TransportType.other;
+    }
   }
 
   @override

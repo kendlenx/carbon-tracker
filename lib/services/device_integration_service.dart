@@ -7,6 +7,7 @@ import 'database_service.dart';
 import 'goal_service.dart';
 import 'notification_service.dart';
 import 'voice_service.dart';
+import '../models/transport_activity.dart';
 
 enum DeviceType {
   appleWatch,
@@ -477,14 +478,16 @@ class DeviceIntegrationService extends ChangeNotifier {
       final walkingDistance = steps * 0.0008; // Approximate km per step
       final carbonSaved = walkingDistance * 0.12; // kg CO₂ saved vs car
       
-      // Log walking activity
-      await _databaseService.addActivity({
-        'type': 'Yürüme',
-        'distance': walkingDistance,
-        'carbonFootprint': -carbonSaved, // Negative because it's saved
-        'timestamp': DateTime.now().toIso8601String(),
-        'source': 'health_sync',
-      });
+      // Log walking activity using TransportActivity model
+      final walkingActivity = TransportActivity.create(
+        type: TransportType.walking,
+        distanceKm: walkingDistance,
+        durationMinutes: (steps / 100).round(), // Rough estimate
+        notes: 'Auto-tracked from health data',
+        metadata: {'source': 'health_sync', 'original_steps': steps},
+      );
+      
+      await _databaseService.addActivity(walkingActivity);
 
       await _notificationService.showSmartSuggestion(
         'Harika! ${steps} adım atarak ${carbonSaved.toStringAsFixed(2)} kg CO₂ tasarruf ettiniz!',

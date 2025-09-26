@@ -82,8 +82,26 @@ dependencies:
   share_plus: ^12.0.0
   cross_file: ^0.3.4+2
   
+  # File Operations
+  file_picker: ^8.1.2
+  path_provider: ^2.1.4
+  
   # Image & Camera
   image_picker: ^1.1.2
+  
+  # PDF Generation & Export
+  pdf: ^3.11.1
+  printing: ^5.13.2
+  screenshot: ^3.0.0
+  
+  # Health & Fitness Integration
+  health: ^13.1.4
+  
+  # HTTP requests for integrations
+  http: ^1.2.0
+  
+  # Testing dependencies  
+  mockito: ^5.4.4
 
 dev_dependencies:
   flutter_test:
