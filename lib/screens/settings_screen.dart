@@ -556,6 +556,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  String _getUserDisplayName(currentUser) {
+    // Önce Firebase displayName'i kontrol et
+    if (currentUser?.displayName != null && currentUser!.displayName!.isNotEmpty) {
+      return currentUser.displayName!;
+    }
+    
+    // Sonra local user name'i kontrol et
+    if (_userName.isNotEmpty) {
+      return _userName;
+    }
+    
+    // En son generic text
+    return _languageService.isEnglish ? 'User Account' : 'Kullanıcı Hesabı';
+  }
+
   Widget _buildUserAccountSection() {
     final currentUser = _firebaseService.currentUser;
     
@@ -592,7 +607,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _languageService.isEnglish ? 'User Account' : 'Kullanıcı Hesabı',
+                      _getUserDisplayName(currentUser),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
