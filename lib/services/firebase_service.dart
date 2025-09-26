@@ -311,13 +311,17 @@ class FirebaseService {
           final decryptedData = await _decryptActivityData(data);
           
           // Check if activity exists locally
-          final existingActivity = await _databaseService.getActivityById(
-            int.parse(decryptedData['id'].toString())
-          );
-          
-          if (existingActivity == null) {
-            // Insert new activity
-            await _databaseService.insertActivity(decryptedData);
+          try {
+            final activityId = int.tryParse(decryptedData['id'].toString()) ?? 0;
+            final existingActivity = await _databaseService.getActivityById(activityId);
+            
+            if (existingActivity == null) {
+              // Insert new activity
+              await _databaseService.insertActivity(decryptedData);
+              debugPrint('Synced activity from cloud: ${decryptedData['id']}');
+            }
+          } catch (activityError) {
+            debugPrint('Could not process activity ${doc.id}: $activityError');
           }
         } catch (e) {
           debugPrint('Error processing activity ${doc.id}: $e');

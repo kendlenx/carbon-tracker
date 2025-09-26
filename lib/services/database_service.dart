@@ -370,7 +370,7 @@ class DatabaseService {
   }
   
   /// Get activity by ID
-  Future<Map<String, dynamic>?> getActivityById(int id) async {
+  Future<TransportActivity?> getActivityById(int id) async {
     final db = await database;
     final results = await db.query(
       _transportActivitiesTable,
@@ -378,7 +378,10 @@ class DatabaseService {
       whereArgs: [id.toString()],
       limit: 1,
     );
-    return results.isNotEmpty ? results.first : null;
+    if (results.isNotEmpty) {
+      return TransportActivity.fromMap(results.first);
+    }
+    return null;
   }
   
   /// Delete all user data (GDPR compliance)

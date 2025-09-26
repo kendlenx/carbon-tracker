@@ -42,7 +42,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String _userName = '';
   String _defaultUserName = '';
   String _userEmail = '';
-  String _profileImagePath = '';
   bool _notificationsEnabled = true;
   bool _hapticFeedbackEnabled = true;
   bool _autoBackupEnabled = false;
@@ -84,7 +83,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _userName = prefs.getString('user_name') ?? defaultUsername;
         _userEmail = prefs.getString('user_email') ?? 'user@carbontracker.com';
         _joinDate = prefs.getString('user_join_date') ?? '2024-01-01';
-        _profileImagePath = prefs.getString('user_profile_image') ?? '';
       });
     } catch (e) {
       // Fallback to defaults
@@ -193,7 +191,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await prefs.setString('user_name', _userName);
     await prefs.setString('user_email', _userEmail);
     await prefs.setString('user_join_date', _joinDate);
-    await prefs.setString('user_profile_image', _profileImagePath);
   }
 
   Future<void> _loadUserStats() async {
@@ -391,10 +388,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            // Profile Section
-            _buildProfileSection(),
-            const SizedBox(height: 24),
-
             // User Account Section
             if (_firebaseService.isUserSignedIn)
               _buildUserAccountSection(),
@@ -422,97 +415,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildProfileSection() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: _changeProfilePicture,
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.green,
-                        backgroundImage: _profileImagePath.isNotEmpty 
-                          ? FileImage(File(_profileImagePath)) 
-                          : null,
-                        child: _profileImagePath.isEmpty 
-                          ? Text(
-                              _userName.isNotEmpty ? _userName[0].toUpperCase() : 'U',
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            )
-                          : null,
-                      ),
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColor,
-                            shape: BoxShape.circle,
-                          ),
-                          padding: const EdgeInsets.all(4),
-                          child: const Icon(
-                            Icons.camera_alt,
-                            size: 16,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _userName,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _userEmail,
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${_languageService.isEnglish ? 'Member since' : 'Üye olma tarihi'}: $_joinDate',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: _editProfile,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildAppPreferencesSection() {
     return Card(
@@ -1403,149 +1305,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Future<void> _changeProfilePicture() async {
-    final ImagePicker picker = ImagePicker();
-    
-    try {
-      showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        builder: (context) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _languageService.isEnglish ? 'Change Profile Picture' : 'Profil Fotoğrafını Değiştir',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildImageSourceOption(
-                      icon: Icons.camera_alt,
-                      label: _languageService.isEnglish ? 'Camera' : 'Kamera',
-                      onTap: () async {
-                        Navigator.pop(context);
-                        final XFile? image = await picker.pickImage(
-                          source: ImageSource.camera,
-                          maxWidth: 512,
-                          maxHeight: 512,
-                          imageQuality: 85,
-                        );
-                        if (image != null) {
-                          await _updateProfileImage(image.path);
-                        }
-                      },
-                    ),
-                    _buildImageSourceOption(
-                      icon: Icons.photo_library,
-                      label: _languageService.isEnglish ? 'Gallery' : 'Galeri',
-                      onTap: () async {
-                        Navigator.pop(context);
-                        final XFile? image = await picker.pickImage(
-                          source: ImageSource.gallery,
-                          maxWidth: 512,
-                          maxHeight: 512,
-                          imageQuality: 85,
-                        );
-                        if (image != null) {
-                          await _updateProfileImage(image.path);
-                        }
-                      },
-                    ),
-                    if (_profileImagePath.isNotEmpty)
-                      _buildImageSourceOption(
-                        icon: Icons.delete,
-                        label: _languageService.isEnglish ? 'Remove' : 'Kaldır',
-                        color: Colors.red,
-                        onTap: () async {
-                          Navigator.pop(context);
-                          await _removeProfileImage();
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-              ],
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_languageService.isEnglish ? 'Error accessing camera/gallery' : 'Kamera/galeri erişim hatası'),
-        ),
-      );
-    }
-  }
-
-  Widget _buildImageSourceOption({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-    Color? color,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: (color ?? Theme.of(context).primaryColor).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icon,
-              color: color ?? Theme.of(context).primaryColor,
-              size: 24,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: color ?? Theme.of(context).primaryColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _updateProfileImage(String imagePath) async {
-    setState(() {
-      _profileImagePath = imagePath;
-    });
-    await _saveUserSettings();
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_languageService.isEnglish ? 'Profile picture updated' : 'Profil fotoğrafı güncellendi'),
-      ),
-    );
-  }
-
-  Future<void> _removeProfileImage() async {
-    setState(() {
-      _profileImagePath = '';
-    });
-    await _saveUserSettings();
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(_languageService.isEnglish ? 'Profile picture removed' : 'Profil fotoğrafı kaldırıldı'),
-      ),
-    );
-  }
 
   void _showNotificationSettings() {
     showModalBottomSheet(
