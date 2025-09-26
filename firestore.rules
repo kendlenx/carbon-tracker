@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only access their own data
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // User's activities subcollection
+      match /activities/{activityId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // User's stats subcollection
+      match /stats/{statId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // User's achievements subcollection
+      match /achievements/{achievementId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Public read-only data (like carbon factors, tips, etc.)
+    match /public/{document=**} {
+      allow read: if true;
+      allow write: if false; // Only admins can write public data
+    }
+    
+    // Global settings and app configuration
+    match /config/{configDoc} {
+      allow read: if true;
+      allow write: if false; // Only admins can modify config
+    }
+  }
+}

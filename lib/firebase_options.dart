@@ -41,28 +41,28 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'demo-api-key-web',
-    appId: '1:123456789012:web:abcdef1234567890',
-    messagingSenderId: '123456789012',
-    projectId: 'carbon-tracker-demo',
-    authDomain: 'carbon-tracker-demo.firebaseapp.com',
-    storageBucket: 'carbon-tracker-demo.appspot.com',
+    apiKey: 'AIzaSyBbo_khmuSc7QZwTk5SffheTy3AoUicLQY',
+    appId: '1:901301851843:web:74aa32c40364bd38493476',
+    messagingSenderId: '901301851843',
+    projectId: 'carbon-tracker-1758906173',
+    authDomain: 'carbon-tracker-1758906173.firebaseapp.com',
+    storageBucket: 'carbon-tracker-1758906173.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'demo-api-key-android',
-    appId: '1:123456789012:android:abcdef1234567890',
-    messagingSenderId: '123456789012',
-    projectId: 'carbon-tracker-demo',
-    storageBucket: 'carbon-tracker-demo.appspot.com',
+    apiKey: 'AIzaSyCctSU357ssiOpL8ZxJ8BlEqUL7bJwOzb4',
+    appId: '1:901301851843:android:b066f7b4c5ab41f0493476',
+    messagingSenderId: '901301851843',
+    projectId: 'carbon-tracker-1758906173',
+    storageBucket: 'carbon-tracker-1758906173.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'demo-api-key-ios',
-    appId: '1:123456789012:ios:abcdef1234567890',
-    messagingSenderId: '123456789012',
-    projectId: 'carbon-tracker-demo',
-    storageBucket: 'carbon-tracker-demo.appspot.com',
+    apiKey: 'AIzaSyCr0lAFO6ORqqa4eajaIy2f-0W1JVkcVfE',
+    appId: '1:901301851843:ios:638413690dd3f40c493476',
+    messagingSenderId: '901301851843',
+    projectId: 'carbon-tracker-1758906173',
+    storageBucket: 'carbon-tracker-1758906173.firebasestorage.app',
     iosBundleId: 'com.example.carbonTracker',
   );
 

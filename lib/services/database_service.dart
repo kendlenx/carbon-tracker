@@ -6,7 +6,7 @@ import '../models/transport_activity.dart';
 class DatabaseService {
   static Database? _database;
   static const String _databaseName = 'carbon_tracker.db';
-  static const int _databaseVersion = 2;
+  static const int _databaseVersion = 3;
 
   // Table names
   static const String _transportActivitiesTable = 'transport_activities';
@@ -91,8 +91,51 @@ class DatabaseService {
       }
     }
     
-    // Future migrations can be added here
-    // if (oldVersion < 3) { ... }
+    // Version 3: Fix any schema issues
+    if (oldVersion < 3) {
+      try {
+        // Check table structure
+        final columns = await db.rawQuery('PRAGMA table_info($_transportActivitiesTable)');
+        final hasTypeColumn = columns.any((col) => col['name'] == 'type');
+        
+        if (!hasTypeColumn) {
+          debugPrint('Type column missing in transport_activities table, recreating...');
+          // Backup existing data if possible
+          final List<Map<String, dynamic>> existingData = [];
+          try {
+            existingData.addAll(await db.query(_transportActivitiesTable));
+          } catch (e) {
+            debugPrint('Could not backup existing data: $e');
+          }
+          
+          // Recreate the table with proper structure
+          await db.execute('DROP TABLE IF EXISTS $_transportActivitiesTable');
+          await _onCreate(db, newVersion);
+          
+          // Attempt to restore data if we have any and fields are compatible
+          for (final item in existingData) {
+            try {
+              // Add type field if missing
+              if (!item.containsKey('type')) {
+                item['type'] = 'other';
+              }
+              await db.insert(
+                _transportActivitiesTable,
+                item,
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            } catch (e) {
+              debugPrint('Failed to restore data item: $e');
+            }
+          }
+        }
+      } catch (e) {
+        debugPrint('Version 3 migration error, recreating table: $e');
+        // If migration fails, recreate the table
+        await db.execute('DROP TABLE IF EXISTS $_transportActivitiesTable');
+        await _onCreate(db, newVersion);
+      }
+    }
   }
 
   // Transport Activities CRUD operations

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "901301851843",
+    "project_id": "carbon-tracker-1758906173",
+    "storage_bucket": "carbon-tracker-1758906173.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901301851843:android:b066f7b4c5ab41f0493476",
+        "android_client_info": {
+          "package_name": "com.example.carbon_tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCctSU357ssiOpL8ZxJ8BlEqUL7bJwOzb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
