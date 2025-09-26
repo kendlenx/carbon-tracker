@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import '../services/widget_data_provider.dart';
 import '../models/transport_activity.dart';
 import '../services/database_service.dart';
 import '../services/language_service.dart';
 import '../widgets/micro_interactions.dart';
-import '../widgets/modern_ui_elements.dart';
 
 class TransportScreen extends StatefulWidget {
   final String? preSelectedTransportType;
@@ -180,6 +180,13 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
       );
 
       await DatabaseService.instance.insertTransportActivity(activity);
+      
+      // Update widgets with new activity
+      await WidgetDataProvider.instance.onActivityAdded(
+        category: 'Transport',
+        co2Amount: activity.co2EmissionKg,
+        description: '${TransportActivity.getTransportTypeDisplayName(activity.type, isEnglish: _languageService.isEnglish)} - ${activity.distanceKm} km',
+      );
       
       if (mounted) {
         await HapticHelper.trigger(HapticType.success);

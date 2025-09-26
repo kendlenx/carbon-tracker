@@ -19,10 +19,10 @@ import 'services/notification_service.dart';
 import 'services/language_service.dart';
 import 'services/permission_service.dart';
 import 'services/advanced_reporting_service.dart';
+import 'services/widget_data_provider.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/achievement_widgets.dart';
-import 'widgets/voice_command_widget.dart';
 import 'widgets/liquid_pull_refresh.dart';
 import 'widgets/hero_dashboard.dart';
 import 'widgets/page_transitions.dart';
@@ -156,6 +156,10 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
 
   Future<void> _initializeApp() async {
     await _loadDashboardData();
+    
+    // Initialize widget data provider
+    await WidgetDataProvider.instance.initialize();
+    WidgetDataProvider.instance.schedulePeriodicUpdates();
     
     // Check permissions on first launch
     WidgetsBinding.instance.addPostFrameCallback((_) async {
