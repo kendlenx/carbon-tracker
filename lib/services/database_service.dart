@@ -334,35 +334,91 @@ class DatabaseService {
       whereArgs: [id.toString()],
       limit: 1,
     );
-    
     return results.isNotEmpty ? results.first : null;
   }
   
-  /// Get activities by category (for multi-category support)
-  Future<List<Map<String, dynamic>>> getActivitiesByCategory(String category) async {
-    // For now, we only have transport activities
-    // In future, this can be extended for food, shopping, etc.
-    if (category == 'transport') {
-      return await getAllActivities();
-    }
-    return [];
+  /// Delete all user data (GDPR compliance)
+  Future<void> deleteAllUserData() async {
+    final db = await database;
+    await db.delete(_transportActivitiesTable);
   }
   
-  /// Insert generic activity (for Firebase sync)
-  Future<int> insertActivity(Map<String, dynamic> activityData) async {
-    // Convert generic activity to TransportActivity and add
+  /// Delete activities before a certain date (data retention)
+  Future<void> deleteActivitiesBefore(DateTime cutoffDate) async {
+    final db = await database;
+    await db.delete(
+      _transportActivitiesTable,
+      where: 'timestamp < ?',
+      whereArgs: [cutoffDate.millisecondsSinceEpoch],
+    );
+  }
+  
+  /// Get activities by category for GDPR export
+  Future<List<Map<String, dynamic>>> getActivitiesByCategory(String category) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      _transportActivitiesTable,
+      where: 'type = ?',
+      whereArgs: [category],
+      orderBy: 'timestamp DESC',
+    );
+    return maps;
+  }
+  
+  /// Insert activity from external data (for sync/import)
+  Future<String> insertActivity(Map<String, dynamic> activityData) async {
+    final db = await database;
+    
+    // Convert generic activity data to TransportActivity format
+    final id = activityData['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString();
+    final type = activityData['type']?.toString() ?? 'car';
+    final distance = double.tryParse(activityData['amount']?.toString() ?? '0') ?? 0.0;
+    final carbonFootprint = double.tryParse(activityData['carbon_footprint']?.toString() ?? '0') ?? 0.0;
+    final timestamp = DateTime.tryParse(activityData['date']?.toString() ?? '') ?? DateTime.now();
+    
+    // Convert to TransportType
+    TransportType transportType;
+    switch (type.toLowerCase()) {
+      case 'walking':
+      case 'yürüme':
+        transportType = TransportType.walking;
+        break;
+      case 'bicycle':
+      case 'bisiklet':
+        transportType = TransportType.bicycle;
+        break;
+      case 'bus':
+      case 'otobüs':
+        transportType = TransportType.bus;
+        break;
+      case 'train':
+      case 'tren':
+        transportType = TransportType.train;
+        break;
+      case 'metro':
+        transportType = TransportType.metro;
+        break;
+      default:
+        transportType = TransportType.car;
+    }
+    
     final activity = TransportActivity(
-      id: activityData['id']?.toString() ?? DateTime.now().millisecondsSinceEpoch.toString(),
-      type: _parseTransportType(activityData['type'] ?? activityData['subcategory'] ?? 'car'),
-      distanceKm: (activityData['distance'] ?? activityData['distanceKm'] ?? 1.0).toDouble(),
-      durationMinutes: (activityData['duration'] ?? activityData['durationMinutes'] ?? 5).round(),
-      co2EmissionKg: (activityData['co2_amount'] ?? activityData['co2EmissionKg'] ?? 0.0).toDouble(),
-      timestamp: DateTime.tryParse(activityData['created_at'] ?? activityData['timestamp'] ?? '') ?? DateTime.now(),
-      notes: activityData['description'] ?? activityData['notes'] ?? '',
+      id: id,
+      type: transportType,
+      distanceKm: distance,
+      durationMinutes: (distance * 3).round(),
+      co2EmissionKg: carbonFootprint,
+      timestamp: timestamp,
+      notes: activityData['description']?.toString() ?? '',
     );
     
-    await addActivity(activity);
-    return int.tryParse(activity.id) ?? 0;
+    await db.insert(
+      _transportActivitiesTable,
+      activity.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    
+    return id;
   }
   
   /// Parse transport type from string
@@ -382,8 +438,6 @@ class DatabaseService {
       return TransportType.car;
     }
   }
-
-
 
   // Close database
   Future<void> close() async {

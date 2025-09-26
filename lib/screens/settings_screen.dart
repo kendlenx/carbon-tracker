@@ -8,10 +8,13 @@ import '../services/notification_service.dart';
 import '../services/data_export_service.dart';
 import '../services/security_service.dart';
 import '../services/firebase_service.dart';
+import '../services/gdpr_service.dart';
 import 'cloud_backup_screen.dart';
 import 'user_profile_screen.dart';
+import 'privacy_policy_screen.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
+import '../widgets/consent_dialog.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -34,6 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final NotificationService _notificationService = NotificationService.instance;
   final SecurityService _securityService = SecurityService();
   final FirebaseService _firebaseService = FirebaseService();
+  final GDPRService _gdprService = GDPRService();
 
   String _userName = '';
   String _defaultUserName = '';
@@ -1085,6 +1089,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Divider(),
 
             _buildPreferenceItem(
+              icon: Icons.privacy_tip,
+              iconColor: Colors.purple,
+              title: _languageService.isEnglish ? 'Privacy Policy' : 'Gizlilik Politikası',
+              subtitle: _languageService.isEnglish ? 'View our privacy policy and GDPR rights' : 'Gizlilik politikamızı ve GDPR haklarınızı görün',
+              onTap: () => _navigateToPrivacyPolicy(),
+            ),
+
+            const Divider(),
+
+            _buildPreferenceItem(
+              icon: Icons.security,
+              iconColor: Colors.blue,
+              title: _languageService.isEnglish ? 'Data Consent' : 'Veri İzinleri',
+              subtitle: _languageService.isEnglish ? 'Manage your data processing consent' : 'Veri işleme izinlerinizi yönetin',
+              onTap: () => _showConsentDialog(),
+            ),
+
+            const Divider(),
+
+            _buildPreferenceItem(
               icon: Icons.delete_forever,
               iconColor: Colors.red,
               title: _languageService.isEnglish ? 'Clear All Data' : 'Tüm Verileri Temizle',
@@ -2113,6 +2137,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _navigateToPrivacyPolicy() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PrivacyPolicyScreen(),
+      ),
+    );
+  }
+
+  void _showConsentDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const ConsentDialog(),
     );
   }
 }

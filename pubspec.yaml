@@ -50,6 +50,9 @@ dependencies:
   # Shared preferences for settings
   shared_preferences: ^2.2.2
   
+  # State management
+  provider: ^6.1.2
+  
   # Smart Notifications & Reminders
   flutter_local_notifications: ^17.2.3
   permission_handler: ^11.3.1
