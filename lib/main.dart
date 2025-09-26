@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'screens/transport_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/energy_screen.dart';
-import 'screens/achievements_screen.dart';
 import 'screens/food_screen.dart';
 import 'screens/shopping_screen.dart';
+import 'screens/achievements_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'screens/onboarding_flow_screen.dart';
+import 'services/onboarding_service.dart';
+import 'services/smart_notification_service.dart';
 import 'screens/settings_screen.dart';
 import 'screens/goals_screen.dart';
 import 'screens/permissions_screen.dart';
@@ -356,7 +361,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         break;
       case CarbonCategory.food:
         final result = await context.pushWithTransition<bool>(
-          const FoodScreen(),
+          FoodScreen(),
           transition: TransitionType.slideUp,
         );
         if (result == true) {
@@ -366,7 +371,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         break;
       case CarbonCategory.shopping:
         final result = await context.pushWithTransition<bool>(
-          const ShoppingScreen(),
+          ShoppingScreen(),
           transition: TransitionType.fadeScale,
         );
         if (result == true) {

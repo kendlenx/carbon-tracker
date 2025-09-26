@@ -194,6 +194,37 @@ class NotificationService extends ChangeNotifier {
     );
   }
 
+  /// Show a generic notification
+  Future<void> showNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    if (!_notificationsEnabled) return;
+    
+    try {
+      await _notifications.show(
+        id,
+        title,
+        body,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'general',
+            'General Notifications',
+            channelDescription: 'General app notifications',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+          ),
+          iOS: DarwinNotificationDetails(),
+        ),
+        payload: payload,
+      );
+    } catch (e) {
+      print('Error showing notification: $e');
+    }
+  }
+
   /// Send achievement notification
   Future<void> showAchievementNotification(String title, String description, int points) async {
     if (!_achievementNotificationsEnabled || !_notificationsEnabled) return;

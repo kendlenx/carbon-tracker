@@ -5,7 +5,7 @@ import '../models/transport_activity.dart';
 class DatabaseService {
   static Database? _database;
   static const String _databaseName = 'carbon_tracker.db';
-  static const int _databaseVersion = 1;
+  static const int _databaseVersion = 2;
 
   // Table names
   static const String _transportActivitiesTable = 'transport_activities';
@@ -57,11 +57,41 @@ class DatabaseService {
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     // Handle database upgrades here
-    // For now, we'll just recreate the tables
-    if (oldVersion < newVersion) {
-      await db.execute('DROP TABLE IF EXISTS $_transportActivitiesTable');
-      await _onCreate(db, newVersion);
+    if (oldVersion < 2) {
+      // Version 2: Ensure timestamp column exists
+      try {
+        // Check if timestamp column exists
+        final columns = await db.rawQuery('PRAGMA table_info($_transportActivitiesTable)');
+        final hasTimestamp = columns.any((col) => col['name'] == 'timestamp');
+        
+        if (!hasTimestamp) {
+          // Add timestamp column if missing
+          await db.execute('ALTER TABLE $_transportActivitiesTable ADD COLUMN timestamp INTEGER NOT NULL DEFAULT 0');
+          
+          // Update existing records with current timestamp if they have timestamp 0
+          await db.execute('''
+            UPDATE $_transportActivitiesTable 
+            SET timestamp = ? 
+            WHERE timestamp = 0
+          ''', [DateTime.now().millisecondsSinceEpoch]);
+        }
+        
+        // Recreate index
+        await db.execute('DROP INDEX IF EXISTS idx_transport_timestamp');
+        await db.execute('''
+          CREATE INDEX idx_transport_timestamp 
+          ON $_transportActivitiesTable(timestamp)
+        ''');
+      } catch (e) {
+        print('Migration error, recreating table: $e');
+        // If migration fails, recreate the table
+        await db.execute('DROP TABLE IF EXISTS $_transportActivitiesTable');
+        await _onCreate(db, newVersion);
+      }
     }
+    
+    // Future migrations can be added here
+    // if (oldVersion < 3) { ... }
   }
 
   // Transport Activities CRUD operations

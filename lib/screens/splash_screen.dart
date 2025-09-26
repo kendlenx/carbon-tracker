@@ -8,8 +8,11 @@ import '../services/permission_service.dart';
 import '../services/notification_service.dart';
 import '../services/achievement_service.dart';
 import '../services/smart_features_service.dart';
+import '../services/onboarding_service.dart';
+import '../services/smart_notification_service.dart';
 import '../main.dart';
 import 'onboarding_screen.dart';
+import 'onboarding_flow_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -170,6 +173,7 @@ class _SplashScreenState extends State<SplashScreen>
         _statusText = 'Akıllı özellikler hazırlanıyor...';
       });
       await SmartFeaturesService.instance.initialize();
+      await SmartNotificationService.instance.initialize();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
@@ -198,6 +202,37 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _navigateToMain() async {
     // Check if onboarding should be shown
+    final onboardingComplete = await OnboardingService.instance.isOnboardingComplete();
+    
+    if (!onboardingComplete) {
+      // Navigate to new onboarding flow
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const OnboardingFlowScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
+      );
+    } else {
+      // Navigate to main app
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const CarbonTrackerHome(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
+      );
+    }
     final prefs = await SharedPreferences.getInstance();
     final showOnboarding = !(prefs.getBool('onboarding_completed') ?? false);
     final targetScreen = showOnboarding ? const OnboardingScreen() : const CarbonTrackerHome();
