@@ -9,6 +9,7 @@ import '../services/data_export_service.dart';
 import '../services/security_service.dart';
 import '../services/firebase_service.dart';
 import 'cloud_backup_screen.dart';
+import 'user_profile_screen.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import 'dart:io';
@@ -386,8 +387,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Section
-              _buildProfileSection(),
+            // Profile Section
+            _buildProfileSection(),
+            const SizedBox(height: 24),
+
+            // User Account Section
+            if (_firebaseService.isUserSignedIn)
+              _buildUserAccountSection(),
+            if (_firebaseService.isUserSignedIn)
               const SizedBox(height: 24),
 
               // App Preferences
@@ -635,6 +642,141 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 setState(() {
                   _dailyCarbonGoal = value;
                 });
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUserAccountSection() {
+    final currentUser = _firebaseService.currentUser;
+    
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: Colors.blue.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.account_circle,
+                    color: Colors.blue,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _languageService.isEnglish ? 'User Account' : 'Kullanıcı Hesabı',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    Text(
+                      currentUser?.email ?? '',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            _buildPreferenceItem(
+              icon: Icons.person,
+              iconColor: Colors.blue,
+              title: _languageService.isEnglish ? 'Profile Settings' : 'Profil Ayarları',
+              subtitle: _languageService.isEnglish 
+                ? 'Manage your profile information and account settings'
+                : 'Profil bilgilerinizi ve hesap ayarlarınızı yönetin',
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (currentUser?.emailVerified == true)
+                    Icon(Icons.verified, color: Colors.green, size: 16)
+                  else
+                    Icon(Icons.warning, color: Colors.orange, size: 16),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.chevron_right, color: Colors.grey),
+                ],
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+                );
+              },
+            ),
+            
+            const Divider(),
+            
+            _buildPreferenceItem(
+              icon: Icons.logout,
+              iconColor: Colors.red,
+              title: _languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap',
+              subtitle: _languageService.isEnglish 
+                ? 'Sign out from your account (local data remains)'
+                : 'Hesabınızdan çıkış yapın (yerel veriler kalacak)',
+              onTap: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(_languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap'),
+                    content: Text(
+                      _languageService.isEnglish
+                        ? 'Are you sure you want to sign out? Your local data will remain on this device.'
+                        : 'Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz bu cihazda kalacaktır.'
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(true),
+                        child: Text(_languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap'),
+                      ),
+                    ],
+                  ),
+                );
+                
+                if (confirmed == true) {
+                  await _firebaseService.signOut();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          _languageService.isEnglish 
+                            ? 'Signed out successfully'
+                            : 'Başarıyla çıkış yapıldı',
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    setState(() {}); // Refresh to update UI
+                  }
+                }
               },
             ),
           ],

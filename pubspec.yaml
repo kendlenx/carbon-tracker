@@ -87,7 +87,7 @@ dependencies:
   path_provider: ^2.1.4
   
   # Image & Camera
-  image_picker: ^1.1.2
+  image_picker: ^1.2.0
   
   # PDF Generation & Export
   pdf: ^3.11.1
