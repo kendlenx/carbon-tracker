@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 import '../firebase_options.dart';
@@ -51,6 +52,13 @@ class FirebaseService {
       // Initialize Firebase Core
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
+      );
+      
+      // Initialize Firebase App Check
+      await FirebaseAppCheck.instance.activate(
+        webProvider: ReCaptchaV3Provider('recaptcha-v3-site-key'),
+        androidProvider: AndroidProvider.debug,
+        appleProvider: AppleProvider.debug,
       );
       
       _auth = FirebaseAuth.instance;

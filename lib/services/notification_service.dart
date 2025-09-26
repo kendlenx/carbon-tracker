@@ -152,46 +152,56 @@ class NotificationService extends ChangeNotifier {
 
   /// Schedule daily carbon goal reminder
   Future<void> _scheduleDailyReminder() async {
-    await _notifications.cancel(1); // Cancel existing
-    
-    if (!_dailyRemindersEnabled || !_notificationsEnabled) return;
-    
-    final now = DateTime.now();
-    final scheduledDate = DateTime(
-      now.year, 
-      now.month, 
-      now.day,
-      _dailyReminderTime.hour,
-      _dailyReminderTime.minute,
-    );
-    
-    // If the time has passed today, schedule for tomorrow
-    final scheduleTime = scheduledDate.isBefore(now) 
-        ? scheduledDate.add(const Duration(days: 1))
-        : scheduledDate;
-    
-    await _notifications.zonedSchedule(
-      1,
-      '🌱 Karbon Takibi Hatırlatıcısı',
-      'Bugün karbon ayak izinizi kaydetmeyi unutmayın!',
-      tz.TZDateTime.from(scheduleTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_reminder',
-          'Günlük Hatırlatıcılar',
-          channelDescription: 'Günlük karbon takibi hatırlatıcıları',
-          importance: Importance.defaultImportance,
-          priority: Priority.defaultPriority,
-          icon: '@mipmap/launcher_icon',
+    try {
+      await _notifications.cancel(1); // Cancel existing
+      
+      if (!_dailyRemindersEnabled || !_notificationsEnabled) return;
+      
+      final now = DateTime.now();
+      final scheduledDate = DateTime(
+        now.year, 
+        now.month, 
+        now.day,
+        _dailyReminderTime.hour,
+        _dailyReminderTime.minute,
+      );
+      
+      // If the time has passed today, schedule for tomorrow
+      final scheduleTime = scheduledDate.isBefore(now) 
+          ? scheduledDate.add(const Duration(days: 1))
+          : scheduledDate;
+      
+      await _notifications.zonedSchedule(
+        1,
+        '🌱 Karbon Takibi Hatırlaıcısı',
+        'Bugün karbon ayak izinizi kaydetmeyi unutmayın!',
+        tz.TZDateTime.from(scheduleTime, tz.local),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'daily_reminder',
+            'Günlük Hatırlaıcılar',
+            channelDescription: 'Günlük karbon takibi hatırlaıcıları',
+            importance: Importance.defaultImportance,
+            priority: Priority.defaultPriority,
+            icon: '@mipmap/launcher_icon',
+          ),
+          iOS: DarwinNotificationDetails(
+            categoryIdentifier: 'daily_reminder',
+          ),
         ),
-        iOS: DarwinNotificationDetails(
-          categoryIdentifier: 'daily_reminder',
-        ),
-      ),
-      payload: 'daily_reminder',
-      matchDateTimeComponents: DateTimeComponents.time,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        payload: 'daily_reminder',
+        matchDateTimeComponents: DateTimeComponents.time,
+        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } catch (e) {
+      debugPrint('Error scheduling daily reminder: $e');
+      // Disable scheduled notifications if exact alarms are not permitted
+      if (e.toString().contains('exact_alarms_not_permitted')) {
+        debugPrint('Exact alarms not permitted - using regular notifications');
+        _dailyRemindersEnabled = false;
+        await _saveSettings();
+      }
+    }
   }
 
   /// Show a generic notification

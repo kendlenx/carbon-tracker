@@ -7,12 +7,8 @@ import 'screens/shopping_screen.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/biometric_lock_screen.dart';
-import 'services/onboarding_service.dart';
-import 'services/smart_notification_service.dart';
 import 'services/security_service.dart';
 import 'services/firebase_service.dart';
-import 'services/onboarding_service.dart';
-import 'services/smart_notification_service.dart';
 import 'screens/settings_screen.dart';
 import 'screens/goals_screen.dart';
 import 'screens/permissions_screen.dart';
@@ -36,7 +32,6 @@ import 'widgets/hero_dashboard.dart';
 import 'widgets/page_transitions.dart';
 import 'widgets/micro_interactions.dart';
 import 'widgets/carbon_tracker_logo.dart';
-import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +45,7 @@ void main() async {
   try {
     await firebaseService.initialize();
   } catch (e) {
-    print('Firebase initialization failed: $e');
+    debugPrint('Firebase initialization failed: $e');
     // Continue without Firebase if it fails
   }
   

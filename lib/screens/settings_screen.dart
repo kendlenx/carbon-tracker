@@ -15,12 +15,7 @@ import 'privacy_policy_screen.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import '../widgets/consent_dialog.dart';
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:math';
 
 class SettingsScreen extends StatefulWidget {
@@ -33,11 +28,9 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final LanguageService _languageService = LanguageService.instance;
   final ThemeService _themeService = ThemeService.instance;
-  final PermissionService _permissionService = PermissionService.instance;
   final NotificationService _notificationService = NotificationService.instance;
   final SecurityService _securityService = SecurityService();
   final FirebaseService _firebaseService = FirebaseService();
-  final GDPRService _gdprService = GDPRService();
 
   String _userName = '';
   String _defaultUserName = '';
@@ -121,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         });
       }
     } catch (e) {
-      print('Error loading security settings: $e');
+      debugPrint('Error loading security settings: $e');
     }
   }
 
@@ -203,7 +196,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _totalCarbon = stats['totalCarbon'] ?? 0.0;
       });
     } catch (e) {
-      print('Error loading user stats: $e');
+      debugPrint('Error loading user stats: $e');
     }
   }
 
