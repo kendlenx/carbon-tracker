@@ -2,9 +2,11 @@
     
     <!-- Gerekli İzinler -->
     <!-- Konum izni (required) -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     
     <!-- Mikrofon izni (required) -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />

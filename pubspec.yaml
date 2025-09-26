@@ -102,6 +102,9 @@ dependencies:
   
   # Testing dependencies  
   mockito: ^5.4.4
+  local_auth: ^2.3.0
+  flutter_secure_storage: ^9.2.4
+  sqflite_sqlcipher: ^3.4.0
 
 dev_dependencies:
   flutter_test:

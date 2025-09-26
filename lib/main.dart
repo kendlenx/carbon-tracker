@@ -6,8 +6,10 @@ import 'screens/food_screen.dart';
 import 'screens/shopping_screen.dart';
 import 'screens/achievements_screen.dart';
 import 'screens/splash_screen.dart';
-import 'screens/onboarding_screen.dart';
-import 'screens/onboarding_flow_screen.dart';
+import 'screens/biometric_lock_screen.dart';
+import 'services/onboarding_service.dart';
+import 'services/smart_notification_service.dart';
+import 'services/security_service.dart';
 import 'services/onboarding_service.dart';
 import 'services/smart_notification_service.dart';
 import 'screens/settings_screen.dart';
@@ -37,11 +39,55 @@ import 'screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const CarbonTrackerApp());
+  
+  // Initialize security service
+  final securityService = SecurityService();
+  await securityService.initializeSecurity();
+  
+  runApp(CarbonTrackerApp(securityService: securityService));
 }
 
-class CarbonTrackerApp extends StatelessWidget {
-  const CarbonTrackerApp({super.key});
+class CarbonTrackerApp extends StatefulWidget {
+  final SecurityService securityService;
+  
+  const CarbonTrackerApp({super.key, required this.securityService});
+
+  @override
+  State<CarbonTrackerApp> createState() => _CarbonTrackerAppState();
+}
+
+class _CarbonTrackerAppState extends State<CarbonTrackerApp> {
+  bool _isAuthenticated = false;
+  bool _needsAuthentication = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  Future<void> _checkAuthentication() async {
+    final needsAuth = await widget.securityService.isAppLockEnabled();
+    setState(() {
+      _needsAuthentication = needsAuth;
+      _isAuthenticated = !needsAuth;
+    });
+  }
+
+  Future<void> _showBiometricLock() async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute<bool>(
+        builder: (context) => const BiometricLockScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+
+    if (result == true) {
+      setState(() {
+        _isAuthenticated = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +110,31 @@ class CarbonTrackerApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: const SplashScreen(),
+          home: _buildHomeScreen(),
           debugShowCheckedModeBanner: false,
         );
       },
-      child: const SplashScreen(), // Pre-build child for performance
     );
+  }
+
+  Widget _buildHomeScreen() {
+    if (_needsAuthentication && !_isAuthenticated) {
+      // Show biometric lock if authentication is needed
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showBiometricLock();
+        }
+      });
+      return Container(
+        color: Colors.black,
+        child: const Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+          ),
+        ),
+      );
+    }
+    return const SplashScreen();
   }
 }
 

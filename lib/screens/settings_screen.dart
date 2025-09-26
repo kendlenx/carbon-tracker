@@ -6,6 +6,7 @@ import '../services/database_service.dart';
 import '../services/permission_service.dart';
 import '../services/notification_service.dart';
 import '../services/data_export_service.dart';
+import '../services/security_service.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import 'dart:io';
@@ -28,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final ThemeService _themeService = ThemeService.instance;
   final PermissionService _permissionService = PermissionService.instance;
   final NotificationService _notificationService = NotificationService.instance;
+  final SecurityService _securityService = SecurityService();
 
   String _userName = '';
   String _defaultUserName = '';
@@ -36,6 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationsEnabled = true;
   bool _hapticFeedbackEnabled = true;
   bool _autoBackupEnabled = false;
+  bool _biometricEnabled = false;
+  bool _appLockEnabled = false;
+  Map<String, bool> _securityStatus = {};
   double _dailyCarbonGoal = 10.0;
   int _totalActivities = 0;
   double _totalCarbon = 0.0;
@@ -47,6 +52,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadUserSettings();
     _loadUserStats();
     _loadNotificationSettings();
+    _loadSecuritySettings();
   }
 
   Future<void> _loadUserSettings() async {
@@ -93,6 +99,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _notificationsEnabled = _notificationService.notificationsEnabled;
     });
+  }
+
+  Future<void> _loadSecuritySettings() async {
+    try {
+      final securityStatus = await _securityService.getSecurityStatus();
+      final biometricEnabled = await _securityService.isBiometricEnabled();
+      final appLockEnabled = await _securityService.isAppLockEnabled();
+      
+      if (mounted) {
+        setState(() {
+          _securityStatus = securityStatus;
+          _biometricEnabled = biometricEnabled;
+          _appLockEnabled = appLockEnabled;
+        });
+      }
+    } catch (e) {
+      print('Error loading security settings: $e');
+    }
+  }
+
+  Future<void> _toggleBiometric(bool enabled) async {
+    try {
+      if (enabled) {
+        final success = await _securityService.enableBiometricAuth();
+        if (success) {
+          await _securityService.setAppLockEnabled(true);
+          await _loadSecuritySettings();
+          _showSecuritySnackBar(
+            _languageService.isEnglish 
+              ? 'Biometric authentication enabled successfully!'
+              : 'Biyometrik kimlik doğrulama başarıyla etkinleştirildi!',
+            Colors.green,
+          );
+        } else {
+          _showSecuritySnackBar(
+            _languageService.isEnglish 
+              ? 'Failed to enable biometric authentication'
+              : 'Biyometrik kimlik doğrulama etkinleştirilemedi',
+            Colors.red,
+          );
+        }
+      } else {
+        await _securityService.disableBiometricAuth();
+        await _loadSecuritySettings();
+        _showSecuritySnackBar(
+          _languageService.isEnglish 
+            ? 'Biometric authentication disabled'
+            : 'Biyometrik kimlik doğrulama devre dışı bırakıldı',
+          Colors.orange,
+        );
+      }
+    } catch (e) {
+      _showSecuritySnackBar(
+        _languageService.isEnglish 
+          ? 'Error: $e'
+          : 'Hata: $e',
+        Colors.red,
+      );
+    }
+  }
+
+  void _showSecuritySnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.security,
+              color: Colors.white,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        backgroundColor: color,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Future<void> _saveUserSettings() async {
@@ -290,6 +375,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           await _loadUserSettings();
           await _loadUserStats();
           await _loadNotificationSettings();
+          await _loadSecuritySettings();
         },
         color: Colors.blue,
         child: SingleChildScrollView(
@@ -303,6 +389,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               // App Preferences
               _buildAppPreferencesSection(),
+              const SizedBox(height: 24),
+
+              // Security Section
+              _buildSecuritySection(),
               const SizedBox(height: 24),
 
               // User Stats
@@ -550,6 +640,199 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildSecuritySection() {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: Colors.green.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.security,
+                    color: Colors.green,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _languageService.isEnglish ? 'Security & Privacy' : 'Güvenlik ve Gizlilik',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                    ),
+                    Text(
+                      _languageService.isEnglish 
+                        ? 'Protect your carbon data' 
+                        : 'Karbon verilerinizi koruyun',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Biometric Authentication
+            _buildSwitchPreference(
+              icon: _securityStatus['biometricsAvailable'] == true 
+                ? Icons.fingerprint 
+                : Icons.security,
+              title: _languageService.isEnglish 
+                ? 'Biometric Authentication' 
+                : 'Biyometrik Kimlik Doğrulama',
+              subtitle: _securityStatus['biometricsAvailable'] == true
+                ? (_languageService.isEnglish 
+                    ? 'Use fingerprint/face unlock' 
+                    : 'Parmak izi/yüz kilidi kullan')
+                : (_languageService.isEnglish 
+                    ? 'Biometrics not available on this device' 
+                    : 'Bu cihazda biyometrik özellik yok'),
+              value: _biometricEnabled && (_securityStatus['biometricsAvailable'] == true),
+              onChanged: _securityStatus['biometricsAvailable'] == true 
+                ? (bool value) {
+                    _toggleBiometric(value);
+                  }
+                : null,
+            ),
+
+            const Divider(),
+
+            // App Lock Status
+            _buildPreferenceItem(
+              icon: _appLockEnabled ? Icons.lock : Icons.lock_open,
+              iconColor: _appLockEnabled ? Colors.green : Colors.orange,
+              title: _languageService.isEnglish ? 'App Lock Status' : 'Uygulama Kilidi Durumu',
+              subtitle: _appLockEnabled 
+                ? (_languageService.isEnglish ? 'App is secured' : 'Uygulama güvende')
+                : (_languageService.isEnglish ? 'App is unlocked' : 'Uygulama açık'),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _appLockEnabled ? Colors.green : Colors.orange,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  _appLockEnabled 
+                    ? (_languageService.isEnglish ? 'SECURE' : 'GÜVENLİ')
+                    : (_languageService.isEnglish ? 'OPEN' : 'AÇIK'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+            const Divider(),
+
+            // Data Encryption Status
+            _buildPreferenceItem(
+              icon: Icons.enhanced_encryption,
+              iconColor: _securityStatus['dataEncrypted'] == true ? Colors.green : Colors.grey,
+              title: _languageService.isEnglish ? 'Data Encryption' : 'Veri Şifreleme',
+              subtitle: _securityStatus['dataEncrypted'] == true
+                ? (_languageService.isEnglish ? 'Your data is encrypted' : 'Verileriniz şifrelenmiş')
+                : (_languageService.isEnglish ? 'Data encryption disabled' : 'Veri şifreleme kapalı'),
+              trailing: Icon(
+                _securityStatus['dataEncrypted'] == true 
+                  ? Icons.check_circle 
+                  : Icons.warning,
+                color: _securityStatus['dataEncrypted'] == true 
+                  ? Colors.green 
+                  : Colors.orange,
+              ),
+            ),
+
+            const Divider(),
+
+            // Clear Security Data
+            _buildPreferenceItem(
+              icon: Icons.delete_sweep,
+              iconColor: Colors.red,
+              title: _languageService.isEnglish ? 'Clear Security Data' : 'Güvenlik Verilerini Temizle',
+              subtitle: _languageService.isEnglish 
+                ? 'Reset all security settings and keys' 
+                : 'Tüm güvenlik ayarlarını ve anahtarları sıfırla',
+              onTap: _clearSecurityData,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _clearSecurityData() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.warning, color: Colors.orange),
+            const SizedBox(width: 8),
+            Text(_languageService.isEnglish ? 'Clear Security Data' : 'Güvenlik Verilerini Temizle'),
+          ],
+        ),
+        content: Text(_languageService.isEnglish 
+          ? 'This will reset all security settings and encryption keys. You will need to set up biometric authentication again. Continue?'
+          : 'Bu işlem tüm güvenlik ayarlarını ve şifreleme anahtarlarını sıfırlayacaktır. Biyometrik kimlik doğrulamayı tekrar kurmanız gerekecektir. Devam edilsin mi?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(_languageService.isEnglish ? 'Clear' : 'Temizle'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _securityService.clearSecureStorage();
+        await _loadSecuritySettings();
+        _showSecuritySnackBar(
+          _languageService.isEnglish 
+            ? 'Security data cleared successfully'
+            : 'Güvenlik verileri başarıyla temizlendi',
+          Colors.green,
+        );
+      } catch (e) {
+        _showSecuritySnackBar(
+          _languageService.isEnglish 
+            ? 'Failed to clear security data: $e'
+            : 'Güvenlik verileri temizlenemedi: $e',
+          Colors.red,
+        );
+      }
+    }
+  }
+
   Widget _buildStatsSection() {
     return Card(
       child: Padding(
@@ -707,7 +990,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String title,
     required String subtitle,
     required bool value,
-    required ValueChanged<bool> onChanged,
+    ValueChanged<bool>? onChanged,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
