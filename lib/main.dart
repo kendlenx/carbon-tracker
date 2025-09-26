@@ -550,23 +550,6 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: VoiceCommandWidget(),
-            ),
-          );
-        },
-        heroTag: "voice_command_fab",
-        child: const Icon(Icons.mic),
-        tooltip: _languageService.isEnglish ? 'Voice Commands' : 'Ses Komutları',
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
     );
   }
 

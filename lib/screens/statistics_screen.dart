@@ -153,32 +153,41 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         ),
         child: TabBar(
           controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white,
-          indicatorColor: Colors.transparent,
-          splashFactory: NoSplash.splashFactory,
-          overlayColor: MaterialStateProperty.all(Colors.transparent),
+          labelColor: Colors.green,
+          unselectedLabelColor: Colors.grey,
+          indicatorColor: Colors.green,
+          indicatorWeight: 3,
+          splashFactory: InkSplash.splashFactory,
+          overlayColor: WidgetStateProperty.resolveWith<Color?>(
+            (Set<WidgetState> states) {
+              if (states.contains(WidgetState.pressed)) {
+                return Colors.green.withOpacity(0.1);
+              }
+              if (states.contains(WidgetState.hovered)) {
+                return Colors.green.withOpacity(0.05);
+              }
+              return null;
+            },
+          ),
           labelStyle: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 12,
-            color: Colors.white,
           ),
           unselectedLabelStyle: const TextStyle(
             fontWeight: FontWeight.normal,
             fontSize: 12,
-            color: Colors.white,
           ),
           tabs: [
             Tab(
-              icon: const Icon(Icons.calendar_view_week, color: Colors.white),
+              icon: const Icon(Icons.calendar_view_week),
               text: _languageService.isEnglish ? 'Weekly' : 'Haftalık',
             ),
             Tab(
-              icon: const Icon(Icons.calendar_month, color: Colors.white),
+              icon: const Icon(Icons.calendar_month),
               text: _languageService.isEnglish ? 'Monthly' : 'Aylık',
             ),
             Tab(
-              icon: const Icon(Icons.pie_chart, color: Colors.white),
+              icon: const Icon(Icons.pie_chart),
               text: _languageService.isEnglish ? 'Categories' : 'Kategoriler',
             ),
           ],
