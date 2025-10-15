@@ -49,20 +49,7 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
   Widget build(BuildContext context) {
     // Return empty container if ad not loaded
     if (!_isAdLoaded || _bannerAd == null) {
-      return Container(
-        width: double.infinity,
-        height: 60,
-        color: Colors.grey.shade100,
-        child: const Center(
-          child: Text(
-            '📱 Banner Reklam Yükleniyor...',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-            ),
-          ),
-        ),
-      );
+      return const SizedBox.shrink(); // Don't show anything while loading
     }
 
     return Container(
@@ -216,7 +203,7 @@ class _SmartBannerAdWidgetState extends State<SmartBannerAdWidget> {
                         ),
                         const SizedBox(width: 2),
                         Text(
-                          'Supporting Carbon Tracker',
+                          'Supporting Carbon Step',
                           style: TextStyle(
                             fontSize: 9,
                             color: Colors.green.shade600,

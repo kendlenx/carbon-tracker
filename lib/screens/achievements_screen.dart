@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:carbon_tracker/services/achievement_service.dart';
-import 'package:carbon_tracker/widgets/achievement_widgets.dart';
-import 'package:carbon_tracker/widgets/animated_widgets.dart';
+import 'package:carbon_step/services/achievement_service.dart';
+import 'package:carbon_step/widgets/achievement_widgets.dart';
+import 'package:carbon_step/widgets/animated_widgets.dart';
 
 class AchievementsScreen extends StatefulWidget {
   const AchievementsScreen({Key? key}) : super(key: key);

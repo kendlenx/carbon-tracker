@@ -130,7 +130,7 @@ class _CarbonTrackerAppState extends State<CarbonTrackerApp> {
       ]),
       builder: (context, child) {
         return MaterialApp(
-          title: 'Carbon Tracker',
+          title: 'Carbon Step',
           theme: ThemeService.instance.lightTheme,
           darkTheme: ThemeService.instance.darkTheme,
           themeMode: ThemeService.instance.themeMode,
@@ -501,7 +501,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Carbon Tracker',
+                    'Carbon Step',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:carbon_tracker/services/achievement_service.dart';
-import 'package:carbon_tracker/widgets/animated_widgets.dart';
+import 'package:carbon_step/services/achievement_service.dart';
+import 'package:carbon_step/widgets/animated_widgets.dart';
 
 class BadgeWidget extends StatefulWidget {
   final Achievement achievement;

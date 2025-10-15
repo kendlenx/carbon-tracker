@@ -48,7 +48,7 @@
     <!-- AdMob reklam izinleri -->
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <application
-        android:label="Carbon Tracker"
+        android:label="Carbon Step"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:enableOnBackInvokedCallback="true">
