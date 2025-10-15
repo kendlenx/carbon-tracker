@@ -12,7 +12,12 @@
           "package_name": "com.example.carbon_tracker"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "901301851843-imvfdiclosbi9l9ama860e02kl1q0l0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCctSU357ssiOpL8ZxJ8BlEqUL7bJwOzb4"
@@ -20,7 +25,55 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901301851843-imvfdiclosbi9l9ama860e02kl1q0l0f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "901301851843-kih78aojdn9fjaqd0m12tiguaiecgari.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carbonTracker"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901301851843:android:cfa4bf528a055dfa493476",
+        "android_client_info": {
+          "package_name": "com.kendlenx.carbonstep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901301851843-imvfdiclosbi9l9ama860e02kl1q0l0f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCctSU357ssiOpL8ZxJ8BlEqUL7bJwOzb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901301851843-imvfdiclosbi9l9ama860e02kl1q0l0f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "901301851843-kih78aojdn9fjaqd0m12tiguaiecgari.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.carbonTracker"
+              }
+            }
+          ]
         }
       }
     }

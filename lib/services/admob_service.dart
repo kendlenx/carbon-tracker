@@ -16,38 +16,38 @@ class AdMobService {
 
   static AdMobService get instance => _instance;
 
-  // Ad Unit IDs - Test IDs for development
+  // Ad Unit IDs - Production IDs
   static String get _bannerAdUnitId => kDebugMode
       ? (Platform.isAndroid
           ? 'ca-app-pub-3940256099942544/6300978111' // Test banner Android
           : 'ca-app-pub-3940256099942544/2934735716') // Test banner iOS
       : (Platform.isAndroid
-          ? 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX' // Your real Android banner ID
-          : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX'); // Your real iOS banner ID
+          ? 'ca-app-pub-8523472394185227/5986288065' // Production banner Android
+          : 'ca-app-pub-8523472394185227/5986288065'); // Production banner iOS
 
   static String get _interstitialAdUnitId => kDebugMode
       ? (Platform.isAndroid
           ? 'ca-app-pub-3940256099942544/1033173712' // Test interstitial Android
           : 'ca-app-pub-3940256099942544/4411468910') // Test interstitial iOS
       : (Platform.isAndroid
-          ? 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX' // Your real Android interstitial ID
-          : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX'); // Your real iOS interstitial ID
+          ? 'ca-app-pub-8523472394185227/1204734672' // Production interstitial Android
+          : 'ca-app-pub-8523472394185227/1204734672'); // Production interstitial iOS
 
   static String get _rewardedAdUnitId => kDebugMode
       ? (Platform.isAndroid
           ? 'ca-app-pub-3940256099942544/5224354917' // Test rewarded Android
           : 'ca-app-pub-3940256099942544/1712485313') // Test rewarded iOS
       : (Platform.isAndroid
-          ? 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX' // Your real Android rewarded ID
-          : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX'); // Your real iOS rewarded ID
+          ? 'ca-app-pub-8523472394185227/7566963048' // Production rewarded Android
+          : 'ca-app-pub-8523472394185227/7566963048'); // Production rewarded iOS
 
   static String get _nativeAdUnitId => kDebugMode
       ? (Platform.isAndroid
           ? 'ca-app-pub-3940256099942544/2247696110' // Test native Android
           : 'ca-app-pub-3940256099942544/3986624511') // Test native iOS
       : (Platform.isAndroid
-          ? 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX' // Your real Android native ID
-          : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX'); // Your real iOS native ID
+          ? 'ca-app-pub-8523472394185227/9486565289' // Production native Android
+          : 'ca-app-pub-8523472394185227/9486565289'); // Production native iOS
 
   // Ad instances
   BannerAd? _bannerAd;
