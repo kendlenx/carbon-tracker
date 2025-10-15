@@ -24,6 +24,8 @@ import 'services/language_service.dart';
 import 'services/permission_service.dart';
 import 'services/advanced_reporting_service.dart';
 import 'services/widget_data_provider.dart';
+import 'services/admob_service.dart';
+import 'services/performance_service.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/achievement_widgets.dart';
@@ -32,6 +34,7 @@ import 'widgets/hero_dashboard.dart';
 import 'widgets/page_transitions.dart';
 import 'widgets/micro_interactions.dart';
 import 'widgets/carbon_tracker_logo.dart';
+import 'widgets/banner_ad_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +50,22 @@ void main() async {
   } catch (e) {
     debugPrint('Firebase initialization failed: $e');
     // Continue without Firebase if it fails
+  }
+  
+  // Initialize AdMob service
+  try {
+    await AdMobService.instance.initialize();
+  } catch (e) {
+    debugPrint('AdMob initialization failed: $e');
+    // Continue without AdMob if it fails
+  }
+  
+  // Initialize Performance Service
+  try {
+    await PerformanceService.instance.initialize();
+  } catch (e) {
+    debugPrint('Performance Service initialization failed: $e');
+    // Continue without Performance Service if it fails
   }
   
   runApp(CarbonTrackerApp(
@@ -240,6 +259,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   Future<void> _initializeApp() async {
     await _loadDashboardData();
     
+    // 💰 Initialize AdMob for maximum revenue
+    await AdMobService.instance.initialize();
+    
     // Initialize widget data provider
     await WidgetDataProvider.instance.initialize();
     WidgetDataProvider.instance.schedulePeriodicUpdates();
@@ -367,8 +389,8 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.green.shade800.withOpacity(0.3)
-                        : Theme.of(context).primaryColor.withOpacity(0.1),
+                        ? Colors.green.shade800.withValues(alpha: 0.3)
+                        : Theme.of(context).primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -462,7 +484,10 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Column(
+      children: [
+        Expanded(
+          child: Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -488,7 +513,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                       _languageService.isEnglish ? '🌍 Track your carbon footprint' : '🌍 Karbon ayak izini takip et',
                       style: TextStyle(
                         fontSize: 11,
-                        color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                       ),
                     ),
                   ),
@@ -637,6 +662,11 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           ),
         ],
       ),
+    ), // Close Scaffold
+        ), // Close Expanded
+        // Banner ad widget at the bottom
+        const BannerAdWidget(),
+      ],
     );
   }
 
@@ -829,20 +859,20 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         gradient: LinearGradient(
           colors: Theme.of(context).brightness == Brightness.dark
               ? [
-                  Colors.purple.shade800.withOpacity(0.2),
-                  Colors.blue.shade900.withOpacity(0.1),
+                  Colors.purple.shade800.withValues(alpha: 0.2),
+                  Colors.blue.shade900.withValues(alpha: 0.1),
                 ]
               : [
-                  Colors.purple.withOpacity(0.05),
-                  Colors.blue.withOpacity(0.03),
+                  Colors.purple.withValues(alpha: 0.05),
+                  Colors.blue.withValues(alpha: 0.03),
                 ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         border: Border.all(
           color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.grey.shade700.withOpacity(0.3)
-              : Colors.grey.withOpacity(0.1),
+              ? Colors.grey.shade700.withValues(alpha: 0.3)
+              : Colors.grey.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -857,7 +887,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.amber.withOpacity(0.1),
+                      color: Colors.amber.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(

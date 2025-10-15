@@ -1,6 +1,5 @@
 package com.example.carbon_tracker
 
-import io.flutter.embedding.android.FlutterActivity
-import androidx.activity.ComponentActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+class MainActivity : FlutterFragmentActivity()

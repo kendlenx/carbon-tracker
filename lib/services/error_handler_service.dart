@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'performance_service.dart';
+
+/// 🛡️ Error Handler Service - Enhanced version
+/// 
+/// Features: Global error handling, memory leak prevention, retry mechanisms
 import 'package:flutter/material.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';

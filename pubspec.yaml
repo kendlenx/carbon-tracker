@@ -104,6 +104,9 @@ dependencies:
   # HTTP requests for integrations
   http: ^1.2.0
   
+  # Google Mobile Ads - AdMob Integration
+  google_mobile_ads: ^5.1.0
+  
   # Testing dependencies  
   mockito: ^5.4.4
   local_auth: ^2.3.0
