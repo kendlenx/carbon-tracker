@@ -15,14 +15,14 @@ struct CarbonTrackerControlWidget: ControlWidget {
                 action: AddActivityIntent()
             ) { isOn in
                 Label {
-                    Text("Carbon Tracker")
+                    Text("Carbon Step")
                 } icon: {
                     Image(systemName: "leaf.fill")
                         .foregroundColor(.green)
                 }
             }
         }
-        .displayName("Carbon Tracker")
+        .displayName("Carbon Step")
         .description("Quick carbon activity tracking")
     }
 }

@@ -1,14 +1,14 @@
-# Terms of Service for Carbon Tracker
+# Terms of Service for Carbon Step
 
 **Last updated:** October 15, 2024
 
 ## 1. Acceptance of Terms
 
-By downloading, installing, or using Carbon Tracker, you agree to be bound by these Terms of Service.
+By downloading, installing, or using Carbon Step, you agree to be bound by these Terms of Service.
 
 ## 2. Description of Service
 
-Carbon Tracker is a mobile application that helps users track and reduce their carbon footprint through:
+Carbon Step is a mobile application that helps users track and reduce their carbon footprint through:
 - Personal carbon footprint calculation
 - Activity tracking and logging  
 - Goal setting and achievement system
@@ -51,7 +51,7 @@ You agree NOT to:
 
 ## 6. Intellectual Property
 
-- Carbon Tracker app and content are our intellectual property
+- Carbon Step app and content are our intellectual property
 - You may not copy, distribute, or create derivative works
 - User-generated data remains your property
 
@@ -103,4 +103,4 @@ For questions about these Terms of Service:
 
 ---
 
-*By using Carbon Tracker, you acknowledge that you have read and agreed to these Terms of Service.*
+*By using Carbon Step, you acknowledge that you have read and agreed to these Terms of Service.*

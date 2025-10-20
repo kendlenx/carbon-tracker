@@ -149,7 +149,7 @@ struct ConfigurableCarbonTrackerWidget: Widget {
         ) { entry in
             ConfigurableCarbonTrackerWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Carbon Tracker")
+        .configurationDisplayName("Carbon Step")
         .description("Customizable carbon footprint tracking widget.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
@@ -349,7 +349,7 @@ struct ConfigurableMediumWidgetView: View {
                     Image(systemName: "leaf.fill")
                         .foregroundColor(entry.colorTheme.primaryColor)
                         .font(.system(size: 14))
-                    Text("Carbon Tracker")
+                    Text("Carbon Step")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -469,7 +469,7 @@ struct ConfigurableLargeWidgetView: View {
                 Image(systemName: "leaf.fill")
                     .foregroundColor(entry.colorTheme.primaryColor)
                     .font(.system(size: 16))
-                Text("Carbon Tracker")
+                Text("Carbon Step")
                     .font(.headline)
                     .foregroundColor(.primary)
                 Spacer()

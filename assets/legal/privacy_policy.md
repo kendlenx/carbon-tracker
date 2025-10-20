@@ -1,10 +1,10 @@
-# Privacy Policy for Carbon Tracker
+# Privacy Policy for Carbon Step
 
 **Last updated:** October 15, 2024
 
 ## 1. Introduction
 
-Carbon Tracker ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
+Carbon Step ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our mobile application.
 
 ## 2. Information We Collect
 

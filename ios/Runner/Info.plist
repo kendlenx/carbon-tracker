@@ -1,80 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-	<dict>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>Carbon Tracker</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleName</key>
-		<string>carbon_tracker</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
-		<true/>
-		<!-- Privacy - Location Usage Description -->
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>Carbon Tracker otomatik yolculuk takibi ve çevre dostu rota önerileri için konum bilginizi kullanır.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>Carbon Tracker arka planda otomatik yolculuk takibi yapabilmek için konum bilginizi kullanır.</string>
-		<key>NSLocationAlwaysUsageDescription</key>
-		<string>Carbon Tracker arka planda otomatik yolculuk takibi yapabilmek için konum bilginizi kullanır.</string>
-		<!-- Privacy - Microphone Usage Description -->
-		<key>NSMicrophoneUsageDescription</key>
-		<string>Carbon Tracker sesli komutlar ve aktivite kaydı için mikrofonunuza erişim gerektirir.</string>
-		<!-- Privacy - Camera Usage Description -->
-		<key>NSCameraUsageDescription</key>
-		<string>Carbon Tracker fatura QR kodlarını okumak için kameranızı kullanabilir.</string>
-		<!-- Privacy - Photo Library Usage Description -->
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Carbon Tracker raporları kaydetmek için fotoğraf kütüphanenize erişim gerektirir.</string>
-		<!-- Privacy - Motion Usage Description -->
-		<key>NSMotionUsageDescription</key>
-		<string>Carbon Tracker adım sayma ve aktivite algılama için hareket sensörlerinizi kullanır.</string>
-		<!-- Privacy - Speech Recognition Usage Description -->
-		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>Carbon Tracker sesli komutları tanımak için konuşma tanıma özelliğini kullanır.</string>
-		<!-- Background Modes -->
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>location</string>
-			<string>background-fetch</string>
-			<string>background-processing</string>
-		</array>
-		<key>UIStatusBarHidden</key>
-		<false/>
-	</dict>
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Carbon Step</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>carbon_tracker</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Carbon Step fatura QR kodlarını okumak için kameranızı kullanabilir.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Carbon Step arka planda otomatik yolculuk takibi yapabilmek için konum bilginizi kullanır.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Carbon Step arka planda otomatik yolculuk takibi yapabilmek için konum bilginizi kullanır.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Carbon Step otomatik yolculuk takibi ve çevre dostu rota önerileri için konum bilginizi kullanır.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Carbon Step sesli komutlar ve aktivite kaydı için mikrofonunuza erişim gerektirir.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Carbon Step adım sayma ve aktivite algılama için hareket sensörlerinizi kullanır.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Carbon Step raporları kaydetmek için fotoğraf kütüphanenize erişim gerektirir.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Carbon Step sesli komutları tanımak için konuşma tanıma özelliğini kullanır.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>background-fetch</string>
+		<string>background-processing</string>
+	</array>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+</dict>
 </plist>

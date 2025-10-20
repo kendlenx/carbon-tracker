@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌱 **Carbon Tracker**
+# 🌱 **Carbon Step**
 
 *Karbon Ayak İzinizi Takip Edin, Etkilerinizi Dönüştürün*
 
@@ -14,9 +14,9 @@
 
 ---
 
-## 🎯 **Carbon Tracker Hakkında**
+## 🎯 **Carbon Step Hakkında**
 
-Carbon Tracker, Türk kullanıcıların karbon ayak izlerini izlemek, analiz etmek ve azaltmak için özel olarak tasarlanmış **premium kalitede bir mobil uygulamadır**. **Gelişmiş AI benzeri öneriler**, **oyunlaştırma öğeleri** ve **çarpıcı animasyonlar** ile çevresel farkındalığı ilgi çekici bir günlük alışkanlığa dönüştürür.
+Carbon Step, Türk kullanıcıların karbon ayak izlerini izlemek, analiz etmek ve azaltmak için özel olarak tasarlanmış **premium kalitede bir mobil uygulamadır**. **Gelişmiş AI benzeri öneriler**, **oyunlaştırma öğeleri** ve **çarpıcı animasyonlar** ile çevresel farkındalığı ilgi çekici bir günlük alışkanlığa dönüştürür.
 
 > 🌍 **Daha temiz bir gezegene doğru atılan her adım önemlidir!**
 
@@ -121,7 +121,7 @@ flutter run
 Carbon Tracker follows **clean architecture principles** with a **service-oriented design**:
 
 ```
-🌱 Carbon Tracker
+🌱 Carbon Step
 ├── 📱 Presentation Layer
 │   ├── 🖼️  Screens (Home, Transport, Energy, Statistics, Achievements)
 │   ├── 🧩 Widgets (Hero Dashboard, Modern UI Components)

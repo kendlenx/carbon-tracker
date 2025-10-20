@@ -70,7 +70,7 @@ struct LiveActivityLockScreenView: View {
                     Image(systemName: "leaf.fill")
                         .foregroundColor(.green)
                         .font(.system(size: 14))
-                    Text("Carbon Tracker")
+                    Text("Carbon Step")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
                 }

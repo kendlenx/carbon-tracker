@@ -1,6 +1,6 @@
-# Carbon Tracker - Track Your Environmental Impact 🌍
+# Carbon Step - Track Your Environmental Impact 🌍
 
-**Reduce your carbon footprint and save the planet with Carbon Tracker!**
+**Reduce your carbon footprint and save the planet with Carbon Step!**
 
 ## 🌟 Features
 
@@ -36,7 +36,7 @@
 - Priority customer support
 - Premium themes & customization
 
-## 🏆 Why Choose Carbon Tracker?
+## 🏆 Why Choose Carbon Step?
 
 ✅ **Accurate Calculations** - Based on scientific research and global standards
 ✅ **Easy to Use** - Simple interface, powerful features
@@ -54,7 +54,7 @@
 
 ## 🚀 Get Started Today
 
-1. Download Carbon Tracker
+1. Download Carbon Step
 2. Log your daily activities
 3. See your environmental impact
 4. Get personalized tips
@@ -62,7 +62,7 @@
 
 ## 🌍 Make a Difference
 
-Every small action counts in fighting climate change. Join the Carbon Tracker community and start your journey toward a more sustainable future today!
+Every small action counts in fighting climate change. Join the Carbon Step community and start your journey toward a more sustainable future today!
 
 ---
 

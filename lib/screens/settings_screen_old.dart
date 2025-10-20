@@ -1054,7 +1054,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.download,
               title: _languageService.isEnglish ? 'Export Data' : 'Verileri Aktar',
-              subtitle: _languageService.isEnglish ? 'Download your carbon tracking data (JSON/CSV)' : 'Karbon takip verilerinizi indirin (JSON/CSV)',
+              subtitle: _languageService.isEnglish ? 'Download your carbon step data (JSON/CSV)' : 'Karbon takip verilerinizi indirin (JSON/CSV)',
               onTap: _showExportOptions,
             ),
 
@@ -1679,8 +1679,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       onPressed: _notificationService.notificationsEnabled ? () async {
                         await _notificationService.showSmartSuggestion(
                           _languageService.isEnglish 
-                            ? 'This is a test notification from Carbon Tracker!' 
-                            : 'Bu Carbon Tracker\'dan bir test bildirimidir!'
+                            ? 'This is a test notification from Carbon Step!' 
+                            : 'Bu Carbon Step\'dan bir test bildirimidir!'
                         );
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -2123,8 +2123,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context) => AlertDialog(
         title: Text(_languageService.isEnglish ? 'Help' : 'Yardım'),
         content: Text(_languageService.isEnglish
-          ? 'Carbon Tracker helps you monitor and reduce your carbon footprint. Track your daily activities across transport, energy, food, and shopping categories.'
-          : 'Carbon Tracker karbon ayak izinizi izlemenize ve azaltmanıza yardımcı olur. Ulaşım, enerji, yemek ve alışveriş kategorilerinde günlük aktivitelerinizi takip edin.'),
+          ? 'Carbon Step helps you monitor and reduce your carbon footprint. Track your daily activities across transport, energy, food, and shopping categories.'
+          : 'Carbon Step karbon ayak izinizi izlemenize ve azaltmanıza yardımcı olur. Ulaşım, enerji, yemek ve alışveriş kategorilerinde günlük aktivitelerinizi takip edin.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

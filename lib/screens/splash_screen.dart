@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Color?> _backgroundGradientStart;
   late Animation<Color?> _backgroundGradientEnd;
 
-  String _statusText = 'Carbon Tracker\'ı başlatıyoruz...';
+  String _statusText = 'Carbon Step\'i başlatıyoruz...';
 
   @override
   void initState() {
@@ -322,7 +322,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Column(
                           children: [
                             Text(
-                              'Carbon Tracker',
+                              'Carbon Step',
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,

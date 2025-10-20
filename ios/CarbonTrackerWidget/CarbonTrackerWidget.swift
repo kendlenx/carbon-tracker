@@ -154,7 +154,7 @@ struct MediumWidgetView: View {
                     Image(systemName: "leaf.fill")
                         .foregroundColor(.green)
                         .font(.system(size: 14))
-                    Text("Carbon Tracker")
+                    Text("Carbon Step")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Spacer()
@@ -270,7 +270,7 @@ struct LargeWidgetView: View {
                 Image(systemName: "leaf.fill")
                     .foregroundColor(.green)
                     .font(.system(size: 16))
-                Text("Carbon Tracker")
+                Text("Carbon Step")
                     .font(.headline)
                     .foregroundColor(.primary)
                 Spacer()
@@ -401,7 +401,7 @@ struct CarbonTrackerWidget: Widget {
         StaticConfiguration(kind: kind, provider: CarbonProvider()) { entry in
             CarbonTrackerWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Carbon Tracker")
+        .configurationDisplayName("Carbon Step")
         .description("Track your daily carbon footprint right from your home screen.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }

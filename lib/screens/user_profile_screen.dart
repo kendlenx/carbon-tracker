@@ -78,7 +78,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
         final backupStatus = await _firebaseService.getBackupStatus();
         setState(() {
           _userProfile = {
-            'displayName': _currentUser!.displayName ?? 'Carbon Tracker User',
+            'displayName': _currentUser!.displayName ?? 'Carbon Step User',
             'email': _currentUser!.email ?? '',
             'photoURL': _currentUser!.photoURL,
             'emailVerified': _currentUser!.emailVerified,

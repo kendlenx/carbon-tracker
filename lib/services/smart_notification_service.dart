@@ -166,10 +166,10 @@ class SmartNotificationService {
     if ([3, 7, 14].contains(daysSinceLastActivity)) {
       String title, message;
       if (_languageService.isEnglish) {
-        title = '🌿 Come back to Carbon Tracker';
+        title = '🌿 Come back to Carbon Step';
         message = 'Your environmental impact matters. Let\'s continue your journey!';
       } else {
-        title = '🌿 Carbon Tracker\'a geri dön';
+        title = '🌿 Carbon Step\'e geri dön';
         message = 'Çevresel etkileriniz önemli. Yolculuğumuza devam edelim!';
       }
       
