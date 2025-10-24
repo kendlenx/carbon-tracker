@@ -43,16 +43,32 @@ import ActivityKit
       updateWidgetData(arguments: call.arguments as? [String: Any], result: result)
       
     case "startLiveActivity":
-      startLiveActivity(arguments: call.arguments as? [String: Any], result: result)
+      if #available(iOS 16.1, *) {
+        startLiveActivity(arguments: call.arguments as? [String: Any], result: result)
+      } else {
+        result(FlutterError(code: "UNSUPPORTED", message: "Live Activities require iOS 16.1+", details: nil))
+      }
       
     case "updateLiveActivity":
-      updateLiveActivity(arguments: call.arguments as? [String: Any], result: result)
+      if #available(iOS 16.1, *) {
+        updateLiveActivity(arguments: call.arguments as? [String: Any], result: result)
+      } else {
+        result(FlutterError(code: "UNSUPPORTED", message: "Live Activities require iOS 16.1+", details: nil))
+      }
       
     case "stopLiveActivity":
-      stopLiveActivity(result: result)
+      if #available(iOS 16.1, *) {
+        stopLiveActivity(result: result)
+      } else {
+        result(FlutterError(code: "UNSUPPORTED", message: "Live Activities require iOS 16.1+", details: nil))
+      }
       
     case "isLiveActivityActive":
-      checkLiveActivityStatus(result: result)
+      if #available(iOS 16.1, *) {
+        checkLiveActivityStatus(result: result)
+      } else {
+        result(false)
+      }
       
     default:
       result(FlutterMethodNotImplemented)
@@ -97,14 +113,15 @@ import ActivityKit
     let category = args["category"] as? String ?? "Transport"
     
     #if canImport(ActivityKit)
-    let success = LiveActivityManager.shared.startCarbonTracking(
-      sessionName: sessionName,
-      goalType: goalType,
-      targetCO2: targetCO2,
-      currentActivity: currentActivity,
-      category: category
-    )
-    result(success)
+    // let success = LiveActivityManager.shared.startCarbonTracking(
+    //   sessionName: sessionName,
+    //   goalType: goalType,
+    //   targetCO2: targetCO2,
+    //   currentActivity: currentActivity,
+    //   category: category
+    // )
+    // result(success)
+    result(false) // Temporarily disabled
     #else
     result(false)
     #endif
@@ -123,13 +140,13 @@ import ActivityKit
     let achievements = args["achievements"] as? [String] ?? []
     
     #if canImport(ActivityKit)
-    LiveActivityManager.shared.updateCarbonTracking(
-      currentCO2: currentCO2,
-      currentActivity: currentActivity,
-      category: category,
-      achievements: achievements
-    )
-    result(true)
+    // LiveActivityManager.shared.updateCarbonTracking(
+    //   currentCO2: currentCO2,
+    //   currentActivity: currentActivity,
+    //   category: category,
+    //   achievements: achievements
+    // )
+    result(false) // Temporarily disabled
     #else
     result(false)
     #endif
@@ -138,8 +155,8 @@ import ActivityKit
   @available(iOS 16.1, *)
   private func stopLiveActivity(result: @escaping FlutterResult) {
     #if canImport(ActivityKit)
-    LiveActivityManager.shared.stopCarbonTracking()
-    result(true)
+    // LiveActivityManager.shared.stopCarbonTracking()
+    result(false) // Temporarily disabled
     #else
     result(false)
     #endif
@@ -148,8 +165,8 @@ import ActivityKit
   @available(iOS 16.1, *)
   private func checkLiveActivityStatus(result: @escaping FlutterResult) {
     #if canImport(ActivityKit)
-    let isActive = LiveActivityManager.shared.isActivityActive()
-    result(isActive)
+    // let isActive = LiveActivityManager.shared.isActivityActive()
+    result(false) // Temporarily disabled
     #else
     result(false)
     #endif

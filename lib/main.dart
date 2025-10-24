@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'screens/transport_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/energy_screen.dart';
@@ -38,6 +39,12 @@ import 'widgets/banner_ad_widget.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Performance optimizations for release builds
+  if (!kDebugMode) {
+    // Disable debug banner and enable performance optimizations
+    debugPrint = (String? message, {int? wrapWidth}) {};
+  }
   
   // Initialize security service
   final securityService = SecurityService();
@@ -144,6 +151,10 @@ class _CarbonTrackerAppState extends State<CarbonTrackerApp> {
           ],
           home: _buildHomeScreen(),
           debugShowCheckedModeBanner: false,
+          // Performance optimizations
+          checkerboardRasterCacheImages: kDebugMode,
+          checkerboardOffscreenLayers: kDebugMode,
+          showPerformanceOverlay: false,
         );
       },
     );

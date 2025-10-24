@@ -78,8 +78,33 @@ class NotificationService extends ChangeNotifier {
   /// Request notification permissions
   Future<void> _requestPermissions() async {
     if (Platform.isAndroid) {
-      final status = await Permission.notification.request();
-      _notificationsEnabled = status.isGranted;
+      // Android 13+ için POST_NOTIFICATIONS permission gerekli
+      final notificationStatus = await Permission.notification.request();
+      
+      // Android 12+ için SCHEDULE_EXACT_ALARM permission kontrol et
+      bool exactAlarmGranted = true;
+      if (Platform.isAndroid) {
+        try {
+          final exactAlarmStatus = await Permission.scheduleExactAlarm.status;
+          if (!exactAlarmStatus.isGranted) {
+            // Exact alarm permission yoksa kullanıcıyı uyar ama uygulamayı durdurma
+            debugPrint('⚠️ Exact alarm permission not granted - using fallback notifications');
+            exactAlarmGranted = false;
+          }
+        } catch (e) {
+          debugPrint('⚠️ Exact alarm permission check failed: $e');
+          exactAlarmGranted = false;
+        }
+      }
+      
+      _notificationsEnabled = notificationStatus.isGranted;
+      
+      // Eğer exact alarm izni yoksa, scheduled notification'ları devre dışı bırak
+      if (!exactAlarmGranted) {
+        _dailyRemindersEnabled = false;
+        _weeklyReportsEnabled = false;
+        await _saveSettings();
+      }
     } else if (Platform.isIOS) {
       final granted = await _notifications
           .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>()

@@ -73,7 +73,10 @@ class AdMobService {
         RequestConfiguration(
           tagForChildDirectedTreatment: TagForChildDirectedTreatment.no,
           tagForUnderAgeOfConsent: TagForUnderAgeOfConsent.no,
-          testDeviceIds: kDebugMode ? ['YOUR_TEST_DEVICE_ID'] : [],
+          testDeviceIds: kDebugMode ? [
+            'kGooglePlayServicesTestDeviceId', // Emulator for testing
+            '33BE2250B43518CCDA7DE426D04EE232' // Add your device ID here
+          ] : [],
         ),
       );
       debugPrint('🎯 AdMob initialized successfully');
