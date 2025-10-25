@@ -91,9 +91,10 @@ class AdMobService {
 
   // 🥇 BANNER ADS - Low value but consistent revenue
   void loadBannerAd() {
+    // Use a cross-platform banner size to avoid Android-only assertions on iOS
     _bannerAd = BannerAd(
       adUnitId: _bannerAdUnitId,
-      size: AdSize.smartBanner, // Optimal size for revenue
+      size: AdSize.banner,
       request: const AdRequest(),
       listener: BannerAdListener(
         onAdLoaded: (_) {
@@ -241,48 +242,67 @@ class AdMobService {
     required Function(Ad ad) onAdLoaded,
     required Function(Ad ad, LoadAdError error) onAdFailedToLoad,
   }) {
-    return NativeAd(
-      adUnitId: _nativeAdUnitId,
-      listener: NativeAdListener(
-        onAdLoaded: (ad) {
-          _nativeImpressions++;
-          debugPrint('🎯 Native ad loaded successfully - Impression #$_nativeImpressions');
-          onAdLoaded(ad);
-        },
-        onAdFailedToLoad: (ad, error) {
-          debugPrint('❌ Native ad failed to load: $error');
-          onAdFailedToLoad(ad, error);
-        },
-        onAdImpression: (ad) {
-          debugPrint('📊 Native ad impression logged');
-        },
-        onAdClicked: (ad) {
-          debugPrint('👆 Native ad clicked');
-        },
-      ),
-      request: const AdRequest(),
-      nativeTemplateStyle: NativeTemplateStyle(
-        templateType: TemplateType.medium,
-        mainBackgroundColor: Colors.white,
-        cornerRadius: 12.0,
-        callToActionTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.white,
-          backgroundColor: Colors.green.shade600,
-          style: NativeTemplateFontStyle.bold,
-          size: 14.0,
+    // Native template styles are Android-only; avoid asserting on iOS
+    if (Platform.isAndroid) {
+      return NativeAd(
+        adUnitId: _nativeAdUnitId,
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            _nativeImpressions++;
+            debugPrint('🎯 Native ad loaded successfully - Impression #$_nativeImpressions');
+            onAdLoaded(ad);
+          },
+          onAdFailedToLoad: (ad, error) {
+            debugPrint('❌ Native ad failed to load: $error');
+            onAdFailedToLoad(ad, error);
+          },
+          onAdImpression: (ad) {
+            debugPrint('📊 Native ad impression logged');
+          },
+          onAdClicked: (ad) {
+            debugPrint('👆 Native ad clicked');
+          },
         ),
-        primaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.black87,
-          style: NativeTemplateFontStyle.bold,
-          size: 16.0,
+        request: const AdRequest(),
+        nativeTemplateStyle: NativeTemplateStyle(
+          templateType: TemplateType.medium,
+          mainBackgroundColor: Colors.white,
+          cornerRadius: 12.0,
+          callToActionTextStyle: NativeTemplateTextStyle(
+            textColor: Colors.white,
+            backgroundColor: Colors.green.shade600,
+            style: NativeTemplateFontStyle.bold,
+            size: 14.0,
+          ),
+          primaryTextStyle: NativeTemplateTextStyle(
+            textColor: Colors.black87,
+            style: NativeTemplateFontStyle.bold,
+            size: 16.0,
+          ),
+          secondaryTextStyle: NativeTemplateTextStyle(
+            textColor: Colors.black54,
+            style: NativeTemplateFontStyle.normal,
+            size: 14.0,
+          ),
         ),
-        secondaryTextStyle: NativeTemplateTextStyle(
-          textColor: Colors.black54,
-          style: NativeTemplateFontStyle.normal,
-          size: 14.0,
+      );
+    } else {
+      return NativeAd(
+        adUnitId: _nativeAdUnitId,
+        listener: NativeAdListener(
+          onAdLoaded: (ad) {
+            _nativeImpressions++;
+            debugPrint('🎯 Native ad loaded (iOS) - Impression #$_nativeImpressions');
+            onAdLoaded(ad);
+          },
+          onAdFailedToLoad: (ad, error) {
+            debugPrint('❌ Native ad failed to load (iOS): $error');
+            onAdFailedToLoad(ad, error);
+          },
         ),
-      ),
-    );
+        request: const AdRequest(),
+      );
+    }
   }
 
   /// Get revenue statistics

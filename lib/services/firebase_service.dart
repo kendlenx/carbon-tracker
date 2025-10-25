@@ -89,9 +89,12 @@ class FirebaseService {
         _startAutoSync();
       }
 
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('Error initializing Firebase: $e');
-      await _crashlytics.recordError(e, StackTrace.current);
+      // Guard against late initialization issues if Crashlytics isn't ready yet
+      try {
+        await FirebaseCrashlytics.instance.recordError(e, st);
+      } catch (_) {}
       rethrow;
     }
   }

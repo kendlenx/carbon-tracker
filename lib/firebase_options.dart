@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCctSU357ssiOpL8ZxJ8BlEqUL7bJwOzb4',
-    appId: '1:901301851843:android:b066f7b4c5ab41f0493476',
+    appId: '1:901301851843:android:cfa4bf528a055dfa493476',
     messagingSenderId: '901301851843',
     projectId: 'carbon-tracker-1758906173',
     storageBucket: 'carbon-tracker-1758906173.firebasestorage.app',
@@ -59,11 +59,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCr0lAFO6ORqqa4eajaIy2f-0W1JVkcVfE',
-    appId: '1:901301851843:ios:638413690dd3f40c493476',
+    appId: '1:901301851843:ios:08e9bcd06e9b658d493476',
     messagingSenderId: '901301851843',
     projectId: 'carbon-tracker-1758906173',
     storageBucket: 'carbon-tracker-1758906173.firebasestorage.app',
-    iosBundleId: 'com.example.carbonTracker',
+    iosClientId: '901301851843-pnqjf0qdlgenvejpvqev8qnn076paj1k.apps.googleusercontent.com',
+    iosBundleId: 'com.kendlenx.carbonstep',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
