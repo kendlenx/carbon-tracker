@@ -39,9 +39,9 @@ class FirebaseService {
   // Getters
   bool get isInitialized => _isInitialized;
   bool get isSyncing => _isSyncing;
-  bool get isUserSignedIn => _auth.currentUser != null;
-  User? get currentUser => _auth.currentUser;
-  String? get userId => _auth.currentUser?.uid;
+  bool get isUserSignedIn => _isInitialized && FirebaseAuth.instance.currentUser != null;
+  User? get currentUser => _isInitialized ? FirebaseAuth.instance.currentUser : null;
+  String? get userId => currentUser?.uid;
   
   Stream<User?> get authStateChanges => _userController.stream;
   Stream<bool> get syncStatusStream => _syncStatusController.stream;
@@ -243,7 +243,7 @@ class FirebaseService {
 
   /// Sync local data to cloud
   Future<void> syncDataToCloud() async {
-    if (!isUserSignedIn || _isSyncing) return;
+    if (!_isInitialized || !isUserSignedIn || _isSyncing) return;
 
     try {
       _isSyncing = true;

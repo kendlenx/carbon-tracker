@@ -490,7 +490,7 @@ class DeviceIntegrationService extends ChangeNotifier {
       await _databaseService.addActivity(walkingActivity);
 
       await _notificationService.showSmartSuggestion(
-        'Harika! ${steps} adım atarak ${carbonSaved.toStringAsFixed(2)} kg CO₂ tasarruf ettiniz!',
+        'Harika! $steps adım atarak ${carbonSaved.toStringAsFixed(2)} kg CO₂ tasarruf ettiniz!',
       );
     }
 

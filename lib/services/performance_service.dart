@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/services/carplay_service.dart';
-import '../lib/services/carplay_siri_service.dart';
+import 'package:carbon_step/services/carplay_service.dart';
+import 'package:carbon_step/services/carplay_siri_service.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

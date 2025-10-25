@@ -154,7 +154,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                           policyContent[sectionKey]!,
                           sectionKey,
                         );
-                      }).toList(),
+                      }),
                       
                       const SizedBox(height: 32),
                       

@@ -3,12 +3,10 @@ import 'package:flutter/services.dart';
 import '../services/language_service.dart';
 import '../services/theme_service.dart';
 import '../services/database_service.dart';
-import '../services/permission_service.dart';
 import '../services/notification_service.dart';
 import '../services/data_export_service.dart';
 import '../services/security_service.dart';
 import '../services/firebase_service.dart';
-import '../services/gdpr_service.dart';
 import 'cloud_backup_screen.dart';
 import 'user_profile_screen.dart';
 import 'privacy_policy_screen.dart';
@@ -359,7 +357,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_languageService.isEnglish ? 'Settings' : 'Ayarlar'),
-        backgroundColor: Colors.blue.withOpacity(0.1),
+        backgroundColor: Colors.blue.withValues(alpha: 0.1),
         foregroundColor: Colors.blue,
         actions: [
           IconButton(
@@ -434,7 +432,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   Text(_languageService.currentLanguageFlag, style: const TextStyle(fontSize: 18)),
                   const SizedBox(width: 8),
-                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade600),
+                  Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.withValues(alpha: 0.6)),
                 ],
               ),
               onTap: () => _showLanguageSettings(),
@@ -572,7 +570,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Colors.blue.withOpacity(0.3),
+          color: Colors.blue.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -586,7 +584,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
+                    color: Colors.blue.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -705,7 +703,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Colors.green.withOpacity(0.3),
+          color: Colors.green.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -719,7 +717,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
+                    color: Colors.green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(
@@ -1676,11 +1674,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? color : Colors.grey.withOpacity(0.3),
+            color: isSelected ? color : Colors.grey.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           color: isSelected 
-            ? color.withOpacity(0.1) 
+            ? color.withValues(alpha: 0.1) 
             : Theme.of(context).cardColor,
         ),
         child: Row(
@@ -1688,7 +1686,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(icon, color: color, size: 24),
@@ -1826,11 +1824,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : Colors.grey.withOpacity(0.3),
+            color: isSelected ? Theme.of(context).primaryColor : Colors.grey.withValues(alpha: 0.3),
             width: isSelected ? 2 : 1,
           ),
           color: isSelected 
-            ? Theme.of(context).primaryColor.withOpacity(0.1) 
+            ? Theme.of(context).primaryColor.withValues(alpha: 0.1) 
             : Theme.of(context).cardColor,
         ),
         child: Row(
@@ -1838,7 +1836,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: Text(

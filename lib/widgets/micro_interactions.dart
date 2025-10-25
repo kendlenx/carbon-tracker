@@ -64,7 +64,7 @@ class MicroButton extends StatefulWidget {
   final EdgeInsets? padding;
 
   const MicroButton({
-    Key? key,
+    super.key,
     required this.child,
     this.onPressed,
     this.animationDuration = const Duration(milliseconds: 150),
@@ -74,7 +74,7 @@ class MicroButton extends StatefulWidget {
     this.enableHaptic = true,
     this.borderRadius,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   State<MicroButton> createState() => _MicroButtonState();
@@ -201,7 +201,7 @@ class MicroCard extends StatefulWidget {
   final bool enableHaptic;
 
   const MicroCard({
-    Key? key,
+    super.key,
     required this.child,
     this.onTap,
     this.elevation = 2.0,
@@ -211,7 +211,7 @@ class MicroCard extends StatefulWidget {
     this.shadowColor,
     this.hapticType = HapticType.light,
     this.enableHaptic = true,
-  }) : super(key: key);
+  });
 
   @override
   State<MicroCard> createState() => _MicroCardState();
@@ -334,14 +334,14 @@ class MicroSwitch extends StatefulWidget {
   final bool enableHaptic;
 
   const MicroSwitch({
-    Key? key,
+    super.key,
     required this.value,
     required this.onChanged,
     this.activeColor,
     this.inactiveColor,
     this.hapticType = HapticType.selection,
     this.enableHaptic = true,
-  }) : super(key: key);
+  });
 
   @override
   State<MicroSwitch> createState() => _MicroSwitchState();
@@ -445,12 +445,12 @@ class MicroTooltip extends StatefulWidget {
   final Duration hideDelay;
 
   const MicroTooltip({
-    Key? key,
+    super.key,
     required this.child,
     required this.message,
     this.showDelay = const Duration(milliseconds: 500),
     this.hideDelay = const Duration(milliseconds: 100),
-  }) : super(key: key);
+  });
 
   @override
   State<MicroTooltip> createState() => _MicroTooltipState();
@@ -570,12 +570,12 @@ class MicroProgressIndicator extends StatefulWidget {
   final Duration animationDuration;
 
   const MicroProgressIndicator({
-    Key? key,
+    super.key,
     required this.progress,
     this.color,
     this.backgroundColor,
     this.animationDuration = const Duration(milliseconds: 500),
-  }) : super(key: key);
+  });
 
   @override
   State<MicroProgressIndicator> createState() => _MicroProgressIndicatorState();

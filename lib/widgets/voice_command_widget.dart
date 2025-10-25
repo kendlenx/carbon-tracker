@@ -8,9 +8,9 @@ class VoiceCommandWidget extends StatefulWidget {
   final VoidCallback? onCommandExecuted;
   
   const VoiceCommandWidget({
-    Key? key,
+    super.key,
     this.onCommandExecuted,
-  }) : super(key: key);
+  });
 
   @override
   State<VoiceCommandWidget> createState() => _VoiceCommandWidgetState();
@@ -457,7 +457,7 @@ class WavePainter extends CustomPainter {
 }
 
 class VoiceCommandDialog extends StatefulWidget {
-  const VoiceCommandDialog({Key? key}) : super(key: key);
+  const VoiceCommandDialog({super.key});
 
   @override
   State<VoiceCommandDialog> createState() => _VoiceCommandDialogState();

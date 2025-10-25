@@ -15,12 +15,10 @@ class TeslaIntegration extends DeviceIntegration {
   Map<String, dynamic>? _lastVehicleData;
   
   TeslaIntegration({
-    required String deviceId,
-    required String deviceName,
+    required super.deviceId,
+    required super.deviceName,
   }) : super(
           deviceType: DeviceType.smartVehicle,
-          deviceId: deviceId,
-          deviceName: deviceName,
           manufacturerName: 'Tesla',
         );
 

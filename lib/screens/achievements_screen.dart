@@ -4,7 +4,7 @@ import 'package:carbon_step/widgets/achievement_widgets.dart';
 import 'package:carbon_step/widgets/animated_widgets.dart';
 
 class AchievementsScreen extends StatefulWidget {
-  const AchievementsScreen({Key? key}) : super(key: key);
+  const AchievementsScreen({super.key});
 
   @override
   State<AchievementsScreen> createState() => _AchievementsScreenState();

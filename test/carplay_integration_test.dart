@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../lib/services/carplay_service.dart';
-import '../lib/services/carplay_siri_service.dart';
+import 'package:carbon_step/services/carplay_service.dart';
+import 'package:carbon_step/services/carplay_siri_service.dart';
 
 void main() {
   group('CarPlay Integration Tests', () {
@@ -139,7 +139,7 @@ void main() {
         await carPlayService.initialize();
         await siriService.initialize();
         
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'start_trip',
           'parameters': {},
         });
@@ -156,7 +156,7 @@ void main() {
         await carPlayService.startTrip();
         await siriService.initialize();
         
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'end_trip',
           'parameters': {},
         });
@@ -186,7 +186,7 @@ void main() {
       test('should handle eco route intent', () async {
         await siriService.initialize();
         
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'eco_route',
           'parameters': {'destination': 'Airport'},
         });
@@ -206,7 +206,7 @@ void main() {
       test('should handle add manual trip intent', () async {
         await siriService.initialize();
         
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'add_manual_trip',
           'parameters': {
             'distance': 15.0,
@@ -230,7 +230,7 @@ void main() {
       test('should handle unknown intent', () async {
         await siriService.initialize();
         
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'unknown_intent',
           'parameters': {},
         });
@@ -259,7 +259,7 @@ void main() {
         methodCalls.clear();
 
         // Start trip via Siri
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'start_trip',
           'parameters': {},
         });
@@ -281,7 +281,7 @@ void main() {
         methodCalls.clear();
 
         // End trip via Siri
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': 'end_trip',
           'parameters': {},
         });
@@ -329,7 +329,7 @@ void main() {
         await siriService.initialize();
         
         // Simulate error by providing malformed data
-        final methodCall = MethodCall('handleSiriIntent', {
+        final _ = MethodCall('handleSiriIntent', {
           'intentType': null, // Invalid intent type
           'parameters': {},
         });

@@ -161,6 +161,7 @@ class DataExportService extends ChangeNotifier {
       await file.writeAsString(content, encoding: utf8);
       
       // Share the file
+      // ignore: deprecated_member_use
       final result = await Share.shareXFiles(
         [XFile(file.path)],
         subject: _languageService.isEnglish 

@@ -11,12 +11,10 @@ class HealthKitIntegration extends DeviceIntegration {
   DateTime? _lastSyncDate;
   
   HealthKitIntegration({
-    required String deviceId,
-    required String deviceName,
+    required super.deviceId,
+    required super.deviceName,
   }) : super(
           deviceType: DeviceType.fitnessTracker,
-          deviceId: deviceId,
-          deviceName: deviceName,
           manufacturerName: 'Apple',
         );
 

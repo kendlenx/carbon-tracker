@@ -5,7 +5,7 @@ import '../services/backup_management_service.dart';
 import '../services/error_handler_service.dart';
 
 class MigrationManagementScreen extends StatefulWidget {
-  const MigrationManagementScreen({Key? key}) : super(key: key);
+  const MigrationManagementScreen({super.key});
 
   @override
   State<MigrationManagementScreen> createState() => _MigrationManagementScreenState();
@@ -287,7 +287,7 @@ class _MigrationManagementScreenState extends State<MigrationManagementScreen> {
               final index = entry.key;
               final step = entry.value;
               return _buildMigrationStepTile(step, index + 1);
-            }).toList(),
+            }),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -595,7 +595,7 @@ class _MigrationManagementScreenState extends State<MigrationManagementScreen> {
       } else {
         final failedSteps = results.where((r) => r.status == MigrationStatus.failed).length;
         _showErrorDialog(
-          'Migration completed with ${failedSteps} failed steps. Please check the migration history for details.',
+          'Migration completed with $failedSteps failed steps. Please check the migration history for details.',
         );
       }
 

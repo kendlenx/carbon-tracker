@@ -399,6 +399,7 @@ class ImageExportService {
 
       final isEnglish = _languageService.isEnglish;
       
+      // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(filePath)],
         subject: subject ?? (isEnglish ? 'Carbon Tracker Stats' : 'Carbon Tracker İstatistikleri'),
@@ -473,6 +474,7 @@ class ImageExportService {
 
       final isEnglish = _languageService.isEnglish;
       
+      // ignore: deprecated_member_use
       await Share.shareXFiles(
         filePaths.map((path) => XFile(path)).toList(),
         subject: subject ?? (isEnglish ? 'Carbon Tracker Analytics' : 'Carbon Tracker Analitikleri'),

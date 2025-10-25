@@ -306,7 +306,7 @@ class _EnergyScreenState extends State<EnergyScreen>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${_electricityEmission.toStringAsFixed(2)}',
+                          _electricityEmission.toStringAsFixed(2),
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).colorScheme.primary,
@@ -451,7 +451,7 @@ class _EnergyScreenState extends State<EnergyScreen>
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${_gasEmission.toStringAsFixed(2)}',
+                          _gasEmission.toStringAsFixed(2),
                           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.orange.shade700,

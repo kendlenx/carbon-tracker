@@ -4,7 +4,7 @@ import '../services/advanced_import_service.dart';
 import '../services/error_handler_service.dart';
 
 class DataImportScreen extends StatefulWidget {
-  const DataImportScreen({Key? key}) : super(key: key);
+  const DataImportScreen({super.key});
 
   @override
   State<DataImportScreen> createState() => _DataImportScreenState();
@@ -171,7 +171,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
                   });
                 },
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -212,7 +212,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
                   });
                 },
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -423,7 +423,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
                 ),
               ],
             ),
-          )).toList(),
+          )),
           if (errors.length > 5)
             Padding(
               padding: const EdgeInsets.only(left: 16, top: 4),
@@ -453,7 +453,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
                 ),
               ],
             ),
-          )).toList(),
+          )),
           if (warnings.length > 3)
             Padding(
               padding: const EdgeInsets.only(left: 16, top: 4),
@@ -492,7 +492,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
               ),
             ],
           ),
-        )).toList(),
+        )),
         if (conflicts.length > 3)
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 4),

@@ -10,14 +10,14 @@ class LiquidPullRefresh extends StatefulWidget {
   final Duration animationDuration;
 
   const LiquidPullRefresh({
-    Key? key,
+    super.key,
     required this.child,
     required this.onRefresh,
     this.color = Colors.blue,
     this.backgroundColor = Colors.white,
     this.height = 80.0,
     this.animationDuration = const Duration(milliseconds: 300),
-  }) : super(key: key);
+  });
 
   @override
   State<LiquidPullRefresh> createState() => _LiquidPullRefreshState();

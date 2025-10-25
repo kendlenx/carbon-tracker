@@ -417,6 +417,7 @@ class AdvancedExportService {
   /// Share exported file
   Future<void> shareExportFile(ExportResult result) async {
     try {
+      // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(result.filePath)],
         text: 'Carbon Tracker Data Export - ${result.totalRecords} records',

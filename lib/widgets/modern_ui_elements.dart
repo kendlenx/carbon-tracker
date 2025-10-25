@@ -17,7 +17,7 @@ class GlassContainer extends StatelessWidget {
   final EdgeInsets? margin;
 
   const GlassContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.width = double.infinity,
     this.height = double.infinity,
@@ -29,7 +29,7 @@ class GlassContainer extends StatelessWidget {
     this.gradient,
     this.padding,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class NeumorphicContainer extends StatelessWidget {
   final EdgeInsets? margin;
 
   const NeumorphicContainer({
-    Key? key,
+    super.key,
     required this.child,
     this.width = double.infinity,
     this.height = double.infinity,
@@ -84,7 +84,7 @@ class NeumorphicContainer extends StatelessWidget {
     this.isPressed = false,
     this.padding,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -144,7 +144,7 @@ class ModernCard extends StatefulWidget {
   final Duration animationDuration;
 
   const ModernCard({
-    Key? key,
+    super.key,
     required this.child,
     this.gradient,
     this.colors,
@@ -156,7 +156,7 @@ class ModernCard extends StatefulWidget {
     this.onTap,
     this.enableHover = true,
     this.animationDuration = const Duration(milliseconds: 200),
-  }) : super(key: key);
+  });
 
   @override
   State<ModernCard> createState() => _ModernCardState();
@@ -271,7 +271,7 @@ class ModernBottomSheet extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   const ModernBottomSheet({
-    Key? key,
+    super.key,
     required this.child,
     this.title,
     this.height,
@@ -279,7 +279,7 @@ class ModernBottomSheet extends StatelessWidget {
     this.enableDrag = true,
     this.backgroundColor,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   static Future<T?> show<T>({
     required BuildContext context,
@@ -391,13 +391,13 @@ class FloatingActionMenu extends StatefulWidget {
   final Color? backgroundColor;
 
   const FloatingActionMenu({
-    Key? key,
+    super.key,
     required this.items,
     required this.mainButton,
     this.animationDuration = const Duration(milliseconds: 300),
     this.spacing = 70.0,
     this.backgroundColor,
-  }) : super(key: key);
+  });
 
   @override
   State<FloatingActionMenu> createState() => _FloatingActionMenuState();
@@ -511,7 +511,7 @@ class _FloatingActionMenuState extends State<FloatingActionMenu>
               );
             },
           );
-        }).toList(),
+        }),
         
         // Main button
         GestureDetector(
@@ -554,7 +554,7 @@ class ModernProgressRing extends StatefulWidget {
   final Duration animationDuration;
 
   const ModernProgressRing({
-    Key? key,
+    super.key,
     required this.progress,
     this.size = 100.0,
     this.strokeWidth = 8.0,
@@ -562,7 +562,7 @@ class ModernProgressRing extends StatefulWidget {
     this.backgroundColor,
     this.center,
     this.animationDuration = const Duration(milliseconds: 1000),
-  }) : super(key: key);
+  });
 
   @override
   State<ModernProgressRing> createState() => _ModernProgressRingState();
@@ -701,13 +701,13 @@ class NotificationCard extends StatefulWidget {
   final bool isDismissible;
 
   const NotificationCard({
-    Key? key,
+    super.key,
     required this.content,
     this.type = NotificationType.info,
     this.duration,
     this.onDismiss,
     this.isDismissible = true,
-  }) : super(key: key);
+  });
 
   @override
   State<NotificationCard> createState() => _NotificationCardState();

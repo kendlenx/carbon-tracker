@@ -415,9 +415,7 @@ class AchievementService extends ChangeNotifier {
       if (achievementsJson != null) {
         final List<dynamic> savedData = json.decode(achievementsJson);
         final Map<String, Map<String, dynamic>> savedAchievements = 
-            Map.fromIterable(savedData, 
-                key: (item) => item['id'], 
-                value: (item) => item);
+            { for (var item in savedData) item['id'] : item };
 
         _achievements = _defaultAchievements.map((template) {
           if (savedAchievements.containsKey(template.id)) {
@@ -682,10 +680,15 @@ class AchievementService extends ChangeNotifier {
     
     // Determine current season
     String currentSeason = '';
-    if (month >= 3 && month <= 5) currentSeason = 'spring';
-    else if (month >= 6 && month <= 8) currentSeason = 'summer';
-    else if (month >= 9 && month <= 11) currentSeason = 'autumn';
-    else currentSeason = 'winter';
+    if (month >= 3 && month <= 5) {
+      currentSeason = 'spring';
+    } else if (month >= 6 && month <= 8) {
+      currentSeason = 'summer';
+    } else if (month >= 9 && month <= 11) {
+      currentSeason = 'autumn';
+    } else {
+      currentSeason = 'winter';
+    }
 
     for (int i = 0; i < _achievements.length; i++) {
       final achievement = _achievements[i];

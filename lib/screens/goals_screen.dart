@@ -237,7 +237,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          '${_currentDaily.toStringAsFixed(1)}',
+                          _currentDaily.toStringAsFixed(1),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

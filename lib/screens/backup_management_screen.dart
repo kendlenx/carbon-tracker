@@ -4,7 +4,7 @@ import '../services/backup_management_service.dart';
 import '../services/error_handler_service.dart';
 
 class BackupManagementScreen extends StatefulWidget {
-  const BackupManagementScreen({Key? key}) : super(key: key);
+  const BackupManagementScreen({super.key});
 
   @override
   State<BackupManagementScreen> createState() => _BackupManagementScreenState();
@@ -865,7 +865,7 @@ class _RestoreBackupDialogState extends State<_RestoreBackupDialog> {
                 });
               },
             );
-          }).toList(),
+          }),
         ],
       ),
       actions: [

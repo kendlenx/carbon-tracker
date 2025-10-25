@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../services/advanced_export_service.dart';
 import '../services/advanced_import_service.dart';
 import '../services/backup_management_service.dart';
 import '../services/migration_service.dart';
@@ -12,7 +11,7 @@ import 'backup_management_screen.dart';
 import 'migration_management_screen.dart';
 
 class AdvancedDataManagementScreen extends StatefulWidget {
-  const AdvancedDataManagementScreen({Key? key}) : super(key: key);
+  const AdvancedDataManagementScreen({super.key});
 
   @override
   State<AdvancedDataManagementScreen> createState() => _AdvancedDataManagementScreenState();
@@ -22,7 +21,6 @@ class _AdvancedDataManagementScreenState extends State<AdvancedDataManagementScr
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   
-  final AdvancedExportService _exportService = AdvancedExportService();
   final AdvancedImportService _importService = AdvancedImportService();
   final BackupManagementService _backupService = BackupManagementService();
   final MigrationService _migrationService = MigrationService();

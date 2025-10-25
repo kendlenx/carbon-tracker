@@ -9,16 +9,11 @@ abstract class SmartHomeIntegration extends DeviceIntegration {
   Timer? _pollingTimer;
   
   SmartHomeIntegration({
-    required DeviceType deviceType,
-    required String deviceId,
-    required String deviceName,
-    required String manufacturerName,
-  }) : super(
-          deviceType: deviceType,
-          deviceId: deviceId,
-          deviceName: deviceName,
-          manufacturerName: manufacturerName,
-        );
+    required super.deviceType,
+    required super.deviceId,
+    required super.deviceName,
+    required super.manufacturerName,
+  });
 
   void startPolling({Duration interval = const Duration(minutes: 10)}) {
     _pollingTimer?.cancel();
@@ -55,12 +50,10 @@ class NestThermostatIntegration extends SmartHomeIntegration {
   Map<String, dynamic>? _lastThermostatData;
 
   NestThermostatIntegration({
-    required String deviceId,
-    required String deviceName,
+    required super.deviceId,
+    required super.deviceName,
   }) : super(
           deviceType: DeviceType.smartThermostat,
-          deviceId: deviceId,
-          deviceName: deviceName,
           manufacturerName: 'Google Nest',
         );
 
@@ -378,14 +371,11 @@ class SmartPlugIntegration extends SmartHomeIntegration {
   Map<String, dynamic>? _lastPlugData;
 
   SmartPlugIntegration({
-    required String deviceId,
-    required String deviceName,
-    required String manufacturerName,
+    required super.deviceId,
+    required super.deviceName,
+    required super.manufacturerName,
   }) : super(
           deviceType: DeviceType.smartPlug,
-          deviceId: deviceId,
-          deviceName: deviceName,
-          manufacturerName: manufacturerName,
         );
 
   @override

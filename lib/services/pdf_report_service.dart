@@ -1269,6 +1269,7 @@ class PdfReportService {
   Future<void> shareReport(String filePath, {String? subject}) async {
     try {
       final isEnglish = _languageService.isEnglish;
+      // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(filePath)],
         subject: subject ?? (isEnglish ? 'Carbon Tracker Report' : 'Carbon Tracker Rapor'),

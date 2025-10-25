@@ -46,7 +46,7 @@ class LanguageService extends ChangeNotifier {
         _currentLocale = _getLocaleFromLanguageCode(savedLanguageCode);
       } else {
         // Auto-detect system language, default to Turkish if not supported
-        final systemLocale = ui.window.locale;
+        final systemLocale = ui.PlatformDispatcher.instance.locale;
         if (_isSupportedLocale(systemLocale)) {
           _currentLocale = systemLocale;
         } else {

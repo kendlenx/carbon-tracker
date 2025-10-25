@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import '../services/advanced_export_service.dart';
 
 class DataExportScreen extends StatefulWidget {
-  const DataExportScreen({Key? key}) : super(key: key);
+  const DataExportScreen({super.key});
 
   @override
   State<DataExportScreen> createState() => _DataExportScreenState();
@@ -84,7 +84,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
                   });
                 },
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -125,7 +125,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
                   });
                 },
               );
-            }).toList(),
+            }),
             if (_selectedScope == ExportScope.dateRange) ...[
               const SizedBox(height: 16),
               Row(

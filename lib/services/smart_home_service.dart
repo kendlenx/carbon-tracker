@@ -451,9 +451,9 @@ class SmartHomeService extends ChangeNotifier {
   /// Remove a smart device
   Future<void> removeDevice(String deviceId) async {
     _devices.removeWhere((d) => d.id == deviceId);
-    _automations.forEach((automation) {
+    for (var automation in _automations) {
       automation.deviceIds.removeWhere((id) => id == deviceId);
-    });
+    }
     
     await _saveDevices();
     await _saveAutomations();

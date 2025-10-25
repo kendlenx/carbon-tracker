@@ -458,10 +458,9 @@ class CustomPageRoute<T> extends PageRoute<T> {
     required this.transitionBuilder,
     Duration transitionDuration = const Duration(milliseconds: 300),
     Duration reverseTransitionDuration = const Duration(milliseconds: 300),
-    RouteSettings? settings,
+    super.settings,
   }) : _transitionDuration = transitionDuration,
-       _reverseTransitionDuration = reverseTransitionDuration,
-       super(settings: settings);
+       _reverseTransitionDuration = reverseTransitionDuration;
 
   @override
   Color? get barrierColor => null;

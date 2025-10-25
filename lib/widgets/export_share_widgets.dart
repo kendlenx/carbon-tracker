@@ -30,8 +30,8 @@ class ExportShareWidgets {
       onPressed: onPressed ?? () => showExportDialog(context),
       heroTag: heroTag ?? "share_fab",
       backgroundColor: Colors.green,
-      child: const Icon(Icons.share, color: Colors.white),
       tooltip: isEnglish ? 'Share Report' : 'Rapor Paylaş',
+      child: const Icon(Icons.share, color: Colors.white),
     );
   }
 

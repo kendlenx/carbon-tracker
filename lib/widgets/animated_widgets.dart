@@ -343,11 +343,11 @@ class FadeInWidget extends StatefulWidget {
   final Duration delay;
 
   const FadeInWidget({
-    Key? key,
+    super.key,
     required this.child,
     this.duration = const Duration(milliseconds: 600),
     this.delay = Duration.zero,
-  }) : super(key: key);
+  });
 
   @override
   State<FadeInWidget> createState() => _FadeInWidgetState();
@@ -407,12 +407,12 @@ class SlideInWidget extends StatefulWidget {
   final Duration delay;
 
   const SlideInWidget({
-    Key? key,
+    super.key,
     required this.child,
     this.direction = SlideDirection.up,
     this.duration = const Duration(milliseconds: 600),
     this.delay = Duration.zero,
-  }) : super(key: key);
+  });
 
   @override
   State<SlideInWidget> createState() => _SlideInWidgetState();
@@ -485,12 +485,12 @@ class TapScaleWidget extends StatefulWidget {
   final Duration duration;
 
   const TapScaleWidget({
-    Key? key,
+    super.key,
     required this.child,
     this.onTap,
     this.scaleValue = 0.95,
     this.duration = const Duration(milliseconds: 100),
-  }) : super(key: key);
+  });
 
   @override
   State<TapScaleWidget> createState() => _TapScaleWidgetState();

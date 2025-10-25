@@ -7,9 +7,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:carbon_tracker/main.dart';
-import 'package:carbon_tracker/services/security_service.dart';
-import 'package:carbon_tracker/services/firebase_service.dart';
+import 'package:carbon_step/main.dart';
+import 'package:carbon_step/services/security_service.dart';
+import 'package:carbon_step/services/firebase_service.dart';
 
 void main() {
   testWidgets('Carbon Tracker app smoke test', (WidgetTester tester) async {

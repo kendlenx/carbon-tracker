@@ -9,12 +9,12 @@ class BadgeWidget extends StatefulWidget {
   final double size;
 
   const BadgeWidget({
-    Key? key,
+    super.key,
     required this.achievement,
     this.showUnlockAnimation = false,
     this.onTap,
     this.size = 60.0,
-  }) : super(key: key);
+  });
 
   @override
   State<BadgeWidget> createState() => _BadgeWidgetState();
@@ -172,11 +172,11 @@ class AchievementCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const AchievementCard({
-    Key? key,
+    super.key,
     required this.achievement,
     this.showProgress = true,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -321,10 +321,10 @@ class AchievementUnlockDialog extends StatefulWidget {
   final VoidCallback? onDismiss;
 
   const AchievementUnlockDialog({
-    Key? key,
+    super.key,
     required this.newAchievements,
     this.onDismiss,
-  }) : super(key: key);
+  });
 
   @override
   State<AchievementUnlockDialog> createState() => _AchievementUnlockDialogState();
@@ -618,12 +618,12 @@ class LevelProgressWidget extends StatelessWidget {
   final int pointsForNextLevel;
 
   const LevelProgressWidget({
-    Key? key,
+    super.key,
     required this.level,
     required this.progress,
     required this.totalPoints,
     required this.pointsForNextLevel,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

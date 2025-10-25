@@ -587,7 +587,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                   ),
                 ),
               );
-            }).toList(),
+            }),
           ],
         ],
       ),

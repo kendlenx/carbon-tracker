@@ -45,13 +45,13 @@ class MorphingFAB extends StatefulWidget {
   final bool showRotationAnimation;
 
   const MorphingFAB({
-    Key? key,
+    super.key,
     required this.currentAction,
     this.animationDuration = const Duration(milliseconds: 300),
     this.animationCurve = Curves.easeInOut,
     this.size = 56.0,
     this.showRotationAnimation = true,
-  }) : super(key: key);
+  });
 
   @override
   State<MorphingFAB> createState() => _MorphingFABState();
@@ -309,12 +309,12 @@ class MultiStateFAB extends StatefulWidget {
   final bool showStateIndicator;
 
   const MultiStateFAB({
-    Key? key,
+    super.key,
     required this.actions,
     required this.currentState,
     this.animationDuration = const Duration(milliseconds: 300),
     this.showStateIndicator = true,
-  }) : super(key: key);
+  });
 
   @override
   State<MultiStateFAB> createState() => _MultiStateFABState();
@@ -373,12 +373,12 @@ class SpeedDialFAB extends StatefulWidget {
   final double spacing;
 
   const SpeedDialFAB({
-    Key? key,
+    super.key,
     required this.mainFAB,
     required this.actions,
     this.animationDuration = const Duration(milliseconds: 300),
     this.spacing = 70.0,
-  }) : super(key: key);
+  });
 
   @override
   State<SpeedDialFAB> createState() => _SpeedDialFABState();
@@ -474,15 +474,15 @@ class _SpeedDialFABState extends State<SpeedDialFAB>
                         _toggle();
                       },
                       backgroundColor: action.backgroundColor,
-                      child: Icon(action.icon),
                       tooltip: action.label,
+                      child: Icon(action.icon),
                     ),
                   ),
                 ),
               );
             },
           );
-        }).toList(),
+        }),
         
         // Main FAB
         AnimatedBuilder(

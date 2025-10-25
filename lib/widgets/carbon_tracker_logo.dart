@@ -7,10 +7,10 @@ class CarbonTrackerLogo extends StatelessWidget {
   final bool isDark;
 
   const CarbonTrackerLogo({
-    Key? key,
+    super.key,
     this.size = 100,
     this.isDark = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +178,7 @@ class CarbonTrackerLogoPainter extends CustomPainter {
 class CarbonTrackerIcon extends StatelessWidget {
   final double size;
 
-  const CarbonTrackerIcon({Key? key, this.size = 32}) : super(key: key);
+  const CarbonTrackerIcon({super.key, this.size = 32});
 
   @override
   Widget build(BuildContext context) {

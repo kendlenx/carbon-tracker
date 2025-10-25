@@ -16,7 +16,7 @@ class AdvancedReportingService extends ChangeNotifier {
   final LanguageService _languageService = LanguageService.instance;
 
   /// Report data cache
-  Map<String, dynamic> _reportCache = {};
+  final Map<String, dynamic> _reportCache = {};
   DateTime? _lastCacheUpdate;
   
   /// Cache validity duration

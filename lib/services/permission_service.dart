@@ -40,7 +40,7 @@ class PermissionService extends ChangeNotifier {
   PermissionService._();
 
   bool _isInitialized = false;
-  Map<AppPermission, PermissionStatus> _permissionStatuses = {};
+  final Map<AppPermission, PermissionStatus> _permissionStatuses = {};
   Set<AppPermission> _requestedPermissions = {};
 
   // Permission definitions

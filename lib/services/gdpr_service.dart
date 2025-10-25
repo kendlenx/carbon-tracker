@@ -354,6 +354,7 @@ class GDPRService {
       await file.writeAsString(jsonData);
       
       // Share the file
+      // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(file.path)],
         text: 'Carbon Tracker - Data Export',

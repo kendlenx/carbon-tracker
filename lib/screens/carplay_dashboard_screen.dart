@@ -7,7 +7,7 @@ import '../services/database_service.dart';
 
 /// CarPlay Dashboard Screen - Main interface for CarPlay
 class CarPlayDashboardScreen extends StatefulWidget {
-  const CarPlayDashboardScreen({Key? key}) : super(key: key);
+  const CarPlayDashboardScreen({super.key});
 
   @override
   State<CarPlayDashboardScreen> createState() => _CarPlayDashboardScreenState();

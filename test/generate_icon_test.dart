@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/widgets/carbon_tracker_logo.dart';
+import 'package:carbon_step/widgets/carbon_tracker_logo.dart';
 
 void main() {
   testWidgets('Generate app icon from CarbonTrackerIcon', (WidgetTester tester) async {

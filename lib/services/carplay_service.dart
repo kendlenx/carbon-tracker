@@ -30,7 +30,7 @@ class CarPlayService {
   StreamSubscription<Position>? _positionStream;
   
   // Current trip data
-  Map<String, dynamic> _currentTripData = {};
+  final Map<String, dynamic> _currentTripData = {};
   Timer? _carPlayUpdateTimer;
 
   /// Stream of CarPlay events
@@ -191,6 +191,7 @@ class CarPlayService {
 
     try {
       // Get current location
+      // ignore: deprecated_member_use
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -201,7 +202,7 @@ class CarPlayService {
       _tripDistance = 0.0;
       _tripPositions = [position];
       
-      debugPrint('Trip started at ${_tripStartTime}');
+      debugPrint('Trip started at $_tripStartTime');
       
       // Start continuous location tracking
       await _startContinuousLocationTracking();
@@ -236,6 +237,7 @@ class CarPlayService {
 
     try {
       final endTime = DateTime.now();
+      // ignore: deprecated_member_use
       final endPosition = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
@@ -277,7 +279,7 @@ class CarPlayService {
       // Save to database
       await _databaseService.addActivity(activity);
       
-      debugPrint('Trip ended: ${_tripDistance.toStringAsFixed(2)} km, ${durationMinutes} minutes');
+      debugPrint('Trip ended: ${_tripDistance.toStringAsFixed(2)} km, $durationMinutes minutes');
       
       // Reset trip state
       _isTripActive = false;

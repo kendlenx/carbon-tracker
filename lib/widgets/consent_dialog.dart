@@ -127,7 +127,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
                                 }
                               });
                             },
-                            activeColor: AppColors.primary,
+                            activeThumbColor: AppColors.primary,
                           ),
                         ],
                       ),
@@ -243,7 +243,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
                       _updateAcceptAll();
                     });
                   },
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
               ],
@@ -436,8 +436,8 @@ class ConsentBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _languageService = LanguageService.instance;
-    final language = _languageService.isEnglish ? 'en' : 'tr';
+    final languageService = LanguageService.instance;
+    final language = languageService.isEnglish ? 'en' : 'tr';
         
     return Container(
           padding: const EdgeInsets.all(16),
