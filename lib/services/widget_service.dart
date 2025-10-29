@@ -162,7 +162,7 @@ class WidgetService extends ChangeNotifier {
       await HomeWidget.saveWidgetData<double>('carbon_today', todayCarbon);
       await HomeWidget.saveWidgetData<String>('carbon_today_text', '${todayCarbon.toStringAsFixed(1)} kg CO₂');
       await HomeWidget.saveWidgetData<String>('carbon_status', _getCarbonStatus(todayCarbon));
-      await HomeWidget.updateWidget(name: 'CarbonTodayWidget', iOSName: 'CarbonTodayWidget');
+      await HomeWidget.updateWidget(name: 'widgets.CarbonTodayWidget', iOSName: 'CarbonTodayWidget');
     }
   }
 
@@ -194,7 +194,7 @@ class WidgetService extends ChangeNotifier {
       await HomeWidget.saveWidgetData<double>('weekly_progress', progress);
       await HomeWidget.saveWidgetData<String>('weekly_text', '${(progress * 100).round()}% tamamlandı');
       await HomeWidget.saveWidgetData<double>('weekly_carbon', weeklyAverage);
-      await HomeWidget.updateWidget(name: 'WeeklyProgressWidget', iOSName: 'WeeklyProgressWidget');
+      await HomeWidget.updateWidget(name: 'widgets.WeeklyProgressWidget', iOSName: 'WeeklyProgressWidget');
     }
   }
 
@@ -227,7 +227,7 @@ class WidgetService extends ChangeNotifier {
         await HomeWidget.saveWidgetData<double>('goal_progress', primaryGoal.progressPercentage / 100);
         await HomeWidget.saveWidgetData<String>('goal_text', primaryGoal.progressText);
         await HomeWidget.saveWidgetData<int>('goal_days', primaryGoal.daysRemaining);
-        await HomeWidget.updateWidget(name: 'GoalProgressWidget', iOSName: 'GoalProgressWidget');
+        await HomeWidget.updateWidget(name: 'widgets.GoalProgressWidget', iOSName: 'GoalProgressWidget');
       }
     }
   }
@@ -264,7 +264,7 @@ class WidgetService extends ChangeNotifier {
       await HomeWidget.saveWidgetData<int>('user_level', level);
       await HomeWidget.saveWidgetData<String>('level_name', _achievementService.getUserRank());
       await HomeWidget.saveWidgetData<int>('recent_count', recentAchievements.length);
-      await HomeWidget.updateWidget(name: 'AchievementsWidget', iOSName: 'AchievementsWidget');
+      await HomeWidget.updateWidget(name: 'widgets.AchievementsWidget', iOSName: 'AchievementsWidget');
     }
   }
 
@@ -297,7 +297,7 @@ class WidgetService extends ChangeNotifier {
       await HomeWidget.saveWidgetData<double>('stats_weekly', weeklyAverage);
       await HomeWidget.saveWidgetData<double>('stats_monthly', monthlyTotal);
       await HomeWidget.saveWidgetData<String>('stats_status', _getCarbonStatus(todayCarbon));
-      await HomeWidget.updateWidget(name: 'QuickStatsWidget', iOSName: 'QuickStatsWidget');
+      await HomeWidget.updateWidget(name: 'widgets.QuickStatsWidget', iOSName: 'QuickStatsWidget');
     }
   }
 
@@ -322,7 +322,7 @@ class WidgetService extends ChangeNotifier {
       await HomeWidget.saveWidgetData<double>('level_progress', levelProgress['progress']);
       await HomeWidget.saveWidgetData<int>('points_to_next', levelProgress['pointsToNext']);
       await HomeWidget.saveWidgetData<String>('current_rank', _achievementService.getUserRank());
-      await HomeWidget.updateWidget(name: 'LevelProgressWidget', iOSName: 'LevelProgressWidget');
+      await HomeWidget.updateWidget(name: 'widgets.LevelProgressWidget', iOSName: 'LevelProgressWidget');
     }
   }
 

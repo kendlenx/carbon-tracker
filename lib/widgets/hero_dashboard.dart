@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../services/carbon_calculator_service.dart';
+import '../l10n/app_localizations.dart';
 
 class HeroDashboard extends StatefulWidget {
   final double totalCarbonToday;
@@ -188,7 +189,7 @@ class _HeroDashboardState extends State<HeroDashboard>
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Bugün',
+                            AppLocalizations.of(context)!.translate('statistics.today'),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Theme.of(context).brightness == Brightness.dark 
                                 ? Colors.grey.shade500 
@@ -236,20 +237,20 @@ class _HeroDashboardState extends State<HeroDashboard>
             children: [
               _buildMiniStat(
                 icon: Icons.trending_up,
-                label: 'Haftalık',
+                label: AppLocalizations.of(context)!.statisticsThisWeek,
                 value: '${widget.weeklyAverage.toStringAsFixed(1)} kg',
                 color: Colors.blue,
               ),
               _buildMiniStat(
                 icon: Icons.flag,
-                label: 'Hedef',
+                label: AppLocalizations.of(context)!.goalsTarget,
                 value: '${dailyGoal.toStringAsFixed(0)} kg',
                 color: Colors.orange,
               ),
               _buildMiniStat(
                 icon: Icons.eco,
-                label: 'Durum',
-                value: comparison.performanceText.split(' ')[0],
+                label: AppLocalizations.of(context)!.dashboardPerformance,
+                value: _localizedPerformanceLabel(AppLocalizations.of(context)!, comparison.performanceLevel),
                 color: comparison.performanceColor,
               ),
             ],
@@ -298,6 +299,21 @@ class _HeroDashboardState extends State<HeroDashboard>
         ),
       ],
     );
+  }
+
+  String _localizedPerformanceLabel(AppLocalizations l, PerformanceLevel level) {
+    switch (level) {
+      case PerformanceLevel.excellent:
+        return l.translate('ui.performance.excellent');
+      case PerformanceLevel.good:
+        return l.translate('ui.performance.good');
+      case PerformanceLevel.average:
+        return l.translate('ui.performance.average');
+      case PerformanceLevel.poor:
+        return l.translate('ui.performance.poor');
+      case PerformanceLevel.critical:
+        return l.translate('ui.performance.critical');
+    }
   }
 
   Color _getProgressColor(double progress) {

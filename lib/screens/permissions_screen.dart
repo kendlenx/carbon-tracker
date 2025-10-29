@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../services/language_service.dart';
 import '../services/permission_service.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
+import '../l10n/app_localizations.dart';
 
 class PermissionsScreen extends StatefulWidget {
   const PermissionsScreen({super.key});
@@ -12,7 +12,6 @@ class PermissionsScreen extends StatefulWidget {
 }
 
 class _PermissionsScreenState extends State<PermissionsScreen> {
-  final LanguageService _languageService = LanguageService.instance;
   final PermissionService _permissionService = PermissionService.instance;
 
   Map<String, bool> _permissionStates = {};
@@ -46,9 +45,10 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Permissions' : 'İzinler'),
+        title: Text(l10n.translate('permissions.title')),
         backgroundColor: Colors.orange.withValues(alpha: 0.1),
         foregroundColor: Colors.orange,
         actions: [
@@ -74,27 +74,21 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
                   // Essential Permissions
                   _buildPermissionSection(
-                    title: _languageService.isEnglish ? 'Essential Permissions' : 'Temel İzinler',
-                    subtitle: _languageService.isEnglish 
-                      ? 'Required for core app functionality'
-                      : 'Uygulamanın temel işlevselliği için gerekli',
+                    title: l10n.translate('permissions.sections.essentialTitle'),
+                    subtitle: l10n.translate('permissions.sections.essentialSubtitle'),
                     permissions: [
                       PermissionItem(
                         key: 'storage',
-                        titleEn: 'Storage Access',
-                        titleTr: 'Depolama Erişimi',
-                        descriptionEn: 'Store and access your carbon tracking data',
-                        descriptionTr: 'Karbon takip verilerinizi saklayın ve erişin',
+                        titleKey: 'permissions.storage',
+                        descriptionKey: 'permissions.descriptions.storage',
                         icon: Icons.storage,
                         color: Colors.blue,
                         isRequired: true,
                       ),
                       PermissionItem(
                         key: 'notifications',
-                        titleEn: 'Notifications',
-                        titleTr: 'Bildirimler',
-                        descriptionEn: 'Receive reminders and updates about your carbon goals',
-                        descriptionTr: 'Karbon hedefleriniz hakkında hatırlatmalar ve güncellemeler alın',
+                        titleKey: 'permissions.notifications',
+                        descriptionKey: 'permissions.descriptions.notifications',
                         icon: Icons.notifications,
                         color: Colors.green,
                         isRequired: true,
@@ -106,37 +100,29 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
                   // Enhanced Features
                   _buildPermissionSection(
-                    title: _languageService.isEnglish ? 'Enhanced Features' : 'Gelişmiş Özellikler',
-                    subtitle: _languageService.isEnglish 
-                      ? 'Optional permissions for additional functionality'
-                      : 'Ek işlevsellik için isteğe bağlı izinler',
+                    title: l10n.translate('permissions.sections.enhancedTitle'),
+                    subtitle: l10n.translate('permissions.sections.enhancedSubtitle'),
                     permissions: [
                       PermissionItem(
                         key: 'location',
-                        titleEn: 'Location Services',
-                        titleTr: 'Konum Servisleri',
-                        descriptionEn: 'Auto-detect transport methods and calculate accurate distances',
-                        descriptionTr: 'Ulaşım yöntemlerini otomatik algıla ve doğru mesafeleri hesapla',
+                        titleKey: 'permissions.location',
+                        descriptionKey: 'permissions.descriptions.location',
                         icon: Icons.location_on,
                         color: Colors.red,
                         isRequired: false,
                       ),
                       PermissionItem(
                         key: 'camera',
-                        titleEn: 'Camera Access',
-                        titleTr: 'Kamera Erişimi',
-                        descriptionEn: 'Scan barcodes and QR codes for quick activity logging',
-                        descriptionTr: 'Hızlı aktivite kaydı için barkodları ve QR kodlarını tarayın',
+                        titleKey: 'permissions.camera',
+                        descriptionKey: 'permissions.descriptions.camera',
                         icon: Icons.camera_alt,
                         color: Colors.purple,
                         isRequired: false,
                       ),
                       PermissionItem(
                         key: 'microphone',
-                        titleEn: 'Microphone Access',
-                        titleTr: 'Mikrofon Erişimi',
-                        descriptionEn: 'Use voice commands to quickly add activities',
-                        descriptionTr: 'Aktiviteleri hızlıca eklemek için sesli komutları kullanın',
+                        titleKey: 'permissions.microphone',
+                        descriptionKey: 'permissions.descriptions.microphone',
                         icon: Icons.mic,
                         color: Colors.teal,
                         isRequired: false,
@@ -160,6 +146,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   }
 
   Widget _buildInfoCard() {
+    final l10n = AppLocalizations.of(context)!;
     return Card(
       color: Colors.orange.withValues(alpha: 0.1),
       child: Padding(
@@ -169,7 +156,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             Icon(Icons.security, color: Colors.orange, size: 32),
             const SizedBox(height: 8),
             Text(
-              _languageService.isEnglish ? 'Privacy & Permissions' : 'Gizlilik ve İzinler',
+              l10n.translate('permissions.infoTitle'),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -177,9 +164,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _languageService.isEnglish 
-                ? 'Your privacy is our priority. We only request permissions that enhance your Carbon Tracker experience. You can manage these settings anytime.'
-                : 'Gizliliğiniz önceliğimizdir. Sadece Carbon Tracker deneyiminizi geliştiren izinleri istiyoruz. Bu ayarları istediğiniz zaman yönetebilirsiniz.',
+              l10n.translate('permissions.infoBody'),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade700,
@@ -268,7 +253,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                   Row(
                     children: [
                       Text(
-                        permission.getTitle(_languageService.isEnglish),
+                        permission.getTitle(AppLocalizations.of(context)!),
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -283,7 +268,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            _languageService.isEnglish ? 'Required' : 'Gerekli',
+                            AppLocalizations.of(context)!.translate('permissions.required'),
                             style: const TextStyle(
                               fontSize: 10,
                               color: Colors.red,
@@ -296,7 +281,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    permission.getDescription(_languageService.isEnglish),
+                    permission.getDescription(AppLocalizations.of(context)!),
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.grey.shade600,
@@ -328,8 +313,8 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                       const SizedBox(width: 4),
                       Text(
                         isGranted 
-                          ? (_languageService.isEnglish ? 'Granted' : 'Verildi')
-                          : (_languageService.isEnglish ? 'Denied' : 'Reddedildi'),
+                          ? AppLocalizations.of(context)!.translate('permissions.granted')
+                          : AppLocalizations.of(context)!.translate('permissions.denied'),
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
@@ -360,7 +345,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                 Icon(Icons.privacy_tip, color: Colors.blue, size: 24),
                 const SizedBox(width: 12),
                 Text(
-                  _languageService.isEnglish ? 'Privacy & Security' : 'Gizlilik ve Güvenlik',
+                  AppLocalizations.of(context)!.translate('ui.securityPrivacy'),
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -372,30 +357,24 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             
             _buildPrivacyItem(
               icon: Icons.local_shipping,
-              titleEn: 'Data stays on your device',
-              titleTr: 'Veriler cihazınızda kalır',
-              descriptionEn: 'Your carbon tracking data is stored locally and never sent to external servers without your consent.',
-              descriptionTr: 'Karbon takip verileriniz yerel olarak saklanır ve izniniz olmadan dış sunuculara asla gönderilmez.',
+              titleKey: 'permissions.dataStaysOnDevice',
+              descriptionKey: 'permissions.dataStaysOnDeviceDesc',
             ),
             
             const SizedBox(height: 16),
             
             _buildPrivacyItem(
               icon: Icons.no_accounts,
-              titleEn: 'No tracking or profiling',
-              titleTr: 'Takip veya profil oluşturma yok',
-              descriptionEn: 'We don\'t track your behavior or create profiles for advertising purposes.',
-              descriptionTr: 'Davranışlarınızı takip etmiyoruz veya reklam amaçlı profiller oluşturmuyoruz.',
+              titleKey: 'permissions.noTrackingProfiling',
+              descriptionKey: 'permissions.noTrackingProfilingDesc',
             ),
             
             const SizedBox(height: 16),
             
             _buildPrivacyItem(
               icon: Icons.verified_user,
-              titleEn: 'Transparent permissions',
-              titleTr: 'Şeffaf izinler',
-              descriptionEn: 'We clearly explain why each permission is needed and how it improves your experience.',
-              descriptionTr: 'Her iznin neden gerekli olduğunu ve deneyiminizi nasıl iyileştirdiğini açıkça açıklıyoruz.',
+              titleKey: 'permissions.transparentPermissions',
+              descriptionKey: 'permissions.transparentPermissionsDesc',
             ),
           ],
         ),
@@ -405,10 +384,8 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 
   Widget _buildPrivacyItem({
     required IconData icon,
-    required String titleEn,
-    required String titleTr,
-    required String descriptionEn,
-    required String descriptionTr,
+    required String titleKey,
+    required String descriptionKey,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -420,7 +397,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _languageService.isEnglish ? titleEn : titleTr,
+                AppLocalizations.of(context)!.translate(titleKey),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -428,7 +405,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
               ),
               const SizedBox(height: 2),
               Text(
-                _languageService.isEnglish ? descriptionEn : descriptionTr,
+                AppLocalizations.of(context)!.translate(descriptionKey),
                 style: TextStyle(
                   fontSize: 11,
                   color: Colors.grey.shade600,
@@ -454,7 +431,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
         ),
         icon: const Icon(Icons.settings),
         label: Text(
-          _languageService.isEnglish ? 'Open System Settings' : 'Sistem Ayarlarını Aç',
+          AppLocalizations.of(context)!.translate('permissions.openSettings'),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -470,7 +447,6 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       builder: (context) => _PermissionDetailSheet(
         permission: permission,
         isGranted: _permissionStates[permission.key] ?? false,
-        languageService: _languageService,
         onRequest: () async {
           await _requestPermission(permission);
           Navigator.of(context).pop();
@@ -508,9 +484,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _languageService.isEnglish 
-              ? '${permission.titleEn} permission granted!'
-              : '${permission.titleTr} izni verildi!',
+            AppLocalizations.of(context)!.translate('permissions.granted'),
           ),
         ),
       );
@@ -525,16 +499,14 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isEnglish ? 'About Permissions' : 'İzinler Hakkında'),
+        title: Text(AppLocalizations.of(context)!.translate('permissions.about.title')),
         content: Text(
-          _languageService.isEnglish
-            ? 'Permissions allow Carbon Tracker to access device features that enhance your experience. You can always change these settings later in your device\'s system settings.'
-            : 'İzinler, Carbon Tracker\'ın deneyiminizi geliştiren cihaz özelliklerine erişmesine olanak tanır. Bu ayarları daha sonra cihazınızın sistem ayarlarından değiştirebilirsiniz.',
+          AppLocalizations.of(context)!.translate('permissions.about.body'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'Got it' : 'Anladım'),
+            child: Text(AppLocalizations.of(context)!.translate('common.ok')),
           ),
         ],
       ),
@@ -545,13 +517,11 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
 class _PermissionDetailSheet extends StatelessWidget {
   final PermissionItem permission;
   final bool isGranted;
-  final LanguageService languageService;
   final VoidCallback onRequest;
 
   const _PermissionDetailSheet({
     required this.permission,
     required this.isGranted,
-    required this.languageService,
     required this.onRequest,
   });
 
@@ -591,7 +561,7 @@ class _PermissionDetailSheet extends StatelessWidget {
           
           // Title
           Text(
-            permission.getTitle(languageService.isEnglish),
+            permission.getTitle(AppLocalizations.of(context)!),
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -609,8 +579,8 @@ class _PermissionDetailSheet extends StatelessWidget {
             ),
             child: Text(
               isGranted 
-                ? (languageService.isEnglish ? 'Permission Granted' : 'İzin Verildi')
-                : (languageService.isEnglish ? 'Permission Denied' : 'İzin Reddedildi'),
+                ? AppLocalizations.of(context)!.translate('permissions.granted')
+                : AppLocalizations.of(context)!.translate('permissions.denied'),
               style: TextStyle(
                 color: isGranted ? Colors.green : Colors.grey,
                 fontWeight: FontWeight.w500,
@@ -622,7 +592,7 @@ class _PermissionDetailSheet extends StatelessWidget {
           
           // Description
           Text(
-            permission.getDescription(languageService.isEnglish),
+            permission.getDescription(AppLocalizations.of(context)!),
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey.shade600,
@@ -645,16 +615,14 @@ class _PermissionDetailSheet extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: Text(
-                  languageService.isEnglish ? 'Grant Permission' : 'İzin Ver',
+                  AppLocalizations.of(context)!.translate('permissions.requestPermission'),
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             )
           else
             Text(
-              languageService.isEnglish 
-                ? 'You can manage this permission in system settings.'
-                : 'Bu izni sistem ayarlarından yönetebilirsiniz.',
+              AppLocalizations.of(context)!.translate('permissions.manageInSystemSettings'),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade600,
@@ -669,25 +637,21 @@ class _PermissionDetailSheet extends StatelessWidget {
 
 class PermissionItem {
   final String key;
-  final String titleEn;
-  final String titleTr;
-  final String descriptionEn;
-  final String descriptionTr;
+  final String titleKey;
+  final String descriptionKey;
   final IconData icon;
   final Color color;
   final bool isRequired;
 
   PermissionItem({
     required this.key,
-    required this.titleEn,
-    required this.titleTr,
-    required this.descriptionEn,
-    required this.descriptionTr,
+    required this.titleKey,
+    required this.descriptionKey,
     required this.icon,
     required this.color,
     required this.isRequired,
   });
 
-  String getTitle(bool isEnglish) => isEnglish ? titleEn : titleTr;
-  String getDescription(bool isEnglish) => isEnglish ? descriptionEn : descriptionTr;
+  String getTitle(AppLocalizations l10n) => l10n.translate(titleKey);
+  String getDescription(AppLocalizations l10n) => l10n.translate(descriptionKey);
 }

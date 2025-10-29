@@ -5,6 +5,11 @@ import 'firebase_service.dart';
 import 'security_service.dart';
 import 'admob_service.dart';
 import 'performance_service.dart';
+import 'feedback_service.dart';
+import 'sync_service.dart';
+import 'gamification_service.dart';
+import 'widget_data_provider.dart';
+import 'widget_service.dart';
 
 /// Runs heavy initializations in the background without blocking first frame
 class BackgroundInitService {
@@ -40,6 +45,31 @@ class BackgroundInitService {
         await PerformanceService.instance.initialize();
       } catch (e) {
         debugPrint('Background Performance init failed: $e');
+      }
+      // Initialize feedback service after Firebase is ready
+      try {
+        await FeedbackService().initialize();
+      } catch (e) {
+        debugPrint('Background Feedback init failed: $e');
+      }
+      // Start sync and gamification services
+      try {
+        await SyncService.instance.start();
+        await GamificationService.instance.initialize();
+        // Initialize widget services (home widgets + iOS widgets/live activity provider)
+        try {
+          await WidgetDataProvider.instance.initialize();
+        } catch (e) {
+          debugPrint('WidgetDataProvider init failed: $e');
+        }
+        try {
+          await WidgetService.instance.initialize();
+          WidgetService.instance.scheduleWidgetUpdates();
+        } catch (e) {
+          debugPrint('WidgetService init failed: $e');
+        }
+      } catch (e) {
+        debugPrint('Background extra init failed: $e');
       }
     } catch (e) {
       debugPrint('Background Firebase init failed: $e');

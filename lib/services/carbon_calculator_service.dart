@@ -112,13 +112,13 @@ class CarbonCalculatorService {
   }
 
   /// CO₂ tasarrufu önerileri
-  static List<CarbonSavingTip> generateTips(double transportEmission) {
+  static List<CarbonSavingTip> generateTips(double transportEmission, String Function(String) t) {
     final tips = <CarbonSavingTip>[];
     
     if (transportEmission > 50) {
       tips.add(CarbonSavingTip(
-        category: 'Ulaşım',
-        tip: 'Mümkün olduğunda toplu taşıma kullanmayı tercih edin.',
+        category: 'transport',
+        tip: t('tips.usePublicTransport'),
         potentialSaving: transportEmission * 0.6,
         difficulty: DifficultyLevel.easy,
       ));
@@ -126,8 +126,8 @@ class CarbonCalculatorService {
     
     if (transportEmission > 30) {
       tips.add(CarbonSavingTip(
-        category: 'Ulaşım',
-        tip: 'Kısa mesafeler için bisiklet veya yürüyüş yapın.',
+        category: 'transport',
+        tip: t('tips.walkMore'),
         potentialSaving: transportEmission * 0.2,
         difficulty: DifficultyLevel.easy,
       ));
@@ -135,16 +135,16 @@ class CarbonCalculatorService {
 
     if (transportEmission > 40) {
       tips.add(CarbonSavingTip(
-        category: 'Ulaşım',
-        tip: 'Araç paylaşımını (car sharing) düşünün.',
+        category: 'transport',
+        tip: t('tips.carShare'),
         potentialSaving: transportEmission * 0.5,
         difficulty: DifficultyLevel.medium,
       ));
     }
 
     tips.add(CarbonSavingTip(
-      category: 'Genel',
-      tip: 'LED ampuller kullanarak enerji tasarrufu yapın.',
+      category: 'energy',
+      tip: t('tips.energyEfficient'),
       potentialSaving: 2.5,
       difficulty: DifficultyLevel.easy,
     ));

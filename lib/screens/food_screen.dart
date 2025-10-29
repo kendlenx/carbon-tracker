@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import '../widgets/micro_interactions.dart';
 
@@ -18,14 +18,12 @@ class _FoodScreenState extends State<FoodScreen> {
   double totalCarbonWeek = 0.0;
   double totalCarbonMonth = 0.0;
 
-  final LanguageService _languageService = LanguageService.instance;
 
   // Food categories with carbon factors (kg CO₂ per serving/kg)
   final List<FoodCategory> foodCategories = [
     FoodCategory(
       id: 'beef',
-      nameEn: 'Beef & Red Meat',
-      nameTr: 'Et ve Kırmızı Et',
+      titleKey: 'food.categoryNames.beef',
       icon: Icons.lunch_dining,
       color: Colors.red,
       carbonPerServing: 27.0, // kg CO₂ per kg of beef
@@ -33,8 +31,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'chicken',
-      nameEn: 'Chicken & Poultry',
-      nameTr: 'Tavuk ve Kanatlı',
+      titleKey: 'food.categoryNames.chicken',
       icon: Icons.egg,
       color: Colors.orange,
       carbonPerServing: 6.9, // kg CO₂ per kg
@@ -42,8 +39,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'fish',
-      nameEn: 'Fish & Seafood',
-      nameTr: 'Balık ve Deniz Ürünleri',
+      titleKey: 'food.categoryNames.fish',
       icon: Icons.set_meal,
       color: Colors.blue,
       carbonPerServing: 13.6, // kg CO₂ per kg
@@ -51,8 +47,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'dairy',
-      nameEn: 'Dairy Products',
-      nameTr: 'Süt Ürünleri',
+      titleKey: 'food.categoryNames.dairy',
       icon: Icons.local_drink,
       color: Colors.cyan,
       carbonPerServing: 9.8, // kg CO₂ per kg (cheese average)
@@ -60,8 +55,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'vegetables',
-      nameEn: 'Vegetables',
-      nameTr: 'Sebzeler',
+      titleKey: 'food.categoryNames.vegetables',
       icon: Icons.eco,
       color: Colors.green,
       carbonPerServing: 2.0, // kg CO₂ per kg
@@ -69,8 +63,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'fruits',
-      nameEn: 'Fruits',
-      nameTr: 'Meyveler',
+      titleKey: 'food.categoryNames.fruits',
       icon: Icons.apple,
       color: Colors.lightGreen,
       carbonPerServing: 1.1, // kg CO₂ per kg
@@ -78,8 +71,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'grains',
-      nameEn: 'Grains & Cereals',
-      nameTr: 'Tahıl ve Hububat',
+      titleKey: 'food.categoryNames.grains',
       icon: Icons.grass,
       color: Colors.brown,
       carbonPerServing: 2.5, // kg CO₂ per kg
@@ -87,8 +79,7 @@ class _FoodScreenState extends State<FoodScreen> {
     ),
     FoodCategory(
       id: 'processed',
-      nameEn: 'Processed Foods',
-      nameTr: 'İşlenmiş Gıdalar',
+      titleKey: 'food.categoryNames.processed',
       icon: Icons.fastfood,
       color: Colors.deepOrange,
       carbonPerServing: 5.5, // kg CO₂ per kg average
@@ -161,7 +152,7 @@ class _FoodScreenState extends State<FoodScreen> {
       await DatabaseService.instance.insertActivity({
         'category': 'food',
         'subcategory': category.id,
-        'description': '${category.getName(_languageService.isEnglish)} x$servings ${category.unit}',
+'description': '${AppLocalizations.of(context)!.translate(category.titleKey)} x$servings ${category.unit}',
         'co2_amount': carbonAmount,
         'created_at': DateTime.now().toIso8601String(),
         'metadata': {
@@ -176,16 +167,14 @@ class _FoodScreenState extends State<FoodScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _languageService.isEnglish 
-              ? 'Added $servings ${category.unit} ${category.nameEn} (+${carbonAmount.toStringAsFixed(1)} kg CO₂)'
-              : '$servings ${category.unit} ${category.nameTr} eklendi (+${carbonAmount.toStringAsFixed(1)} kg CO₂)',
+            AppLocalizations.of(context)!.translate('common.success'),
           ),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_languageService.isEnglish ? 'Error adding food item' : 'Yiyecek eklenirken hata oluştu'),
+          content: Text(AppLocalizations.of(context)!.translate('errors.saveError')),
         ),
       );
     }
@@ -195,7 +184,7 @@ class _FoodScreenState extends State<FoodScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Food Carbon' : 'Yemek Karbonu'),
+        title: Text(AppLocalizations.of(context)!.translate('food.title')),
         backgroundColor: Colors.green.withValues(alpha: 0.1),
         foregroundColor: Colors.green,
       ),
@@ -219,7 +208,7 @@ class _FoodScreenState extends State<FoodScreen> {
 
                     // Categories Grid
                     Text(
-                      _languageService.isEnglish ? 'Food Categories' : 'Yemek Kategorileri',
+                      AppLocalizations.of(context)!.translate('food.categories'),
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -231,7 +220,7 @@ class _FoodScreenState extends State<FoodScreen> {
                     // Recent Activities
                     if (foodActivities.isNotEmpty) ...[
                       Text(
-                        _languageService.isEnglish ? 'Recent Meals' : 'Son Yemekler',
+                        AppLocalizations.of(context)!.translate('food.recentMeals'),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -256,7 +245,7 @@ class _FoodScreenState extends State<FoodScreen> {
             Icon(Icons.info_outline, color: Colors.green, size: 32),
             const SizedBox(height: 8),
             Text(
-              _languageService.isEnglish ? 'Food Impact Facts' : 'Yemek Etki Bilgileri',
+              AppLocalizations.of(context)!.translate('food.infoTitle'),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
@@ -264,15 +253,7 @@ class _FoodScreenState extends State<FoodScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              _languageService.isEnglish 
-                ? '• Food production accounts for ~26% of global greenhouse gas emissions\n'
-                  '• Livestock farming produces ~14.5% of global emissions\n'
-                  '• Plant-based foods generally have lower carbon footprints\n'
-                  '• Local, seasonal foods reduce transportation emissions'
-                : '• Gıda üretimi küresel sera gazı emisyonlarının ~%26\'sını oluşturur\n'
-                  '• Hayvancılık küresel emisyonların ~%14.5\'ini üretir\n'
-                  '• Bitki bazlı gıdalar genelde daha düşük karbon ayak izine sahiptir\n'
-                  '• Yerel, mevsimlik gıdalar ulaştırma emisyonlarını azaltır',
+              AppLocalizations.of(context)!.translate('food.infoBody'),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey.shade700,
@@ -289,7 +270,7 @@ class _FoodScreenState extends State<FoodScreen> {
       children: [
         Expanded(
           child: _buildStatCard(
-            _languageService.isEnglish ? 'Today' : 'Bugün',
+            AppLocalizations.of(context)!.translate('statistics.today'),
             totalCarbonToday,
             Colors.green,
             Icons.today,
@@ -298,7 +279,7 @@ class _FoodScreenState extends State<FoodScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            _languageService.isEnglish ? 'This Week' : 'Bu Hafta',
+            AppLocalizations.of(context)!.translate('statistics.thisWeek'),
             totalCarbonWeek,
             Colors.teal,
             Icons.calendar_view_week,
@@ -307,7 +288,7 @@ class _FoodScreenState extends State<FoodScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            _languageService.isEnglish ? 'This Month' : 'Bu Ay',
+            AppLocalizations.of(context)!.translate('statistics.thisMonth'),
             totalCarbonMonth,
             Colors.lightGreen,
             Icons.calendar_month,
@@ -388,7 +369,7 @@ class _FoodScreenState extends State<FoodScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              category.getName(_languageService.isEnglish),
+              AppLocalizations.of(context)!.translate(category.titleKey),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
@@ -406,7 +387,7 @@ class _FoodScreenState extends State<FoodScreen> {
               ),
             ),
             Text(
-              'per ${category.unit}',
+              '${AppLocalizations.of(context)!.translate('common.per')} ${category.unit}',
               style: TextStyle(
                 color: Colors.grey.shade600,
                 fontSize: 10,
@@ -425,14 +406,12 @@ class _FoodScreenState extends State<FoodScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(category.getName(_languageService.isEnglish)),
+          title: Text(AppLocalizations.of(context)!.translate(category.titleKey)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _languageService.isEnglish 
-                  ? 'How many ${category.unit}s?' 
-                  : 'Kaç ${category.unit}?',
+                AppLocalizations.of(context)!.translate('common.howMany'),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 16),
@@ -459,7 +438,7 @@ class _FoodScreenState extends State<FoodScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                '${_languageService.isEnglish ? 'Total CO₂:' : 'Toplam CO₂:'} ${(category.carbonPerServing * servings * 0.1).toStringAsFixed(1)} kg',
+                '${AppLocalizations.of(context)!.translate('statistics.totalCO2')}: ${(category.carbonPerServing * servings * 0.1).toStringAsFixed(1)} kg',
                 style: TextStyle(
                   color: category.color,
                   fontWeight: FontWeight.bold,
@@ -470,14 +449,14 @@ class _FoodScreenState extends State<FoodScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+              child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _addFoodItem(category, servings);
               },
-              child: Text(_languageService.isEnglish ? 'Add' : 'Ekle'),
+              child: Text(AppLocalizations.of(context)!.translate('common.add')),
             ),
           ],
         ),
@@ -498,7 +477,7 @@ class _FoodScreenState extends State<FoodScreen> {
               backgroundColor: Colors.green.withValues(alpha: 0.1),
               child: const Icon(Icons.restaurant, color: Colors.green),
             ),
-            title: Text(activity['description'] ?? 'Food Item'),
+            title: Text(activity['description'] ?? AppLocalizations.of(context)!.translate('food.title')),
             subtitle: Text(
               DateTime.parse(activity['created_at']).toString().split(' ')[0],
             ),
@@ -518,8 +497,7 @@ class _FoodScreenState extends State<FoodScreen> {
 
 class FoodCategory {
   final String id;
-  final String nameEn;
-  final String nameTr;
+  final String titleKey;
   final IconData icon;
   final Color color;
   final double carbonPerServing;
@@ -527,13 +505,10 @@ class FoodCategory {
 
   FoodCategory({
     required this.id,
-    required this.nameEn,
-    required this.nameTr,
+    required this.titleKey,
     required this.icon,
     required this.color,
     required this.carbonPerServing,
     required this.unit,
   });
-
-  String getName(bool isEnglish) => isEnglish ? nameEn : nameTr;
 }

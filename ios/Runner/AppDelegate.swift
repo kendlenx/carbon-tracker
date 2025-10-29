@@ -93,8 +93,13 @@ import ActivityKit
       sharedDefaults.synchronize()
     }
     
-    // Reload widgets
+    // Reload widgets (all kinds)
     WidgetCenter.shared.reloadTimelines(ofKind: "CarbonTrackerWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "ConfigurableCarbonTrackerWidget")
+    WidgetCenter.shared.reloadTimelines(ofKind: "TodayExtensionWidget")
+    if #available(iOS 17.0, *) {
+      WidgetCenter.shared.reloadTimelines(ofKind: "InteractiveCarbonWidget")
+    }
     
     result(true)
   }

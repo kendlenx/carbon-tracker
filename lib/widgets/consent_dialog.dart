@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/gdpr_service.dart';
-import '../services/language_service.dart';
 import '../utils/app_colors.dart';
+import '../l10n/app_localizations.dart';
 
 class ConsentDialog extends StatefulWidget {
   final bool isFirstTime;
@@ -17,7 +17,6 @@ class ConsentDialog extends StatefulWidget {
 
 class _ConsentDialogState extends State<ConsentDialog> {
   final GDPRService _gdprService = GDPRService();
-  final LanguageService _languageService = LanguageService.instance;
   Map<String, bool> _consents = {};
   bool _isLoading = true;
   bool _acceptAll = false;
@@ -45,7 +44,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final language = _languageService.isEnglish ? 'en' : 'tr';
+    final l = AppLocalizations.of(context)!;
     
     return AlertDialog(
           shape: RoundedRectangleBorder(
@@ -61,9 +60,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  language == 'tr' 
-                    ? 'Gizlilik ve İzinler' 
-                    : 'Privacy & Consent',
+                  l.translate('consent.title'),
                   style: TextStyle(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.bold,
@@ -84,9 +81,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
                   children: [
                     // Introduction text
                     Text(
-                      language == 'tr'
-                        ? 'Verilerinizi nasıl kullandığımızı kontrol edin. Bu izinleri istediğiniz zaman değiştirebilirsiniz.'
-                        : 'Control how we use your data. You can change these permissions at any time.',
+                      l.translate('consent.intro'),
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
@@ -108,9 +103,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
                         children: [
                           Expanded(
                             child: Text(
-                              language == 'tr' 
-                                ? 'Tümünü Kabul Et' 
-                                : 'Accept All',
+                              l.translate('consent.acceptAll'),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
@@ -136,7 +129,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
                     const SizedBox(height: 16),
                     
                     // Individual consent options
-                    ..._buildConsentOptions(language),
+                    ..._buildConsentOptions(l),
                     
                     const SizedBox(height: 16),
                     
@@ -148,9 +141,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        language == 'tr'
-                          ? 'Temel uygulama işlevleri için gerekli olan veriler, izniniz olmadan da işlenir (yasal gereklilik).'
-                          : 'Essential data for app functionality is processed without consent (legal requirement).',
+                        l.translate('consent.legalNote'),
                         style: TextStyle(
                           fontSize: 12,
                           fontStyle: FontStyle.italic,
@@ -164,10 +155,10 @@ class _ConsentDialogState extends State<ConsentDialog> {
           actions: [
             // Learn more button
             TextButton.icon(
-              onPressed: () => _showDetailedInfo(context, language),
+              onPressed: () => _showDetailedInfo(context, l),
               icon: const Icon(Icons.info_outline, size: 16),
               label: Text(
-                language == 'tr' ? 'Detaylar' : 'Learn More',
+                l.translate('consent.learnMore'),
                 style: const TextStyle(fontSize: 12),
               ),
             ),
@@ -177,7 +168,7 @@ class _ConsentDialogState extends State<ConsentDialog> {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 child: Text(
-                  language == 'tr' ? 'İptal' : 'Cancel',
+                  l.translate('common.cancel'),
                 ),
               ),
             ],
@@ -189,15 +180,15 @@ class _ConsentDialogState extends State<ConsentDialog> {
                 foregroundColor: Colors.white,
               ),
               child: Text(
-                language == 'tr' ? 'Kaydet' : 'Save',
+                AppLocalizations.of(context)!.translate('common.save'),
               ),
             ),
           ],
         );
   }
 
-  List<Widget> _buildConsentOptions(String language) {
-    final consentOptions = _getConsentOptions(language);
+  List<Widget> _buildConsentOptions(AppLocalizations l) {
+    final consentOptions = _getConsentOptions(l);
     
     return consentOptions.map((option) {
       final key = option['key'] as String;
@@ -263,72 +254,37 @@ class _ConsentDialogState extends State<ConsentDialog> {
     }).toList();
   }
 
-  List<Map<String, dynamic>> _getConsentOptions(String language) {
-    if (language == 'tr') {
-      return [
-        {
-          'key': GDPRService.consentAnalytics,
-          'icon': Icons.analytics,
-          'title': 'Analitik ve Performans',
-          'description': 'Uygulama performansını ölçmek ve iyileştirmek için anonim kullanım verileri toplamamıza izin verin.',
-        },
-        {
-          'key': GDPRService.consentCrashReporting,
-          'icon': Icons.bug_report,
-          'title': 'Hata Raporlama',
-          'description': 'Uygulama hatalarını tespit etmek ve düzeltmek için otomatik hata raporları göndermeyi etkinleştirin.',
-        },
-        {
-          'key': GDPRService.consentDataSync,
-          'icon': Icons.sync,
-          'title': 'Bulut Senkronizasyonu',
-          'description': 'Verilerinizi cihazlar arası senkronize etmek için bulut depolamayı kullanın.',
-        },
-        {
-          'key': GDPRService.consentLocationTracking,
-          'icon': Icons.location_on,
-          'title': 'Konum Takibi',
-          'description': 'Daha doğru karbon ayak izi hesaplamaları için konum verilerinizi kullanın (isteğe bağlı).',
-        },
-        {
-          'key': GDPRService.consentMarketing,
-          'icon': Icons.campaign,
-          'title': 'Pazarlama İletişimi',
-          'description': 'Yeni özellikler ve ipuçları hakkında kişiselleştirilmiş bildirimler alın.',
-        },
-      ];
-    }
-    
+  List<Map<String, dynamic>> _getConsentOptions(AppLocalizations l) {
     return [
       {
         'key': GDPRService.consentAnalytics,
         'icon': Icons.analytics,
-        'title': 'Analytics & Performance',
-        'description': 'Allow us to collect anonymous usage data to measure and improve app performance.',
+'title': l.translate('consent.options.analytics.title'),
+'description': l.translate('consent.options.analytics.description'),
       },
       {
         'key': GDPRService.consentCrashReporting,
         'icon': Icons.bug_report,
-        'title': 'Crash Reporting',
-        'description': 'Enable automatic crash reports to help us identify and fix app issues.',
+'title': l.translate('consent.options.crash.title'),
+'description': l.translate('consent.options.crash.description'),
       },
       {
         'key': GDPRService.consentDataSync,
         'icon': Icons.sync,
-        'title': 'Cloud Synchronization',
-        'description': 'Use cloud storage to synchronize your data across devices.',
+'title': l.translate('consent.options.dataSync.title'),
+'description': l.translate('consent.options.dataSync.description'),
       },
       {
         'key': GDPRService.consentLocationTracking,
         'icon': Icons.location_on,
-        'title': 'Location Tracking',
-        'description': 'Use your location data for more accurate carbon footprint calculations (optional).',
+'title': l.translate('consent.options.location.title'),
+'description': l.translate('consent.options.location.description'),
       },
       {
         'key': GDPRService.consentMarketing,
         'icon': Icons.campaign,
-        'title': 'Marketing Communications',
-        'description': 'Receive personalized notifications about new features and tips.',
+'title': l.translate('consent.options.marketing.title'),
+'description': l.translate('consent.options.marketing.description'),
       },
     ];
   }
@@ -337,55 +293,23 @@ class _ConsentDialogState extends State<ConsentDialog> {
     _acceptAll = _consents.values.every((consent) => consent);
   }
 
-  void _showDetailedInfo(BuildContext context, String language) {
+  void _showDetailedInfo(BuildContext context, AppLocalizations l) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          language == 'tr' 
-            ? 'Veri Kullanımı Detayları' 
-            : 'Data Usage Details',
+          l.translate('consent.detailsTitle'),
         ),
         content: SingleChildScrollView(
           child: Text(
-            language == 'tr'
-              ? '''Gizliliğiniz bizim için önemlidir. İşte verilerinizi nasıl kullandığımız:
-
-• Temel İşlevler: Uygulama çalıştırmak için gerekli veriler (karbon aktiviteleri, hesap bilgileri)
-
-• Analitik: Anonim kullanım istatistikleri (hangi özellikler kullanılıyor, performans metrikleri)
-
-• Hata Raporları: Uygulama çökmelerini tespit etmek için teknik veriler
-
-• Bulut Sync: Firebase üzerinden şifrelenmiş veri yedekleme
-
-• Konum: GPS verisi sadece aktivite kaydı sırasında kullanılır
-
-• Pazarlama: Sadece uygulama içi bildirimler, hiçbir üçüncü tarafla paylaşılmaz
-
-Tüm veriler GDPR uyumludur ve dilediğiniz zaman silebilirsiniz.'''
-              : '''Your privacy is important to us. Here's how we use your data:
-
-• Essential Functions: Data required to run the app (carbon activities, account info)
-
-• Analytics: Anonymous usage statistics (which features are used, performance metrics)
-
-• Crash Reports: Technical data to identify app crashes
-
-• Cloud Sync: Encrypted data backup via Firebase
-
-• Location: GPS data only used during activity recording
-
-• Marketing: Only in-app notifications, never shared with third parties
-
-All data is GDPR compliant and you can delete it anytime.''',
+            l.translate('consent.detailsBody'),
             style: const TextStyle(fontSize: 14),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.translate('common.ok')),
           ),
         ],
       ),
@@ -405,9 +329,7 @@ All data is GDPR compliant and you can delete it anytime.''',
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              LanguageService.instance.isEnglish
-                ? 'Your consent preferences have been saved'
-                : 'İzin ayarlarınız kaydedildi',
+              AppLocalizations.of(context)!.translate('consent.saveSuccess'),
             ),
             backgroundColor: Colors.green,
           ),
@@ -418,9 +340,7 @@ All data is GDPR compliant and you can delete it anytime.''',
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              LanguageService.instance.isEnglish
-                ? 'Failed to save settings: ${e.toString()}'
-                : 'Ayarlar kaydedilemedi: ${e.toString()}',
+              '${AppLocalizations.of(context)!.translate('consent.saveFailed')}: ${e.toString()}',
             ),
             backgroundColor: Colors.red,
           ),
@@ -436,9 +356,8 @@ class ConsentBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final languageService = LanguageService.instance;
-    final language = languageService.isEnglish ? 'en' : 'tr';
-        
+    final l = AppLocalizations.of(context)!;
+    
     return Container(
           padding: const EdgeInsets.all(16),
           margin: const EdgeInsets.all(16),
@@ -462,9 +381,7 @@ class ConsentBanner extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      language == 'tr' 
-                        ? 'Gizliliğiniz Önemli' 
-                        : 'Your Privacy Matters',
+                      l.translate('consent.bannerTitle'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -476,9 +393,7 @@ class ConsentBanner extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                language == 'tr'
-                  ? 'Verilerinizi nasıl kullandığımızı kontrol edin. GDPR uyumlu gizlilik seçeneklerinizi yönetin.'
-                  : 'Control how we use your data. Manage your GDPR-compliant privacy options.',
+                l.translate('consent.bannerBody'),
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -496,9 +411,7 @@ class ConsentBanner extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                       ),
                       child: Text(
-                        language == 'tr' 
-                          ? 'İzinleri Yönet' 
-                          : 'Manage Consent',
+                        l.translate('consent.manage'),
                       ),
                     ),
                   ),

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:carbon_step/services/achievement_service.dart';
 import 'package:carbon_step/widgets/achievement_widgets.dart';
 import 'package:carbon_step/widgets/animated_widgets.dart';
+import 'package:carbon_step/services/gamification_service.dart';
+import 'package:carbon_step/services/image_export_service.dart';
+import 'package:carbon_step/widgets/share_composer_bottom_sheet.dart';
+import 'package:carbon_step/l10n/app_localizations.dart';
 
 class AchievementsScreen extends StatefulWidget {
   const AchievementsScreen({super.key});
@@ -31,18 +35,23 @@ class _AchievementsScreenState extends State<AchievementsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Başarılar'),
         elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            onPressed: () => ShareComposerBottomSheet.show(context),
+          )
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: const [
-            Tab(text: 'Tümü'),
-            Tab(text: 'Günlük'),
-            Tab(text: 'Haftalık'),
-            Tab(text: 'Seri'),
-            Tab(text: 'Kilometre Taşları'),
-            Tab(text: 'Özel'),
+          tabs: [
+            Tab(text: AppLocalizations.of(context)!.translate('ui.tabs.all')),
+            Tab(text: AppLocalizations.of(context)!.translate('ui.tabs.daily')),
+            Tab(text: AppLocalizations.of(context)!.translate('ui.tabs.weekly')),
+            Tab(text: AppLocalizations.of(context)!.translate('ui.tabs.streak')),
+            Tab(text: AppLocalizations.of(context)!.translate('ui.tabs.milestones')),
+            Tab(text: AppLocalizations.of(context)!.translate('ui.tabs.special')),
           ],
         ),
       ),
@@ -64,6 +73,52 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                 ),
               ),
               
+              // Weekly challenge + streak
+              FutureBuilder<WeeklyChallenge>(
+                future: GamificationService.instance.getWeeklyChallenge(),
+                builder: (context, snapshot) {
+                  final challenge = snapshot.data;
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.green.withValues(alpha: 0.08),
+                      border: Border.all(color: Colors.green.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.flag, color: Colors.green),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(AppLocalizations.of(context)!.translate('achievements.weeklyChallenge'),
+                                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 4),
+                              LinearProgressIndicator(
+                                value: challenge?.completion ?? 0,
+                                backgroundColor: Colors.green.withValues(alpha: 0.1),
+                                color: Colors.green,
+                                minHeight: 6,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                challenge == null
+                                    ? AppLocalizations.of(context)!.translate('common.loading')
+                                  : '${challenge.progress}/${challenge.target} ${AppLocalizations.of(context)!.translate('ui.completeShort')} • ${AppLocalizations.of(context)!.translate('ui.streak')}: ${GamificationService.instance.streak}',
+                                style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
               // Statistics Row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -71,7 +126,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                   children: [
                     Expanded(
                       child: _buildStatCard(
-                        'Kazanılan',
+                        AppLocalizations.of(context)!.achievementsUnlocked,
                         '${_achievementService.unlockedCount}',
                         '${_achievementService.totalAchievements}',
                         Colors.green,
@@ -81,9 +136,9 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                     const SizedBox(width: 12.0),
                     Expanded(
                       child: _buildStatCard(
-                        'Toplam XP',
+                        AppLocalizations.of(context)!.translate('ui.totalXP'),
                         '${_achievementService.totalPoints}',
-                        'puan',
+                        AppLocalizations.of(context)!.translate('ui.points'),
                         Colors.purple,
                         Icons.stars,
                       ),
@@ -91,9 +146,9 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                     const SizedBox(width: 12.0),
                     Expanded(
                       child: _buildStatCard(
-                        'Seviye',
+                        AppLocalizations.of(context)!.achievementsLevel,
                         '${_achievementService.userLevel}',
-                        'level',
+AppLocalizations.of(context)!.translate('achievements.level'),
                         Colors.orange,
                         Icons.trending_up,
                       ),
@@ -188,8 +243,40 @@ class _AchievementsScreenState extends State<AchievementsScreen>
     );
   }
 
+  String _locTitle(Achievement a) {
+    return AppLocalizations.of(context)!.translate('ach.${a.id}.title');
+  }
+
+  String _locDesc(Achievement a) {
+    return AppLocalizations.of(context)!.translate('ach.${a.id}.desc');
+  }
+
+  String _locUnit(String unit) {
+    final l = AppLocalizations.of(context)!;
+    switch (unit) {
+      case 'gün':
+        return l.translate('goals.units.days');
+      case 'puan':
+        return l.translate('ui.points');
+      case 'aktivite':
+        return l.translate('ui.activities');
+      case 'tür':
+        return l.translate('ui.types');
+      case 'yüzde':
+        return '%';
+      default:
+        return unit; // kg CO₂, km, etc.
+    }
+  }
+
   Widget _buildAllAchievements() {
-    final achievements = _achievementService.achievements;
+    final achievements = _achievementService.achievements
+        .map((a) => a.copyWith(
+              title: _locTitle(a),
+              description: _locDesc(a),
+              unit: _locUnit(a.unit),
+            ))
+        .toList();
     final unlockedAchievements = achievements.where((a) => a.isUnlocked).toList();
     final lockedAchievements = achievements.where((a) => !a.isUnlocked).toList();
     
@@ -224,11 +311,18 @@ class _AchievementsScreenState extends State<AchievementsScreen>
   }
 
   Widget _buildAchievementsByType(AchievementType type) {
-    final achievements = _achievementService.getAchievementsByType(type);
+    final achievements = _achievementService
+        .getAchievementsByType(type)
+        .map((a) => a.copyWith(
+              title: _locTitle(a),
+              description: _locDesc(a),
+              unit: _locUnit(a.unit),
+            ))
+        .toList();
     
     if (achievements.isEmpty) {
-      return const Center(
-        child: Text('Bu kategoride henüz başarı yok.'),
+      return Center(
+        child: Text(AppLocalizations.of(context)!.translate('ui.noAchievements')),
       );
     }
     
@@ -264,6 +358,11 @@ class _AchievementsScreenState extends State<AchievementsScreen>
   }
 
   void _showAchievementDetails(Achievement achievement) {
+    final a = achievement.copyWith(
+      title: _locTitle(achievement),
+      description: _locDesc(achievement),
+      unit: _locUnit(achievement.unit),
+    );
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -279,7 +378,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
             ),
             const SizedBox(height: 16.0),
             Text(
-              achievement.title,
+              a.title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -287,7 +386,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
             ),
             const SizedBox(height: 8.0),
             Text(
-              achievement.description,
+              a.description,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
@@ -306,14 +405,14 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Hedef:',
+                        '${AppLocalizations.of(context)!.goalsTarget}:',
                         style: TextStyle(
                           color: achievement.color,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                       Text(
-                        '${achievement.targetValue.toStringAsFixed(1)} ${achievement.unit}',
+                        '${a.targetValue.toStringAsFixed(1)} ${a.unit}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -323,7 +422,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'XP Değeri:',
+                        '${AppLocalizations.of(context)!.translate('ui.totalXP')}:',
                         style: TextStyle(
                           color: achievement.color,
                           fontWeight: FontWeight.w600,
@@ -341,7 +440,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'İlerleme:',
+                          '${AppLocalizations.of(context)!.achievementsProgress}:',
                           style: TextStyle(
                             color: achievement.color,
                             fontWeight: FontWeight.w600,
@@ -366,7 +465,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Kazanıldı:',
+                          '${AppLocalizations.of(context)!.translate('ui.earnedAt')}:',
                           style: TextStyle(
                             color: achievement.color,
                             fontWeight: FontWeight.w600,
@@ -387,7 +486,7 @@ class _AchievementsScreenState extends State<AchievementsScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Tamam'),
+            child: Text(AppLocalizations.of(context)!.commonOk),
           ),
         ],
       ),

@@ -13,6 +13,10 @@ import 'privacy_policy_screen.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import '../widgets/consent_dialog.dart';
+import '../widgets/feedback_dialog.dart';
+import '../widgets/export_share_widgets.dart' hide ExportFormat;
+import '../widgets/share_composer_bottom_sheet.dart';
+import '../l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:math';
 
@@ -24,6 +28,30 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  String _currentLanguageName() {
+    final code = Localizations.localeOf(context).languageCode;
+    final l = AppLocalizations.of(context)!;
+    switch (code) {
+      case 'tr':
+        return l.translate('settings.turkish');
+      case 'en':
+        return l.translate('settings.english');
+      case 'es':
+        return l.translate('settings.spanish');
+      case 'de':
+        return l.translate('settings.german');
+      case 'fr':
+        return l.translate('settings.french');
+      case 'it':
+        return l.translate('settings.italian');
+      case 'pt':
+        return l.translate('settings.portuguese');
+      case 'ru':
+        return l.translate('settings.russian');
+      default:
+        return l.translate('settings.english');
+    }
+  }
   final LanguageService _languageService = LanguageService.instance;
   final ThemeService _themeService = ThemeService.instance;
   final NotificationService _notificationService = NotificationService.instance;
@@ -124,16 +152,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
           await _securityService.setAppLockEnabled(true);
           await _loadSecuritySettings();
           _showSecuritySnackBar(
-            _languageService.isEnglish 
-              ? 'Biometric authentication enabled successfully!'
-              : 'Biyometrik kimlik doğrulama başarıyla etkinleştirildi!',
+            AppLocalizations.of(context)!.translate('settings.biometricEnabledSuccess'),
             Colors.green,
           );
         } else {
           _showSecuritySnackBar(
-            _languageService.isEnglish 
-              ? 'Failed to enable biometric authentication'
-              : 'Biyometrik kimlik doğrulama etkinleştirilemedi',
+            AppLocalizations.of(context)!.translate('settings.biometricEnableFailed'),
             Colors.red,
           );
         }
@@ -141,17 +165,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         await _securityService.disableBiometricAuth();
         await _loadSecuritySettings();
         _showSecuritySnackBar(
-          _languageService.isEnglish 
-            ? 'Biometric authentication disabled'
-            : 'Biyometrik kimlik doğrulama devre dışı bırakıldı',
+          AppLocalizations.of(context)!.translate('settings.biometricDisabled'),
           Colors.orange,
         );
       }
     } catch (e) {
       _showSecuritySnackBar(
-        _languageService.isEnglish 
-          ? 'Error: $e'
-          : 'Hata: $e',
+        '${AppLocalizations.of(context)!.translate('common.error')}: $e',
         Colors.red,
       );
     }
@@ -204,18 +224,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_languageService.isEnglish 
-            ? 'Data exported successfully!'
-            : 'Veriler başarıyla aktarıldı!'),
+          content: Text(AppLocalizations.of(context)!.translate('settings.export.success')),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_languageService.isEnglish 
-            ? 'Export failed: $e'
-            : 'Aktarım başarısız: $e'),
+          content: Text('${AppLocalizations.of(context)!.translate('settings.export.failed')}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -226,13 +242,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isEnglish ? 'Export Data' : 'Veri Aktar'),
+        title: Text(AppLocalizations.of(context)!.translate('settings.export.title')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_languageService.isEnglish 
-              ? 'Choose export format:'
-              : 'Aktarım formatını seçin:'),
+            Text(AppLocalizations.of(context)!.translate('settings.export.chooseFormat')),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -243,7 +257,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _exportData(ExportFormat.json);
                     },
                     icon: const Icon(Icons.code),
-                    label: Text('JSON\n${_languageService.isEnglish ? "(Complete backup)" : "(Tam yedek)"}'),
+                    label: Text(AppLocalizations.of(context)!.translate('settings.export.jsonLabel')),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
@@ -258,7 +272,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _exportData(ExportFormat.csv);
                     },
                     icon: const Icon(Icons.table_chart),
-                    label: Text('CSV\n${_languageService.isEnglish ? "(Spreadsheet)" : "(Tablo)"}'),
+                    label: Text(AppLocalizations.of(context)!.translate('settings.export.csvLabel')),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
@@ -272,7 +286,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
         ],
       ),
@@ -288,18 +302,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_languageService.isEnglish 
-            ? 'Data imported successfully!'
-            : 'Veriler başarıyla içe aktarıldı!'),
+          content: Text(AppLocalizations.of(context)!.translate('import.success')),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_languageService.isEnglish 
-            ? 'Import failed: $e'
-            : 'İçe aktarım başarısız: $e'),
+          content: Text('${AppLocalizations.of(context)!.translate('import.failed')}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -310,19 +320,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isEnglish ? 'Clear All Data' : 'Tüm Verileri Temizle'),
-        content: Text(_languageService.isEnglish 
-          ? 'This will permanently delete all your carbon tracking data. This action cannot be undone.'
-          : 'Bu işlem tüm karbon takip verilerinizi kalıcı olarak silecektir. Bu işlem geri alınamaz.'),
+        title: Text(AppLocalizations.of(context)!.translate('settings.clearAllDataTitle')),
+        content: Text(AppLocalizations.of(context)!.translate('settings.clearAllDataBody')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(_languageService.isEnglish ? 'Delete' : 'Sil'),
+            child: Text(AppLocalizations.of(context)!.translate('common.delete')),
           ),
         ],
       ),
@@ -335,17 +343,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_languageService.isEnglish 
-              ? 'All data cleared successfully'
-              : 'Tüm veriler başarıyla temizlendi'),
+            content: Text(AppLocalizations.of(context)!.translate('settings.clearAllDataSuccess')),
           ),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_languageService.isEnglish 
-              ? 'Failed to clear data: $e'
-              : 'Veri temizleme başarısız: $e'),
+            content: Text('${AppLocalizations.of(context)!.translate('settings.clearAllDataFailed')}: $e'),
           ),
         );
       }
@@ -355,17 +359,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Settings' : 'Ayarlar'),
-        backgroundColor: Colors.blue.withValues(alpha: 0.1),
-        foregroundColor: Colors.blue,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            onPressed: () => _showHelp(),
-          ),
-        ],
-      ),
+      appBar: null,
       body: LiquidPullRefresh(
         onRefresh: () async {
           await _loadUserSettings();
@@ -389,6 +383,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _buildAppPreferencesSection(),
               const SizedBox(height: 24),
 
+
               // Security Section
               _buildSecuritySection(),
               const SizedBox(height: 24),
@@ -406,6 +401,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  void _openFeedbackDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const FeedbackDialog(),
+    );
+  }
+
+  String _localizedThemeSubtitle() {
+    // Map current theme to localized description
+    final l = AppLocalizations.of(context)!;
+    final mode = _themeService.themeMode;
+    switch (mode) {
+      case ThemeMode.light:
+        return l.translate('settings.themeLightDesc');
+      case ThemeMode.dark:
+        return l.translate('settings.themeDarkDesc');
+      case ThemeMode.system:
+      default:
+        return l.translate('settings.themeSystemDesc');
+    }
+  }
 
   Widget _buildAppPreferencesSection() {
     return Card(
@@ -415,7 +431,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'App Preferences' : 'Uygulama Tercihleri',
+              AppLocalizations.of(context)!.translate('ui.appPreferences'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -423,10 +439,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
 
             // Language Setting
-            _buildPreferenceItem(
+              _buildPreferenceItem(
               icon: Icons.language,
-              title: _languageService.isEnglish ? 'Language' : 'Dil',
-              subtitle: _languageService.currentLanguageDisplayName,
+              title: AppLocalizations.of(context)!.settingsLanguage,
+              subtitle: _currentLanguageName(),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -441,12 +457,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const Divider(),
 
             // Theme Setting
-            _buildPreferenceItem(
+              _buildPreferenceItem(
               icon: _themeService.themeIcon,
-              title: _languageService.isEnglish ? 'Theme' : 'Tema',
-              subtitle: _languageService.isEnglish ? _themeService.themeName : 
-                (_themeService.themeName == 'Light' ? 'Açık' : 
-                 _themeService.themeName == 'Dark' ? 'Koyu' : 'Sistem'),
+              title: AppLocalizations.of(context)!.settingsTheme,
+              subtitle: _localizedThemeSubtitle(),
               trailing: Icon(
                 _themeService.themeIcon,
                 color: Theme.of(context).primaryColor,
@@ -457,8 +471,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const Divider(),
 
-            // Notifications  
-            MicroCard(
+              // Notifications  
+              MicroCard(
               onTap: () => _showNotificationSettings(),
               hapticType: HapticType.light,
               child: Padding(
@@ -472,7 +486,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _languageService.isEnglish ? 'Notifications' : 'Bildirimler',
+                            AppLocalizations.of(context)!.settingsNotifications,
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -481,8 +495,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           const SizedBox(height: 2),
                           Text(
                             _notificationsEnabled 
-                              ? (_languageService.isEnglish ? 'Enabled' : 'Etkin')
-                              : (_languageService.isEnglish ? 'Disabled' : 'Devre dışı'),
+                              ? AppLocalizations.of(context)!.locationEnabled
+                              : AppLocalizations.of(context)!.locationDisabled,
                             style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context).brightness == Brightness.dark 
@@ -512,11 +526,31 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             const Divider(),
 
+            // Feedback
+            _buildPreferenceItem(
+              icon: Icons.feedback,
+              title: AppLocalizations.of(context)!.translate('ui.feedback'),
+              subtitle: AppLocalizations.of(context)!.translate('settings.feedbackSubtitle'),
+              onTap: _openFeedbackDialog,
+            ),
+
+            const Divider(),
+
+            // Share progress
+            _buildPreferenceItem(
+              icon: Icons.share,
+              title: AppLocalizations.of(context)!.translate('ui.shareProgress'),
+              subtitle: AppLocalizations.of(context)!.translate('settings.shareSubtitle'),
+              onTap: () => ShareComposerBottomSheet.show(context),
+            ),
+
+            const Divider(),
+
             // Haptic Feedback
             _buildSwitchPreference(
               icon: Icons.vibration,
-              title: _languageService.isEnglish ? 'Haptic Feedback' : 'Titreşim Geri Bildirimi',
-              subtitle: _languageService.isEnglish ? 'Feel vibrations for interactions' : 'Etkileşimler için titreşim hisset',
+              title: AppLocalizations.of(context)!.translate('ui.hapticFeedback'),
+              subtitle: AppLocalizations.of(context)!.translate('settings.hapticSubtitle'),
               value: _hapticFeedbackEnabled,
               onChanged: (value) {
                 setState(() {
@@ -530,7 +564,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             // Daily Goal
             _buildSliderPreference(
               icon: Icons.flag,
-              title: _languageService.isEnglish ? 'Daily Carbon Goal' : 'Günlük Karbon Hedefi',
+              title: AppLocalizations.of(context)!.translate('ui.dailyCarbonGoal'),
               subtitle: '${_dailyCarbonGoal.toStringAsFixed(1)} kg CO₂',
               value: _dailyCarbonGoal,
               min: 1.0,
@@ -559,7 +593,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
     
     // En son generic text
-    return _languageService.isEnglish ? 'User Account' : 'Kullanıcı Hesabı';
+    return _languageService.isTurkish ? 'Kullanıcı Hesabı' : 'User Account';
   }
 
   Widget _buildUserAccountSection() {
@@ -619,10 +653,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.person,
               iconColor: Colors.blue,
-              title: _languageService.isEnglish ? 'Profile Settings' : 'Profil Ayarları',
-              subtitle: _languageService.isEnglish 
-                ? 'Manage your profile information and account settings'
-                : 'Profil bilgilerinizi ve hesap ayarlarınızı yönetin',
+              title: AppLocalizations.of(context)!.translate('ui.profileSettings'),
+              subtitle: _languageService.isTurkish 
+                ? 'Profil bilgilerinizi ve hesap ayarlarınızı yönetin'
+                : 'Manage your profile information and account settings',
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -646,7 +680,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.logout,
               iconColor: Colors.red,
-              title: _languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap',
+              title: AppLocalizations.of(context)!.translate('ui.signOut'),
               subtitle: _languageService.isEnglish 
                 ? 'Sign out from your account (local data remains)'
                 : 'Hesabınızdan çıkış yapın (yerel veriler kalacak)',
@@ -654,20 +688,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text(_languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap'),
+                title: Text(_languageService.isTurkish ? 'Çıkış Yap' : 'Sign Out'),
                     content: Text(
-                      _languageService.isEnglish
-                        ? 'Are you sure you want to sign out? Your local data will remain on this device.'
-                        : 'Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz bu cihazda kalacaktır.'
+                      _languageService.isTurkish
+                        ? 'Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz bu cihazda kalacaktır.'
+                        : 'Are you sure you want to sign out? Your local data will remain on this device.'
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
-                        child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+                        child: Text(_languageService.isTurkish ? 'İptal' : 'Cancel'),
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(true),
-                        child: Text(_languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap'),
+                        child: Text(_languageService.isTurkish ? 'Çıkış Yap' : 'Sign Out'),
                       ),
                     ],
                   ),
@@ -679,9 +713,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          _languageService.isEnglish 
-                            ? 'Signed out successfully'
-                            : 'Başarıyla çıkış yapıldı',
+                          _languageService.isTurkish 
+                            ? 'Başarıyla çıkış yapıldı'
+                            : 'Signed out successfully',
                         ),
                         backgroundColor: Colors.green,
                       ),
@@ -727,25 +761,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                     Text(
-                      _languageService.isEnglish ? 'Security & Privacy' : 'Güvenlik ve Gizlilik',
+                      AppLocalizations.of(context)!.translate('ui.securityPrivacy'),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.green,
                       ),
                     ),
                     Text(
-                      _languageService.isEnglish 
-                        ? 'Protect your carbon data' 
-                        : 'Karbon verilerinizi koruyun',
+                      _languageService.isTurkish 
+                        ? 'Karbon verilerinizi koruyun' 
+                        : 'Protect your carbon data',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey[600],
                       ),
                     ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -756,16 +792,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: _securityStatus['biometricsAvailable'] == true 
                 ? Icons.fingerprint 
                 : Icons.security,
-              title: _languageService.isEnglish 
-                ? 'Biometric Authentication' 
-                : 'Biyometrik Kimlik Doğrulama',
+              title: AppLocalizations.of(context)!.translate('settings.biometricAuthTitle'),
               subtitle: _securityStatus['biometricsAvailable'] == true
-                ? (_languageService.isEnglish 
-                    ? 'Use fingerprint/face unlock' 
-                    : 'Parmak izi/yüz kilidi kullan')
-                : (_languageService.isEnglish 
-                    ? 'Biometrics not available on this device' 
-                    : 'Bu cihazda biyometrik özellik yok'),
+                ? AppLocalizations.of(context)!.translate('settings.biometricsUseHint')
+                : AppLocalizations.of(context)!.translate('settings.biometricsNotAvailable'),
               value: _biometricEnabled && (_securityStatus['biometricsAvailable'] == true),
               onChanged: _securityStatus['biometricsAvailable'] == true 
                 ? (bool value) {
@@ -780,10 +810,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: _appLockEnabled ? Icons.lock : Icons.lock_open,
               iconColor: _appLockEnabled ? Colors.green : Colors.orange,
-              title: _languageService.isEnglish ? 'App Lock Status' : 'Uygulama Kilidi Durumu',
+              title: AppLocalizations.of(context)!.translate('settings.appLockStatus'),
               subtitle: _appLockEnabled 
-                ? (_languageService.isEnglish ? 'App is secured' : 'Uygulama güvende')
-                : (_languageService.isEnglish ? 'App is unlocked' : 'Uygulama açık'),
+                ? AppLocalizations.of(context)!.translate('settings.appSecured')
+                : AppLocalizations.of(context)!.translate('settings.appUnlocked'),
               trailing: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
@@ -792,8 +822,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 child: Text(
                   _appLockEnabled 
-                    ? (_languageService.isEnglish ? 'SECURE' : 'GÜVENLİ')
-                    : (_languageService.isEnglish ? 'OPEN' : 'AÇIK'),
+                    ? AppLocalizations.of(context)!.translate('settings.secureBadge')
+                    : AppLocalizations.of(context)!.translate('settings.openBadge'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -809,10 +839,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.enhanced_encryption,
               iconColor: _securityStatus['dataEncrypted'] == true ? Colors.green : Colors.grey,
-              title: _languageService.isEnglish ? 'Data Encryption' : 'Veri Şifreleme',
+              title: AppLocalizations.of(context)!.translate('settings.dataEncryption'),
               subtitle: _securityStatus['dataEncrypted'] == true
-                ? (_languageService.isEnglish ? 'Your data is encrypted' : 'Verileriniz şifrelenmiş')
-                : (_languageService.isEnglish ? 'Data encryption disabled' : 'Veri şifreleme kapalı'),
+                ? AppLocalizations.of(context)!.translate('settings.dataEncrypted')
+                : AppLocalizations.of(context)!.translate('settings.dataEncryptionDisabled'),
               trailing: Icon(
                 _securityStatus['dataEncrypted'] == true 
                   ? Icons.check_circle 
@@ -829,10 +859,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.delete_sweep,
               iconColor: Colors.red,
-              title: _languageService.isEnglish ? 'Clear Security Data' : 'Güvenlik Verilerini Temizle',
-              subtitle: _languageService.isEnglish 
-                ? 'Reset all security settings and keys' 
-                : 'Tüm güvenlik ayarlarını ve anahtarları sıfırla',
+              title: AppLocalizations.of(context)!.translate('settings.clearSecurityData'),
+              subtitle: AppLocalizations.of(context)!.translate('settings.clearSecurityDataSubtitle'),
               onTap: _clearSecurityData,
             ),
           ],
@@ -849,21 +877,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             const Icon(Icons.warning, color: Colors.orange),
             const SizedBox(width: 8),
-            Text(_languageService.isEnglish ? 'Clear Security Data' : 'Güvenlik Verilerini Temizle'),
+            Expanded(
+              child: Text(
+                AppLocalizations.of(context)!.translate('settings.clearSecurityConfirmTitle'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                softWrap: true,
+              ),
+            ),
           ],
         ),
-        content: Text(_languageService.isEnglish 
-          ? 'This will reset all security settings and encryption keys. You will need to set up biometric authentication again. Continue?'
-          : 'Bu işlem tüm güvenlik ayarlarını ve şifreleme anahtarlarını sıfırlayacaktır. Biyometrik kimlik doğrulamayı tekrar kurmanız gerekecektir. Devam edilsin mi?'),
+        content: Text(AppLocalizations.of(context)!.translate('settings.clearSecurityConfirmBody')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(_languageService.isEnglish ? 'Clear' : 'Temizle'),
+            child: Text(AppLocalizations.of(context)!.translate('settings.clear')),
           ),
         ],
       ),
@@ -874,16 +907,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         await _securityService.clearSecureStorage();
         await _loadSecuritySettings();
         _showSecuritySnackBar(
-          _languageService.isEnglish 
-            ? 'Security data cleared successfully'
-            : 'Güvenlik verileri başarıyla temizlendi',
+          AppLocalizations.of(context)!.translate('settings.clearSecurityDataSuccess'),
           Colors.green,
         );
       } catch (e) {
         _showSecuritySnackBar(
-          _languageService.isEnglish 
-            ? 'Failed to clear security data: $e'
-            : 'Güvenlik verileri temizlenemedi: $e',
+          '${AppLocalizations.of(context)!.translate('settings.clearSecurityDataFailed')}: $e',
           Colors.red,
         );
       }
@@ -898,7 +927,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Your Statistics' : 'İstatistikleriniz',
+              AppLocalizations.of(context)!.translate('ui.yourStatistics'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -908,7 +937,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 Expanded(
                   child: _buildStatItem(
-                    _languageService.isEnglish ? 'Total Activities' : 'Toplam Aktivite',
+                    AppLocalizations.of(context)!.translate('ui.totalActivities'),
                     _totalActivities.toString(),
                     Icons.list_alt,
                     Colors.blue,
@@ -916,7 +945,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 Expanded(
                   child: _buildStatItem(
-                    _languageService.isEnglish ? 'Total CO₂' : 'Toplam CO₂',
+                    AppLocalizations.of(context)!.translate('ui.totalCO2'),
                     '${_totalCarbon.toStringAsFixed(1)} kg',
                     Icons.cloud,
                     Colors.green,
@@ -938,7 +967,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Data Management' : 'Veri Yönetimi',
+              AppLocalizations.of(context)!.translate('ui.dataManagement'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -948,10 +977,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.cloud,
               iconColor: Colors.blue,
-              title: _languageService.isEnglish ? 'Cloud Backup' : 'Bulut Yedekleme',
+              title: AppLocalizations.of(context)!.translate('ui.cloudBackup'),
               subtitle: _firebaseService.isUserSignedIn 
-                ? (_languageService.isEnglish ? 'Manage cloud backup and sync' : 'Bulut yedekleme ve senkronizasyonu yönet')
-                : (_languageService.isEnglish ? 'Sign in to backup your data to the cloud' : 'Verilerinizi buluta yedeklemek için giriş yapın'),
+                ? AppLocalizations.of(context)!.translate('cloud.manageBackup')
+                : AppLocalizations.of(context)!.translate('cloud.signInToBackup'),
               trailing: _firebaseService.isUserSignedIn
                 ? Icon(Icons.check_circle, color: Colors.green, size: 20)
                 : Icon(Icons.cloud_off, color: Colors.orange, size: 20),
@@ -966,8 +995,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             _buildPreferenceItem(
               icon: Icons.download,
-              title: _languageService.isEnglish ? 'Export Data' : 'Verileri Aktar',
-              subtitle: _languageService.isEnglish ? 'Download your carbon tracking data (JSON/CSV)' : 'Karbon takip verilerinizi indirin (JSON/CSV)',
+              title: AppLocalizations.of(context)!.translate('ui.exportData'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.exportDataSubtitle'),
               onTap: _showExportOptions,
             ),
 
@@ -975,8 +1004,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             _buildPreferenceItem(
               icon: Icons.upload,
-              title: _languageService.isEnglish ? 'Import Data' : 'Verileri İçe Aktar',
-              subtitle: _languageService.isEnglish ? 'Restore from JSON backup file' : 'JSON yedek dosyasından geri yükle',
+              title: AppLocalizations.of(context)!.translate('ui.importData'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.importDataSubtitle'),
               onTap: _importData,
             ),
 
@@ -984,8 +1013,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             _buildSwitchPreference(
               icon: Icons.cloud_upload,
-              title: _languageService.isEnglish ? 'Auto Backup' : 'Otomatik Yedekleme',
-              subtitle: _languageService.isEnglish ? 'Automatically backup data weekly' : 'Verileri haftalık otomatik yedekle',
+              title: AppLocalizations.of(context)!.translate('ui.autoBackup'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.autoBackupSubtitle'),
               value: _autoBackupEnabled,
               onChanged: (value) {
                 setState(() {
@@ -999,8 +1028,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.privacy_tip,
               iconColor: Colors.purple,
-              title: _languageService.isEnglish ? 'Privacy Policy' : 'Gizlilik Politikası',
-              subtitle: _languageService.isEnglish ? 'View our privacy policy and GDPR rights' : 'Gizlilik politikamızı ve GDPR haklarınızı görün',
+              title: AppLocalizations.of(context)!.translate('ui.privacyPolicy'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.privacyPolicySubtitle'),
               onTap: () => _navigateToPrivacyPolicy(),
             ),
 
@@ -1009,8 +1038,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.security,
               iconColor: Colors.blue,
-              title: _languageService.isEnglish ? 'Data Consent' : 'Veri İzinleri',
-              subtitle: _languageService.isEnglish ? 'Manage your data processing consent' : 'Veri işleme izinlerinizi yönetin',
+              title: AppLocalizations.of(context)!.translate('ui.dataConsent'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.dataConsentSubtitle'),
               onTap: () => _showConsentDialog(),
             ),
 
@@ -1019,8 +1048,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildPreferenceItem(
               icon: Icons.delete_forever,
               iconColor: Colors.red,
-              title: _languageService.isEnglish ? 'Clear All Data' : 'Tüm Verileri Temizle',
-              subtitle: _languageService.isEnglish ? 'Permanently delete all tracking data' : 'Tüm takip verilerini kalıcı olarak sil',
+              title: AppLocalizations.of(context)!.translate('ui.clearAllData'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.clearAllDataSubtitle'),
               onTap: _clearAllData,
             ),
           ],
@@ -1236,7 +1265,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Icon(Icons.person, color: Theme.of(context).primaryColor),
                   const SizedBox(width: 8),
                   Text(
-                    _languageService.isEnglish ? 'Edit Profile' : 'Profili Düzenle',
+                    _languageService.isTurkish ? 'Profili Düzenle' : 'Edit Profile',
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
@@ -1250,7 +1279,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: _languageService.isEnglish ? 'Username' : 'Kullanıcı Adı',
+                  labelText: _languageService.isTurkish ? 'Kullanıcı Adı' : 'Username',
                   border: const OutlineInputBorder(),
                   hintText: _defaultUserName,
                 ),
@@ -1260,7 +1289,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: _languageService.isEnglish ? 'Email' : 'E-posta',
+                  labelText: _languageService.isTurkish ? 'E-posta' : 'Email',
                   border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -1275,10 +1304,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     String? error;
                     if (name.isEmpty) {
-                      error = _languageService.isEnglish ? 'Username cannot be empty' : 'Kullanıcı adı boş olamaz';
-                    } else if (email.isEmpty || !RegExp(r'^.+@.+\..+').hasMatch(email)) {
+                      error = _languageService.isTurkish ? 'Kullanıcı adı boş olamaz' : 'Username cannot be empty';
+                    } else if (email.isEmpty || !RegExp(r'^.+@.+\\..+').hasMatch(email)) {
                       // Basic email validation fallback
-                      error = _languageService.isEnglish ? 'Please enter a valid email' : 'Geçerli bir e-posta girin';
+                      error = _languageService.isTurkish ? 'Geçerli bir e-posta girin' : 'Please enter a valid email';
                     }
 
                     if (error != null) {
@@ -1295,13 +1324,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(_languageService.isEnglish ? 'Profile updated' : 'Profil güncellendi'),
+                          content: Text(_languageService.isTurkish ? 'Profil güncellendi' : 'Profile updated'),
                         ),
                       );
                     }
                   },
                   icon: const Icon(Icons.save),
-                  label: Text(_languageService.isEnglish ? 'Save' : 'Kaydet'),
+                  label: Text(_languageService.isTurkish ? 'Kaydet' : 'Save'),
                 ),
               ),
             ],
@@ -1338,7 +1367,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Icon(Icons.notifications, color: Theme.of(context).primaryColor),
                       const SizedBox(width: 8),
                       Text(
-                        _languageService.isEnglish ? 'Notification Settings' : 'Bildirim Ayarları',
+                        AppLocalizations.of(context)!.settingsNotifications,
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
@@ -1348,12 +1377,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
+                  Text(
+                    AppLocalizations.of(context)!.translate('settings.notificationsIntro'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).brightness == Brightness.dark ? Colors.grey.shade300 : Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   
-                  // Master notification toggle
+                  // Single permission toggle only
                   _buildModalSwitchItem(
-                    title: _languageService.isEnglish ? 'Enable Notifications' : 'Bildirimleri Etkinleştir',
-                    subtitle: _languageService.isEnglish ? 'Turn on/off all notifications' : 'Tüm bildirimleri aç/kapat',
+                    title: AppLocalizations.of(context)!.translate('settings.enableNotifications'),
+                    subtitle: AppLocalizations.of(context)!.translate('settings.allowNotifications'),
                     value: _notificationService.notificationsEnabled,
                     onChanged: (value) async {
                       await _notificationService.updateSettings(notificationsEnabled: value);
@@ -1365,105 +1402,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       });
                     },
                   ),
-                  
-                  const Divider(),
-                  
-                  // Individual notification settings
-                  AnimatedOpacity(
-                    opacity: _notificationService.notificationsEnabled ? 1.0 : 0.5,
-                    duration: const Duration(milliseconds: 200),
-                    child: Column(
-                      children: [
-                        _buildModalSwitchItem(
-                          title: _languageService.isEnglish ? 'Daily Reminders' : 'Günlük Hatırlatıcılar',
-                          subtitle: _languageService.isEnglish ? 'Get daily carbon tracking reminders' : 'Günlük karbon takip hatırlatıcıları al',
-                          value: _notificationService.dailyRemindersEnabled,
-                          enabled: _notificationService.notificationsEnabled,
-                          onChanged: (value) async {
-                            await _notificationService.updateSettings(dailyRemindersEnabled: value);
-                            setModalState(() {});
-                          },
-                        ),
-                        
-                        const Divider(),
-                        
-                        _buildModalSwitchItem(
-                          title: _languageService.isEnglish ? 'Achievement Notifications' : 'Başarı Bildirimleri',
-                          subtitle: _languageService.isEnglish ? 'Get notified when you earn badges' : 'Rozet kazandığınızda bildirim al',
-                          value: _notificationService.achievementNotificationsEnabled,
-                          enabled: _notificationService.notificationsEnabled,
-                          onChanged: (value) async {
-                            await _notificationService.updateSettings(achievementNotificationsEnabled: value);
-                            setModalState(() {});
-                          },
-                        ),
-                        
-                        const Divider(),
-                        
-                        _buildModalSwitchItem(
-                          title: _languageService.isEnglish ? 'Weekly Reports' : 'Haftalık Raporlar',
-                          subtitle: _languageService.isEnglish ? 'Receive weekly carbon footprint summaries' : 'Haftalık karbon ayak izi özetleri al',
-                          value: _notificationService.weeklyReportsEnabled,
-                          enabled: _notificationService.notificationsEnabled,
-                          onChanged: (value) async {
-                            await _notificationService.updateSettings(weeklyReportsEnabled: value);
-                            setModalState(() {});
-                          },
-                        ),
-                        
-                        const Divider(),
-                        
-                        _buildModalSwitchItem(
-                          title: _languageService.isEnglish ? 'Smart Suggestions' : 'Akıllı Öneriler',
-                          subtitle: _languageService.isEnglish ? 'Get personalized eco-friendly tips' : 'Kişiselleştirilmiş çevre dostu ipuçları al',
-                          value: _notificationService.smartSuggestionsEnabled,
-                          enabled: _notificationService.notificationsEnabled,
-                          onChanged: (value) async {
-                            await _notificationService.updateSettings(smartSuggestionsEnabled: value);
-                            setModalState(() {});
-                          },
-                        ),
-                        
-                        const Divider(),
-                        
-                        // Daily reminder time picker
-                        if (_notificationService.dailyRemindersEnabled && _notificationService.notificationsEnabled)
-                          _buildTimePicker(
-                            title: _languageService.isEnglish ? 'Daily Reminder Time' : 'Günlük Hatırlatıcı Zamanı',
-                            time: _notificationService.dailyReminderTime,
-                            onTimeChanged: (time) async {
-                              await _notificationService.updateSettings(dailyReminderTime: time);
-                              setModalState(() {});
-                            },
-                          ),
-                      ],
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Test notification button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _notificationService.notificationsEnabled ? () async {
-                        await _notificationService.showSmartSuggestion(
-                          _languageService.isEnglish 
-                            ? 'This is a test notification from Carbon Step!' 
-                            : 'Bu Carbon Step\'dan bir test bildirimidir!'
-                        );
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(_languageService.isEnglish ? 'Test notification sent!' : 'Test bildirimi gönderildi!'),
-                            ),
-                          );
-                        }
-                      } : null,
-                      icon: const Icon(Icons.send),
-                      label: Text(_languageService.isEnglish ? 'Send Test Notification' : 'Test Bildirimi Gönder'),
-                    ),
-                  ),
+                  const SizedBox(height: 8),
                 ],
               ),
             );
@@ -1561,7 +1500,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
             },
             icon: const Icon(Icons.access_time),
-            label: Text(_languageService.isEnglish ? 'Change' : 'Değiştir'),
+            label: Text(AppLocalizations.of(context)!.translate('common.edit')),
           ),
         ],
       ),
@@ -1588,7 +1527,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Icon(Icons.palette, color: Theme.of(context).primaryColor),
                       const SizedBox(width: 8),
                       Text(
-                        _languageService.isEnglish ? 'Theme Settings' : 'Tema Ayarları',
+                        AppLocalizations.of(context)!.settingsTheme,
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const Spacer(),
@@ -1602,8 +1541,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   
                   // Light theme option
                   _buildThemeOption(
-                    title: _languageService.isEnglish ? 'Light Theme' : 'Açık Tema',
-                    subtitle: _languageService.isEnglish ? 'Bright and clean appearance' : 'Parlak ve temiz görünüm',
+                    title: AppLocalizations.of(context)!.settingsLightTheme,
+                    subtitle: AppLocalizations.of(context)!.translate('settings.themeLightDesc'),
                     icon: Icons.light_mode,
                     color: Colors.orange,
                     isSelected: _themeService.themeMode == ThemeMode.light,
@@ -1619,8 +1558,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   
                   // Dark theme option
                   _buildThemeOption(
-                    title: _languageService.isEnglish ? 'Dark Theme' : 'Koyu Tema',
-                    subtitle: _languageService.isEnglish ? 'Easy on the eyes in low light' : 'Az ışıkta gözleri yormuyor',
+                    title: AppLocalizations.of(context)!.settingsDarkTheme,
+                    subtitle: AppLocalizations.of(context)!.translate('settings.themeDarkDesc'),
                     icon: Icons.dark_mode,
                     color: Colors.indigo,
                     isSelected: _themeService.themeMode == ThemeMode.dark,
@@ -1636,8 +1575,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   
                   // System theme option
                   _buildThemeOption(
-                    title: _languageService.isEnglish ? 'System Theme' : 'Sistem Teması',
-                    subtitle: _languageService.isEnglish ? 'Follow device settings' : 'Cihaz ayarlarını takip et',
+                    title: AppLocalizations.of(context)!.settingsSystemTheme,
+                    subtitle: AppLocalizations.of(context)!.translate('settings.themeSystemDesc'),
                     icon: Icons.settings_system_daydream,
                     color: Colors.purple,
                     isSelected: _themeService.themeMode == ThemeMode.system,
@@ -1743,65 +1682,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            return SafeArea(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.language, color: Theme.of(context).primaryColor),
-                      const SizedBox(width: 8),
-                      Text(
-                        _languageService.isEnglish ? 'Language Settings' : 'Dil Ayarları',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      Row(
+                        children: [
+                          Icon(Icons.language, color: Theme.of(context).primaryColor),
+                          const SizedBox(width: 8),
+                          Text(
+                        AppLocalizations.of(context)!.settingsLanguage,
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ],
                       ),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
+                      const SizedBox(height: 20),
+                      
+                      // Dynamic language list from LanguageService
+                      ...[
+                        'en','tr','es','de','fr','it','pt','ru'
+                      ].map((code) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildLanguageOption(
+                          title: _languageService.getLanguageDisplayName(code),
+                          subtitle: null,
+                          flag: _languageService.getLanguageFlag(code),
+                          isSelected: _languageService.currentLanguageCode == code,
+                          onTap: () async {
+                            if (_languageService.currentLanguageCode != code) {
+                              await _languageService.setLanguage(code);
+                              setModalState(() {});
+                              setState(() {});
+                              HapticFeedback.selectionClick();
+                            }
+                          },
+                        ),
+                      )),
+                      
+                      const SizedBox(height: 20),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  
-                  // English option
-                  _buildLanguageOption(
-                    title: 'English',
-                    subtitle: 'English language interface',
-                    flag: '🇺🇸',
-                    isSelected: _languageService.isEnglish,
-                    onTap: () async {
-                      if (!_languageService.isEnglish) {
-                        await _languageService.setLanguage('en');
-                        setModalState(() {});
-                        setState(() {});
-                        HapticFeedback.selectionClick();
-                      }
-                    },
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // Turkish option
-                  _buildLanguageOption(
-                    title: 'Türkçe',
-                    subtitle: 'Türkçe dil arabirimi',
-                    flag: '🇹🇷',
-                    isSelected: !_languageService.isEnglish,
-                    onTap: () async {
-                      if (_languageService.isEnglish) {
-                        await _languageService.setLanguage('tr');
-                        setModalState(() {});
-                        setState(() {});
-                        HapticFeedback.selectionClick();
-                      }
-                    },
-                  ),
-                  
-                  const SizedBox(height: 20),
-                ],
+                ),
               ),
             );
           },
@@ -1812,7 +1742,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   
   Widget _buildLanguageOption({
     required String title,
-    required String subtitle,
+    String? subtitle,
     required String flag,
     required bool isSelected,
     required VoidCallback onTap,
@@ -1857,14 +1787,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: isSelected ? Theme.of(context).primaryColor : null,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade600,
+                  if (subtitle != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -1891,14 +1823,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isEnglish ? 'Help' : 'Yardım'),
-        content: Text(_languageService.isEnglish
-          ? 'Carbon Step helps you monitor and reduce your carbon footprint. Track your daily activities across transport, energy, food, and shopping categories.'
-          : 'Carbon Step karbon ayak izinizi izlemenize ve azaltmanıza yardımcı olur. Ulaşım, enerji, yemek ve alışveriş kategorilerinde günlük aktivitelerinizi takip edin.'),
+        title: Text(_languageService.isTurkish ? 'Yardım' : 'Help'),
+        content: Text(_languageService.isTurkish
+          ? 'Carbon Step karbon ayak izinizi izlemenize ve azaltmanıza yardımcı olur. Ulaşım, enerji, yemek ve alışveriş kategorilerinde günlük aktivitelerinizi takip edin.'
+          : 'Carbon Step helps you monitor and reduce your carbon footprint. Track your daily activities across transport, energy, food, and shopping categories.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'OK' : 'Tamam'),
+            child: Text(_languageService.isTurkish ? 'Tamam' : 'OK'),
           ),
         ],
       ),

@@ -10,6 +10,8 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  exclude:
+    - build/**
   errors:
     # Silence selected noisy rules to minimize warnings in this project
     use_build_context_synchronously: ignore

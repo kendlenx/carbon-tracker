@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../services/language_service.dart';
 import '../widgets/micro_interactions.dart';
 import '../main.dart';
+import '../l10n/app_localizations.dart';
+import '../services/onboarding_service.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -20,6 +22,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
   late AnimationController _slideAnimationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  
+  Locale? _lastLocale;
+  bool _pagesInitialized = false;
 
   final List<OnboardingPage> _pages = [];
 
@@ -27,8 +32,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
   void initState() {
     super.initState();
     _setupAnimations();
-    _setupPages();
+    // Defer pages until localizations are available
     _fadeAnimationController.forward();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = Localizations.localeOf(context);
+    if (!_pagesInitialized || _lastLocale != currentLocale) {
+      _setupPages();
+      _lastLocale = currentLocale;
+      _pagesInitialized = true;
+      setState(() {});
+    }
   }
 
   void _setupAnimations() {
@@ -52,57 +69,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
   }
 
   void _setupPages() {
+    final t = AppLocalizations.of(context)!;
+    _pages.clear();
     _pages.addAll([
       OnboardingPage(
-        titleEn: 'Welcome to Carbon Tracker',
-        titleTr: 'Carbon Tracker\'a Hoş Geldiniz',
-        subtitleEn: 'Track and reduce your carbon footprint every day',
-        subtitleTr: 'Her gün karbon ayak izinizi takip edin ve azaltın',
+        title: t.translate('onboarding.p1.title'),
+        subtitle: t.translate('onboarding.p1.subtitle'),
         icon: Icons.eco,
         color: Colors.green,
         animation: _buildWelcomeAnimation(),
       ),
       OnboardingPage(
-        titleEn: 'Track Your Activities',
-        titleTr: 'Aktivitelerinizi Takip Edin',
-        subtitleEn: 'Monitor transport, energy, food, and shopping emissions',
-        subtitleTr: 'Ulaşım, enerji, yemek ve alışveriş emisyonlarını izleyin',
+        title: t.translate('onboarding.p2.title'),
+        subtitle: t.translate('onboarding.p2.subtitle'),
         icon: Icons.track_changes,
         color: Colors.blue,
         animation: _buildTrackingAnimation(),
       ),
       OnboardingPage(
-        titleEn: 'Set Your Goals',
-        titleTr: 'Hedeflerinizi Belirleyin',
-        subtitleEn: 'Create daily, weekly, and monthly carbon reduction targets',
-        subtitleTr: 'Günlük, haftalık ve aylık karbon azaltma hedefleri oluşturun',
+        title: t.translate('onboarding.p3.title'),
+        subtitle: t.translate('onboarding.p3.subtitle'),
         icon: Icons.flag,
         color: Colors.orange,
         animation: _buildGoalsAnimation(),
       ),
       OnboardingPage(
-        titleEn: 'Smart Features',
-        titleTr: 'Akıllı Özellikler',
-        subtitleEn: 'Voice commands, CarPlay, and Siri shortcuts for easy tracking',
-        subtitleTr: 'Kolay takip için sesli komutlar, CarPlay ve Siri kısayolları',
+        title: t.translate('onboarding.p4.title'),
+        subtitle: t.translate('onboarding.p4.subtitle'),
         icon: Icons.mic,
         color: Colors.purple,
         animation: _buildSmartFeaturesAnimation(),
       ),
       OnboardingPage(
-        titleEn: 'Get Insights',
-        titleTr: 'İçgörüler Edinin',
-        subtitleEn: 'View statistics, achievements, and personalized tips',
-        subtitleTr: 'İstatistikleri, başarıları ve kişiselleştirilmiş ipuçlarını görüntüleyin',
+        title: t.translate('onboarding.p5.title'),
+        subtitle: t.translate('onboarding.p5.subtitle'),
         icon: Icons.insights,
         color: Colors.indigo,
         animation: _buildInsightsAnimation(),
       ),
       OnboardingPage(
-        titleEn: 'Start Your Journey',
-        titleTr: 'Yolculuğunuza Başlayın',
-        subtitleEn: 'Join millions making a difference for our planet',
-        subtitleTr: 'Gezegenimiz için fark yaratan milyonlarca kişiye katılın',
+        title: t.translate('onboarding.p6.title'),
+        subtitle: t.translate('onboarding.p6.subtitle'),
         icon: Icons.rocket_launch,
         color: Colors.teal,
         animation: _buildStartAnimation(),
@@ -131,28 +138,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Language toggle
-                  MicroCard(
-                    onTap: () async {
-                      await _languageService.toggleLanguage();
-                      _setupPages(); // Refresh pages with new language
-                      setState(() {});
-                    },
-                    hapticType: HapticType.light,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                  // Language picker
+                  InkWell(
+                    onTap: _showLanguagePicker,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                      ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            _languageService.currentLanguageFlag,
-                            style: const TextStyle(fontSize: 20),
-                          ),
+                          Text(_languageService.currentLanguageFlag, style: const TextStyle(fontSize: 18)),
                           const SizedBox(width: 6),
                           Text(
                             _languageService.currentLanguageDisplayName,
                             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                           ),
+                          const SizedBox(width: 4),
+                          Icon(Icons.keyboard_arrow_down, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ],
                       ),
                     ),
@@ -162,7 +169,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                   TextButton(
                     onPressed: _skipOnboarding,
                     child: Text(
-                      _languageService.isEnglish ? 'Skip' : 'Geç',
+                      AppLocalizations.of(context)!.commonSkip,
                       style: TextStyle(
                         color: Colors.grey.shade600,
                         fontSize: 16,
@@ -231,7 +238,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
 
           // Title
           Text(
-            page.getTitle(_languageService.isEnglish),
+            page.title,
             style: const TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -243,7 +250,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
 
           // Subtitle
           Text(
-            page.getSubtitle(_languageService.isEnglish),
+            page.subtitle,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey.shade600,
@@ -298,7 +305,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                       side: BorderSide(color: _pages[_currentPage].color),
                     ),
                     child: Text(
-                      _languageService.isEnglish ? 'Back' : 'Geri',
+                      AppLocalizations.of(context)!.commonPrevious,
                       style: TextStyle(
                         color: _pages[_currentPage].color,
                         fontSize: 16,
@@ -329,8 +336,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
                     children: [
                       Text(
                         _currentPage == _pages.length - 1
-                          ? (_languageService.isEnglish ? 'Get Started' : 'Başlayalım')
-                          : (_languageService.isEnglish ? 'Next' : 'İleri'),
+                          ? AppLocalizations.of(context)!.commonDone
+                          : AppLocalizations.of(context)!.commonNext,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -727,9 +734,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
   Future<void> _completeOnboarding() async {
     await HapticHelper.trigger(HapticType.success);
     
-    // Mark onboarding as completed
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('onboarding_completed', true);
+    // Mark onboarding as completed (use service key)
+    await OnboardingService.instance.completeOnboarding();
     
     // Navigate to main app
     if (mounted) {
@@ -753,33 +759,92 @@ class _OnboardingScreenState extends State<OnboardingScreen> with TickerProvider
     }
   }
 
+  void _showLanguagePicker() {
+    final codes = ['en','tr','es','de','fr','it','pt','ru'];
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.language, color: Theme.of(context).primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        _languageService.isTurkish ? 'Dil' : 'Language',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ...codes.map((code) {
+                    final isSelected = _languageService.currentLanguageCode == code;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: ListTile(
+                        leading: Text(_languageService.getLanguageFlag(code), style: const TextStyle(fontSize: 22)),
+                        title: Text(_languageService.getLanguageDisplayName(code)),
+                        trailing: isSelected ? const Icon(Icons.check_circle, color: Colors.green) : const Icon(Icons.circle_outlined, color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.withValues(alpha: 0.3),
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        onTap: () async {
+                          if (!isSelected) {
+                            await _languageService.setLanguage(code);
+                            _setupPages();
+                            if (mounted) setState(() {});
+                          }
+                          if (context.mounted) Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   static Future<bool> shouldShowOnboarding() async {
-    final prefs = await SharedPreferences.getInstance();
-    return !(prefs.getBool('onboarding_completed') ?? false);
+    return !(await OnboardingService.instance.isOnboardingComplete());
   }
 }
 
 class OnboardingPage {
-  final String titleEn;
-  final String titleTr;
-  final String subtitleEn;
-  final String subtitleTr;
+  final String title;
+  final String subtitle;
   final IconData icon;
   final Color color;
   final Widget? animation;
 
   OnboardingPage({
-    required this.titleEn,
-    required this.titleTr,
-    required this.subtitleEn,
-    required this.subtitleTr,
+    required this.title,
+    required this.subtitle,
     required this.icon,
     required this.color,
     this.animation,
   });
-
-  String getTitle(bool isEnglish) => isEnglish ? titleEn : titleTr;
-  String getSubtitle(bool isEnglish) => isEnglish ? subtitleEn : subtitleTr;
 }
 
 class ConnectionLinesPainter extends CustomPainter {

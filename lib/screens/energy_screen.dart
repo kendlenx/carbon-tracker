@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/carbon_calculator_service.dart';
 import '../services/database_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 
 class EnergyScreen extends StatefulWidget {
   const EnergyScreen({super.key});
@@ -14,7 +14,6 @@ class _EnergyScreenState extends State<EnergyScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   
-  final LanguageService _languageService = LanguageService.instance;
   
   // Elektrik formu
   final TextEditingController _electricityController = TextEditingController();
@@ -73,7 +72,7 @@ class _EnergyScreenState extends State<EnergyScreen>
   Future<void> _saveElectricity() async {
     if (_electricityController.text.isEmpty || _electricityEmission <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_languageService.isEnglish ? 'Please enter a valid kWh value' : 'Lütfen geçerli bir kWh değeri girin')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.translate('energy.validation.enterValidKwh'))),
       );
       return;
     }
@@ -82,7 +81,7 @@ class _EnergyScreenState extends State<EnergyScreen>
       await DatabaseService.instance.insertActivity({
         'category': 'energy',
         'subcategory': 'electricity',
-        'description': '${_electricityController.text} kWh ${_languageService.isEnglish ? 'electricity consumption' : 'elektrik tüketimi'}',
+        'description': '${_electricityController.text} kWh ${AppLocalizations.of(context)!.translate('energy.electricityConsumption')}',
         'co2_amount': _electricityEmission,
         'created_at': DateTime.now().toIso8601String(),
         'metadata': {
@@ -92,11 +91,11 @@ class _EnergyScreenState extends State<EnergyScreen>
         }
       });
       
-      _showSuccessMessage(_languageService.isEnglish ? 'Electricity' : 'Elektrik', _electricityEmission);
+      _showSuccessMessage(AppLocalizations.of(context)!.energyElectricity, _electricityEmission);
       _clearElectricityForm();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_languageService.isEnglish ? 'Error saving electricity data' : 'Elektrik verisi kaydedilirken hata oluştu')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.translate('energy.errors.saveElectricity'))),
       );
     }
   }
@@ -104,7 +103,7 @@ class _EnergyScreenState extends State<EnergyScreen>
   Future<void> _saveGas() async {
     if (_gasController.text.isEmpty || _gasEmission <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_languageService.isEnglish ? 'Please enter a valid m³ value' : 'Lütfen geçerli bir m³ değeri girin')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.translate('energy.validation.enterValidM3'))),
       );
       return;
     }
@@ -113,7 +112,7 @@ class _EnergyScreenState extends State<EnergyScreen>
       await DatabaseService.instance.insertActivity({
         'category': 'energy',
         'subcategory': 'natural_gas',
-        'description': '${_gasController.text} m³ ${_languageService.isEnglish ? 'natural gas consumption' : 'doğal gaz tüketimi'}',
+        'description': '${_gasController.text} m³ ${AppLocalizations.of(context)!.translate('energy.naturalGasConsumption')}',
         'co2_amount': _gasEmission,
         'created_at': DateTime.now().toIso8601String(),
         'metadata': {
@@ -123,11 +122,11 @@ class _EnergyScreenState extends State<EnergyScreen>
         }
       });
       
-      _showSuccessMessage(_languageService.isEnglish ? 'Natural Gas' : 'Doğal Gaz', _gasEmission);
+      _showSuccessMessage(AppLocalizations.of(context)!.energyNaturalGas, _gasEmission);
       _clearGasForm();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_languageService.isEnglish ? 'Error saving gas data' : 'Gaz verisi kaydedilirken hata oluştu')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.translate('energy.errors.saveGas'))),
       );
     }
   }
@@ -170,18 +169,18 @@ class _EnergyScreenState extends State<EnergyScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('⚡ Enerji Tüketimi'),
+        title: Text('⚡ ${AppLocalizations.of(context)!.energyTitle}'),
         backgroundColor: Theme.of(context).colorScheme.surface,
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [
+          tabs: [
             Tab(
-              icon: Icon(Icons.flash_on),
-              text: 'Elektrik',
+              icon: const Icon(Icons.flash_on),
+              text: AppLocalizations.of(context)!.energyElectricity,
             ),
             Tab(
-              icon: Icon(Icons.local_fire_department),
-              text: 'Doğal Gaz',
+              icon: const Icon(Icons.local_fire_department),
+              text: AppLocalizations.of(context)!.energyNaturalGas,
             ),
           ],
         ),
@@ -218,7 +217,7 @@ class _EnergyScreenState extends State<EnergyScreen>
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Elektrik Tüketimi',
+                        AppLocalizations.of(context)!.translate('energy.electricitySectionTitle'),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -227,7 +226,7 @@ class _EnergyScreenState extends State<EnergyScreen>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Türkiye elektrik şebekesi CO₂ faktörü: 0.486 kg CO₂/kWh',
+                    AppLocalizations.of(context)!.translate('energy.co2FactorElectricity'),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey.shade600,
                     ),
@@ -240,7 +239,7 @@ class _EnergyScreenState extends State<EnergyScreen>
           const SizedBox(height: 24),
 
           Text(
-            'Elektrik Tüketimi (kWh)',
+            AppLocalizations.of(context)!.translate('energy.input.electricityKwh'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -250,18 +249,18 @@ class _EnergyScreenState extends State<EnergyScreen>
             controller: _electricityController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
-              hintText: 'Örn: 150',
-              suffixText: 'kWh',
+              hintText: '150',
+              suffixText: AppLocalizations.of(context)!.energyKwh,
               border: const OutlineInputBorder(),
               prefixIcon: const Icon(Icons.flash_on),
-              helperText: 'Fatura üzerindeki aylık tüketim miktarı',
+              helperText: AppLocalizations.of(context)!.translate('energy.hints.monthlyBillUsage'),
             ),
           ),
 
           const SizedBox(height: 16),
 
           Text(
-            'Notlar (İsteğe bağlı)',
+            AppLocalizations.of(context)!.translate('common.notesOptional'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -270,10 +269,10 @@ class _EnergyScreenState extends State<EnergyScreen>
           TextField(
             controller: _electricityNotesController,
             maxLines: 2,
-            decoration: const InputDecoration(
-              hintText: 'Örn: Ekim ayı faturası',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.note),
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.translate('common.notesOptional'),
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.note),
             ),
           ),
 
@@ -291,11 +290,11 @@ class _EnergyScreenState extends State<EnergyScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Tahmini CO₂ Emisyonu',
+                          AppLocalizations.of(context)!.translate('energy.estimatedEmission'),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          '${_electricityController.text} kWh elektrik',
+                          '${_electricityController.text} ${AppLocalizations.of(context)!.energyKwh} ${AppLocalizations.of(context)!.energyElectricity.toLowerCase()}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.grey.shade600,
                           ),
@@ -330,7 +329,7 @@ class _EnergyScreenState extends State<EnergyScreen>
             child: ElevatedButton.icon(
               onPressed: _electricityEmission > 0 ? _saveElectricity : null,
               icon: const Icon(Icons.save),
-              label: const Text('Elektrik Tüketimini Kaydet'),
+              label: Text(AppLocalizations.of(context)!.translate('energy.saveElectricity')),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -363,7 +362,7 @@ class _EnergyScreenState extends State<EnergyScreen>
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Doğal Gaz Tüketimi',
+                        AppLocalizations.of(context)!.translate('energy.naturalGasSectionTitle'),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -372,7 +371,7 @@ class _EnergyScreenState extends State<EnergyScreen>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Doğal gaz CO₂ faktörü: 2.0 kg CO₂/m³',
+                    AppLocalizations.of(context)!.translate('energy.co2FactorGas'),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey.shade600,
                     ),
@@ -385,7 +384,7 @@ class _EnergyScreenState extends State<EnergyScreen>
           const SizedBox(height: 24),
 
           Text(
-            'Doğal Gaz Tüketimi (m³)',
+            AppLocalizations.of(context)!.translate('energy.input.gasM3'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -395,18 +394,18 @@ class _EnergyScreenState extends State<EnergyScreen>
             controller: _gasController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
-              hintText: 'Örn: 75',
-              suffixText: 'm³',
+              hintText: '75',
+              suffixText: AppLocalizations.of(context)!.energyM3,
               border: const OutlineInputBorder(),
               prefixIcon: const Icon(Icons.local_fire_department),
-              helperText: 'Fatura üzerindeki aylık tüketim miktarı',
+              helperText: AppLocalizations.of(context)!.translate('energy.hints.monthlyBillUsage'),
             ),
           ),
 
           const SizedBox(height: 16),
 
           Text(
-            'Notlar (İsteğe bağlı)',
+            AppLocalizations.of(context)!.translate('common.notesOptional'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -415,10 +414,10 @@ class _EnergyScreenState extends State<EnergyScreen>
           TextField(
             controller: _gasNotesController,
             maxLines: 2,
-            decoration: const InputDecoration(
-              hintText: 'Örn: Kış ayı ısıtma',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.note),
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.translate('energy.hints.gasNoteExample'),
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.note),
             ),
           ),
 
@@ -436,11 +435,11 @@ class _EnergyScreenState extends State<EnergyScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Tahmini CO₂ Emisyonu',
+                          AppLocalizations.of(context)!.translate('energy.estimatedEmission'),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         Text(
-                          '${_gasController.text} m³ doğal gaz',
+                          '${_gasController.text} ${AppLocalizations.of(context)!.energyM3} ${AppLocalizations.of(context)!.energyNaturalGas.toLowerCase()}',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.grey.shade600,
                           ),
@@ -475,7 +474,7 @@ class _EnergyScreenState extends State<EnergyScreen>
             child: ElevatedButton.icon(
               onPressed: _gasEmission > 0 ? _saveGas : null,
               icon: const Icon(Icons.save),
-              label: const Text('Doğal Gaz Tüketimini Kaydet'),
+              label: Text(AppLocalizations.of(context)!.translate('energy.saveGas')),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 backgroundColor: Colors.orange,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_service.dart';
-import '../services/language_service.dart';
+// removed LanguageService import – using AppLocalizations exclusively
+import '../l10n/app_localizations.dart';
 import '../widgets/liquid_pull_refresh.dart';
 import 'auth_screen.dart';
 import 'dart:async';
@@ -15,7 +16,6 @@ class CloudBackupScreen extends StatefulWidget {
 
 class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProviderStateMixin {
   final FirebaseService _firebaseService = FirebaseService();
-  final LanguageService _languageService = LanguageService.instance;
 
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
@@ -144,25 +144,19 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
     try {
       await _firebaseService.syncDataToCloud();
       _showSuccessSnackBar(
-        _languageService.isEnglish
-          ? 'Data synchronized to cloud successfully!'
-          : 'Veriler buluta başarıyla senkronize edildi!',
+        AppLocalizations.of(context)!.translate('cloud.syncSuccess'),
       );
     } catch (e) {
       _showErrorSnackBar(
-        _languageService.isEnglish
-          ? 'Failed to sync data: $e'
-          : 'Veri senkronizasyonu başarısız: $e',
+        '${AppLocalizations.of(context)!.translate('cloud.syncFailed')}: $e',
       );
     }
   }
 
   Future<void> _restoreFromCloud() async {
     final confirmed = await _showConfirmDialog(
-      title: _languageService.isEnglish ? 'Restore from Cloud' : 'Buluttan Geri Yükle',
-      content: _languageService.isEnglish
-        ? 'This will restore your data from the cloud backup. Local data will be merged. Continue?'
-        : 'Bu işlem bulut yedeğinden verilerinizi geri yükleyecektir. Yerel veriler birleştirilecektir. Devam edilsin mi?',
+      title: AppLocalizations.of(context)!.translate('cloud.restoreTitle'),
+      content: AppLocalizations.of(context)!.translate('cloud.restoreConfirm'),
     );
 
     if (confirmed != true) return;
@@ -170,25 +164,19 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
     try {
       await _firebaseService.syncDataFromCloud();
       _showSuccessSnackBar(
-        _languageService.isEnglish
-          ? 'Data restored from cloud successfully!'
-          : 'Veriler buluttan başarıyla geri yüklendi!',
+        AppLocalizations.of(context)!.translate('cloud.restoreSuccess'),
       );
     } catch (e) {
       _showErrorSnackBar(
-        _languageService.isEnglish
-          ? 'Failed to restore data: $e'
-          : 'Veri geri yükleme başarısız: $e',
+        '${AppLocalizations.of(context)!.translate('cloud.restoreFailed')}: $e',
       );
     }
   }
 
   Future<void> _signOut() async {
     final confirmed = await _showConfirmDialog(
-      title: _languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap',
-      content: _languageService.isEnglish
-        ? 'Are you sure you want to sign out? Your local data will remain on this device.'
-        : 'Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz bu cihazda kalacaktır.',
+      title: AppLocalizations.of(context)!.translate('cloud.signOutTitle'),
+      content: AppLocalizations.of(context)!.translate('cloud.signOutConfirm'),
     );
 
     if (confirmed == true) {
@@ -208,11 +196,11 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(_languageService.isEnglish ? 'Continue' : 'Devam'),
+            child: Text(AppLocalizations.of(context)!.translate('common.next')),
           ),
         ],
       ),
@@ -252,7 +240,8 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
   }
 
   String _formatDateTime(dynamic timestamp) {
-    if (timestamp == null) return _languageService.isEnglish ? 'Never' : 'Hiçbir zaman';
+    final l = AppLocalizations.of(context)!;
+    if (timestamp == null) return l.translate('common.never');
     
     try {
       DateTime date;
@@ -267,22 +256,16 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
       final difference = now.difference(date);
       
       if (difference.inDays > 0) {
-        return _languageService.isEnglish 
-          ? '${difference.inDays} days ago'
-          : '${difference.inDays} gün önce';
+        return '${difference.inDays} ${l.translate('common.daysAgo')}';
       } else if (difference.inHours > 0) {
-        return _languageService.isEnglish
-          ? '${difference.inHours} hours ago'
-          : '${difference.inHours} saat önce';
+        return '${difference.inHours} ${l.translate('common.hoursAgo')}';
       } else if (difference.inMinutes > 0) {
-        return _languageService.isEnglish
-          ? '${difference.inMinutes} minutes ago'
-          : '${difference.inMinutes} dakika önce';
+        return '${difference.inMinutes} ${l.translate('common.minutesAgo')}';
       } else {
-        return _languageService.isEnglish ? 'Just now' : 'Şimdi';
+        return l.translate('common.justNow');
       }
     } catch (e) {
-      return _languageService.isEnglish ? 'Unknown' : 'Bilinmiyor';
+      return l.translate('common.unknown');
     }
   }
 
@@ -290,7 +273,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Cloud Backup' : 'Bulut Yedekleme'),
+        title: Text(AppLocalizations.of(context)!.translate('cloud.title')),
         backgroundColor: Colors.blue.withValues(alpha: 0.1),
         foregroundColor: Colors.blue,
         actions: [
@@ -298,7 +281,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: _signOut,
-              tooltip: _languageService.isEnglish ? 'Sign Out' : 'Çıkış Yap',
+              tooltip: AppLocalizations.of(context)!.translate('cloud.signOut'),
             ),
         ],
       ),
@@ -359,9 +342,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
               const SizedBox(height: 24),
               
               Text(
-                _languageService.isEnglish 
-                  ? 'Sign in to backup your data'
-                  : 'Verilerinizi yedeklemek için giriş yapın',
+                AppLocalizations.of(context)!.translate('cloud.signInTitle'),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -371,9 +352,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
               const SizedBox(height: 16),
               
               Text(
-                _languageService.isEnglish
-                  ? 'Secure your carbon tracking data in the cloud and access it from any device.'
-                  : 'Karbon takip verilerinizi bulutta güvence altına alın ve herhangi bir cihazdan erişin.',
+                AppLocalizations.of(context)!.translate('cloud.signInSubtitle'),
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: Colors.grey[600],
                 ),
@@ -388,7 +367,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                     child: ElevatedButton.icon(
                       onPressed: _signIn,
                       icon: const Icon(Icons.login),
-                      label: Text(_languageService.isEnglish ? 'Sign In' : 'Giriş Yap'),
+                      label: Text(AppLocalizations.of(context)!.translate('auth.signIn')),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
@@ -404,7 +383,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                     child: OutlinedButton.icon(
                       onPressed: _signUp,
                       icon: const Icon(Icons.person_add),
-                      label: Text(_languageService.isEnglish ? 'Sign Up' : 'Kayıt Ol'),
+                      label: Text(AppLocalizations.of(context)!.translate('auth.signUp')),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.green,
                         side: const BorderSide(color: Colors.green),
@@ -432,24 +411,18 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
     final features = [
       {
         'icon': Icons.cloud_upload,
-        'title': _languageService.isEnglish ? 'Automatic Backup' : 'Otomatik Yedekleme',
-        'subtitle': _languageService.isEnglish 
-          ? 'Your data is automatically backed up every 15 minutes'
-          : 'Verileriniz her 15 dakikada bir otomatik olarak yedeklenir',
+'title': AppLocalizations.of(context)!.translate('cloud.features.autoBackupTitle'),
+'subtitle': AppLocalizations.of(context)!.translate('cloud.features.autoBackupSubtitle'),
       },
       {
         'icon': Icons.devices,
-        'title': _languageService.isEnglish ? 'Multi-Device Sync' : 'Çoklu Cihaz Senkronizasyonu',
-        'subtitle': _languageService.isEnglish
-          ? 'Access your data from any device, anywhere'
-          : 'Verilerinize her cihazdan, her yerden erişin',
+'title': AppLocalizations.of(context)!.translate('cloud.features.multiDeviceTitle'),
+'subtitle': AppLocalizations.of(context)!.translate('cloud.features.multiDeviceSubtitle'),
       },
       {
         'icon': Icons.security,
-        'title': _languageService.isEnglish ? 'Encrypted Storage' : 'Şifreli Depolama',
-        'subtitle': _languageService.isEnglish
-          ? 'Your data is encrypted before being stored in the cloud'
-          : 'Verileriniz bulutta depolanmadan önce şifrelenir',
+'title': AppLocalizations.of(context)!.translate('cloud.features.encryptedTitle'),
+'subtitle': AppLocalizations.of(context)!.translate('cloud.features.encryptedSubtitle'),
       },
     ];
 
@@ -460,7 +433,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Cloud Backup Features' : 'Bulut Yedekleme Özellikleri',
+              AppLocalizations.of(context)!.translate('cloud.featuresTitle'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -566,7 +539,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _languageService.isEnglish ? 'SIGNED IN' : 'OTURUM AÇIK',
+                    AppLocalizations.of(context)!.translate('cloud.signedInBadge'),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -606,7 +579,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _languageService.isEnglish ? 'Backup Status' : 'Yedekleme Durumu',
+                        AppLocalizations.of(context)!.translate('cloud.statusTitle'),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -614,8 +587,8 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                       ),
                       Text(
                         hasBackup 
-                          ? (_languageService.isEnglish ? 'Data backed up' : 'Veriler yedeklendi')
-                          : (_languageService.isEnglish ? 'No backup found' : 'Yedek bulunamadı'),
+                          ? AppLocalizations.of(context)!.translate('cloud.hasBackup')
+                          : AppLocalizations.of(context)!.translate('cloud.noBackup'),
                         style: TextStyle(
                           color: hasBackup ? Colors.green : Colors.orange,
                           fontWeight: FontWeight.w600,
@@ -642,7 +615,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                   Expanded(
                     child: _buildStatItem(
                       icon: Icons.list_alt,
-                      title: _languageService.isEnglish ? 'Activities' : 'Aktiviteler',
+                      title: AppLocalizations.of(context)!.translate('ui.totalActivities'),
                       value: (_backupStatus['totalActivities'] ?? 0).toString(),
                       color: Colors.blue,
                     ),
@@ -650,7 +623,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                   Expanded(
                     child: _buildStatItem(
                       icon: Icons.cloud,
-                      title: _languageService.isEnglish ? 'Total CO₂' : 'Toplam CO₂',
+                      title: AppLocalizations.of(context)!.translate('ui.totalCO2'),
                       value: '${(_backupStatus['totalCO2'] ?? 0.0).toStringAsFixed(1)} kg',
                       color: Colors.green,
                     ),
@@ -665,7 +638,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                   Icon(Icons.schedule, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 8),
                   Text(
-                    '${_languageService.isEnglish ? "Last sync: " : "Son senkronizasyon: "}${_formatDateTime(_backupStatus['lastSyncAt'])}',
+                    '${AppLocalizations.of(context)!.translate('cloud.lastSync')} ${_formatDateTime(_backupStatus['lastSyncAt'])}',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
@@ -715,7 +688,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          _languageService.isEnglish ? 'Sync Controls' : 'Senkronizasyon Kontrolleri',
+          AppLocalizations.of(context)!.translate('cloud.syncControls'),
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
@@ -740,8 +713,8 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                       : const Icon(Icons.cloud_upload),
                     label: Text(
                       _isSyncing
-                        ? (_languageService.isEnglish ? 'Syncing...' : 'Senkronize ediliyor...')
-                        : (_languageService.isEnglish ? 'Backup to Cloud' : 'Buluta Yedekle'),
+                        ? AppLocalizations.of(context)!.translate('cloud.syncing')
+                        : AppLocalizations.of(context)!.translate('cloud.backupToCloud'),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
@@ -761,7 +734,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                   child: OutlinedButton.icon(
                     onPressed: _isSyncing ? null : _restoreFromCloud,
                     icon: const Icon(Icons.cloud_download),
-                    label: Text(_languageService.isEnglish ? 'Restore from Cloud' : 'Buluttan Geri Yükle'),
+                    label: Text(AppLocalizations.of(context)!.translate('cloud.restoreFromCloud')),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.blue,
                       side: const BorderSide(color: Colors.blue),

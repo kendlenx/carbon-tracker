@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
-import 'language_service.dart';
 
 /// Service for exporting widgets/charts as images and sharing them
 class ImageExportService {
@@ -15,7 +14,6 @@ class ImageExportService {
   
   ImageExportService._();
 
-  final LanguageService _languageService = LanguageService.instance;
 
   /// Capture a widget as an image
   Future<Uint8List> captureWidget({
@@ -26,9 +24,15 @@ class ImageExportService {
     try {
       // Create a RepaintBoundary to capture the widget
       final repaintBoundary = RepaintBoundary(
-        child: Material(
-          color: Colors.transparent,
-          child: widget,
+          child: Directionality(
+            textDirection: ui.TextDirection.ltr,
+          child: MediaQuery(
+            data: const MediaQueryData(),
+            child: Material(
+              color: Colors.transparent,
+              child: widget,
+            ),
+          ),
         ),
       );
 
@@ -66,6 +70,8 @@ class ImageExportService {
       pipelineOwner.flushCompositingBits();
       pipelineOwner.flushPaint();
 
+      // Allow a microtask for paint to settle
+      await Future<void>.delayed(const Duration(milliseconds: 16));
       // Capture the image
       final image = await renderRepaintBoundary.toImage(pixelRatio: pixelRatio);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -184,6 +190,38 @@ class ImageExportService {
     );
   }
 
+  Future<File> exportWidgetAsPng({
+    required Widget widget,
+    Size size = const Size(800, 800),
+    double pixelRatio = 3.0,
+    String fileName = 'share.png',
+  }) async {
+    final bytes = await captureWidget(widget: widget, size: size, pixelRatio: pixelRatio);
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/$fileName');
+    await file.writeAsBytes(bytes);
+    return file;
+  }
+
+  Future<void> shareWidget({
+    required Widget widget,
+    Size size = const Size(800, 800),
+    String fileName = 'share.png',
+    String? subject,
+    String? text,
+  }) async {
+    try {
+      final file = await exportWidgetAsPng(widget: widget, size: size, fileName: fileName);
+      await Share.shareXFiles(
+        [XFile(file.path)],
+        subject: subject ?? 'Carbon Tracker',
+        text: text,
+      );
+    } catch (e) {
+      throw Exception('Failed to share widget: $e');
+    }
+  }
+
   /// Create a trend chart widget for export
   Widget buildTrendChartForExport({
     required String title,
@@ -210,7 +248,7 @@ class ImageExportService {
         ),
         child: Center(
           child: Text(
-            _languageService.isEnglish ? 'No data available' : 'Veri bulunamadı',
+            'No data available',
             style: const TextStyle(color: Colors.grey),
           ),
         ),
@@ -358,59 +396,6 @@ class ImageExportService {
     );
   }
 
-  /// Export widget as PNG image and save to temporary directory
-  Future<String> exportWidgetAsPng({
-    required Widget widget,
-    Size? size,
-    double pixelRatio = 3.0,
-  }) async {
-    try {
-      final imageBytes = await captureWidget(
-        widget: widget,
-        size: size,
-        pixelRatio: pixelRatio,
-      );
-
-      final directory = await getTemporaryDirectory();
-      final fileName = 'carbon_tracker_chart_${DateFormat('yyyyMMdd_HHmmss').format(DateTime.now())}.png';
-      final file = File('${directory.path}/$fileName');
-      
-      await file.writeAsBytes(imageBytes);
-      return file.path;
-    } catch (e) {
-      throw Exception('Failed to export widget as PNG: $e');
-    }
-  }
-
-  /// Share widget as image
-  Future<void> shareWidget({
-    required Widget widget,
-    Size? size,
-    double pixelRatio = 3.0,
-    String? subject,
-    String? text,
-  }) async {
-    try {
-      final filePath = await exportWidgetAsPng(
-        widget: widget,
-        size: size,
-        pixelRatio: pixelRatio,
-      );
-
-      final isEnglish = _languageService.isEnglish;
-      
-      // ignore: deprecated_member_use
-      await Share.shareXFiles(
-        [XFile(filePath)],
-        subject: subject ?? (isEnglish ? 'Carbon Tracker Stats' : 'Carbon Tracker İstatistikleri'),
-        text: text ?? (isEnglish 
-            ? 'Check out my carbon footprint stats from Carbon Tracker!'
-            : 'Carbon Tracker\'dan karbon ayak izi istatistiklerimi inceleyin!'),
-      );
-    } catch (e) {
-      throw Exception('Failed to share widget: $e');
-    }
-  }
 
   /// Create and share a summary card
   Future<void> shareSummaryCard({
@@ -461,26 +446,21 @@ class ImageExportService {
     String? text,
   }) async {
     try {
-      final filePaths = <String>[];
+      final files = <XFile>[];
       
       for (int i = 0; i < widgets.length; i++) {
-        final filePath = await exportWidgetAsPng(
+        final file = await exportWidgetAsPng(
           widget: widgets[i],
-          size: size,
+          size: size ?? const Size(800, 800),
           pixelRatio: pixelRatio,
         );
-        filePaths.add(filePath);
+        files.add(XFile(file.path));
       }
 
-      final isEnglish = _languageService.isEnglish;
-      
-      // ignore: deprecated_member_use
       await Share.shareXFiles(
-        filePaths.map((path) => XFile(path)).toList(),
-        subject: subject ?? (isEnglish ? 'Carbon Tracker Analytics' : 'Carbon Tracker Analitikleri'),
-        text: text ?? (isEnglish 
-            ? 'My carbon footprint analytics from Carbon Tracker!'
-            : 'Carbon Tracker\'dan karbon ayak izi analizlerim!'),
+        files,
+        subject: subject ?? 'Carbon Tracker Analytics',
+        text: text ?? 'My carbon footprint analytics from Carbon Tracker!',
       );
     } catch (e) {
       throw Exception('Failed to share multiple widgets: $e');
@@ -495,8 +475,6 @@ class ImageExportService {
     required String topCategory,
     Size size = const Size(400, 500),
   }) {
-    final isEnglish = _languageService.isEnglish;
-    
     return Container(
       width: size.width,
       height: size.height,
@@ -550,7 +528,7 @@ class ImageExportService {
                         ),
                       ),
                       Text(
-                        isEnglish ? 'Your Carbon Footprint' : 'Karbon Ayak İziniz',
+                        'Your Carbon Footprint',
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -570,7 +548,7 @@ class ImageExportService {
                 children: [
                   // Today
                   _buildStatRow(
-                    isEnglish ? 'Today' : 'Bugün',
+                    'Today',
                     todayCO2,
                     Colors.blue,
                   ),
@@ -579,7 +557,7 @@ class ImageExportService {
                   
                   // This week
                   _buildStatRow(
-                    isEnglish ? 'This Week' : 'Bu Hafta',
+                    'This Week',
                     weekCO2,
                     Colors.orange,
                   ),
@@ -588,7 +566,7 @@ class ImageExportService {
                   
                   // This month
                   _buildStatRow(
-                    isEnglish ? 'This Month' : 'Bu Ay',
+                    'This Month',
                     monthCO2,
                     Colors.purple,
                   ),
@@ -615,7 +593,7 @@ class ImageExportService {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                isEnglish ? 'Top Category' : 'En Yüksek Kategori',
+                                'Top Category',
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey[600],
@@ -651,7 +629,7 @@ class ImageExportService {
                   ),
                 ),
                 Text(
-                  isEnglish ? 'Shared from Carbon Tracker' : 'Carbon Tracker\'dan paylaşıldı',
+                  'Shared from Carbon Tracker',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[500],
@@ -729,6 +707,44 @@ class ImageExportService {
     await shareWidget(
       widget: widget,
       size: const Size(400, 500),
+    );
+  }
+
+  Future<File> exportFromRepaintBoundary({
+    required GlobalKey key,
+    Size size = const Size(800, 800),
+    double pixelRatio = 3.0,
+    String fileName = 'share.png',
+  }) async {
+    try {
+      final boundary = key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+      if (boundary == null) {
+        throw Exception('Preview not ready');
+      }
+      final image = await boundary.toImage(pixelRatio: pixelRatio);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      final bytes = byteData!.buffer.asUint8List();
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/$fileName');
+      await file.writeAsBytes(bytes);
+      return file;
+    } catch (e) {
+      throw Exception('Failed to export from preview: $e');
+    }
+  }
+
+  Future<void> shareFromRepaintBoundary({
+    required GlobalKey key,
+    Size size = const Size(800, 800),
+    String fileName = 'share.png',
+    String? subject,
+    String? text,
+  }) async {
+    final file = await exportFromRepaintBoundary(key: key, size: size, fileName: fileName);
+    await Share.shareXFiles(
+      [XFile(file.path)],
+      subject: subject ?? 'Carbon Tracker',
+      text: text,
     );
   }
 }

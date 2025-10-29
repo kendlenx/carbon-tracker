@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../services/language_service.dart';
+import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import '../services/database_service.dart';
 import '../services/achievement_service.dart' show Achievement, AchievementType;
 import '../widgets/liquid_pull_refresh.dart';
@@ -13,7 +14,6 @@ class GoalsScreen extends StatefulWidget {
 }
 
 class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin {
-  final LanguageService _languageService = LanguageService.instance;
   
   // Goals
   double _dailyGoal = 10.0;
@@ -33,6 +33,8 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
   // Animation controllers
   late AnimationController _progressAnimationController;
   late AnimationController _chartAnimationController;
+  bool _achievementsInitialized = false;
+  Locale? _lastLocale;
   
   @override
   void initState() {
@@ -40,7 +42,19 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
     _setupAnimations();
     _loadGoals();
     _loadProgress();
-    _setupAchievements();
+  }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = Localizations.localeOf(context);
+    if (!_achievementsInitialized || _lastLocale != currentLocale) {
+      setState(() {
+        _setupAchievements();
+        _achievementsInitialized = true;
+        _lastLocale = currentLocale;
+      });
+    }
   }
 
   void _setupAnimations() {
@@ -90,44 +104,46 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
   }
 
   void _setupAchievements() {
+    _achievements.clear();
+    final l = AppLocalizations.of(context)!;
     _achievements.addAll([
       Achievement(
         id: 'daily_green',
-        title: _languageService.isEnglish ? 'Daily Green Champion' : 'Günlük Yeşil Şampiyon',
-        description: _languageService.isEnglish ? 'Stay under daily goal for 7 days' : '7 gün boyunca günlük hedefin altında kal',
+        title: l.translate('goals.ach.dailyGreenChampion.title'),
+        description: l.translate('goals.ach.dailyGreenChampion.desc'),
         icon: '🌱',
         color: Colors.green,
         type: AchievementType.daily,
         targetValue: 7,
-        unit: 'gün',
+        unit: l.translate('goals.units.days'),
         points: 50,
       ),
       Achievement(
         id: 'weekly_warrior',
-        title: _languageService.isEnglish ? 'Weekly Warrior' : 'Haftalık Savaşçı',
-        description: _languageService.isEnglish ? 'Achieve weekly goal 4 times' : '4 kez haftalık hedefe ulaş',
+        title: l.translate('goals.ach.weeklyWarrior.title'),
+        description: l.translate('goals.ach.weeklyWarrior.desc'),
         icon: '🏆',
         color: Colors.blue,
         type: AchievementType.weekly,
         targetValue: 4,
-        unit: 'hafta',
+        unit: l.translate('goals.units.weeks'),
         points: 75,
       ),
       Achievement(
         id: 'monthly_master',
-        title: _languageService.isEnglish ? 'Monthly Master' : 'Aylık Usta',
-        description: _languageService.isEnglish ? 'Beat monthly goal' : 'Aylık hedefi geç',
+        title: l.translate('goals.ach.monthlyMaster.title'),
+        description: l.translate('goals.ach.monthlyMaster.desc'),
         icon: '⭐',
         color: Colors.amber,
         type: AchievementType.monthly,
         targetValue: 1,
-        unit: 'hedef',
+        unit: l.translate('goals.units.goal'),
         points: 100,
       ),
       Achievement(
         id: 'carbon_crusher',
-        title: _languageService.isEnglish ? 'Carbon Crusher' : 'Karbon Ezici',
-        description: _languageService.isEnglish ? 'Reduce emissions by 50%' : 'Emisyonları %50 azalt',
+        title: l.translate('goals.ach.carbonCrusher.title'),
+        description: l.translate('goals.ach.carbonCrusher.desc'),
         icon: '📉',
         color: Colors.red,
         type: AchievementType.milestone,
@@ -141,17 +157,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Carbon Goals' : 'Karbon Hedefleri'),
-        backgroundColor: Colors.green.withValues(alpha: 0.1),
-        foregroundColor: Colors.green,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit),
-            onPressed: _editGoals,
-          ),
-        ],
-      ),
+      appBar: null,
       body: LiquidPullRefresh(
         onRefresh: () async {
           await _loadProgress();
@@ -189,7 +195,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
         backgroundColor: Colors.green,
         icon: const Icon(Icons.edit, color: Colors.white),
         label: Text(
-          _languageService.isEnglish ? 'Edit Goals' : 'Hedefleri Düzenle',
+          AppLocalizations.of(context)!.translate('ui.editGoals'),
           style: const TextStyle(color: Colors.white),
         ),
       ),
@@ -206,7 +212,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
         child: Column(
           children: [
             Text(
-              _languageService.isEnglish ? 'Today\'s Goal Progress' : 'Bugünkü Hedef İlerlemesi',
+              AppLocalizations.of(context)!.translate('ui.todaysGoalProgress'),
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -279,8 +285,8 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
               ),
               child: Text(
                 dailyProgress <= 1.0 
-                  ? (_languageService.isEnglish ? 'On track' : 'Hedefteyiz')
-                  : (_languageService.isEnglish ? 'Over goal' : 'Hedef aşıldı'),
+                  ? AppLocalizations.of(context)!.goalsOnTrack
+                  : AppLocalizations.of(context)!.goalsExceeded,
                 style: TextStyle(
                   color: dailyProgress <= 1.0 ? Colors.green.shade700 : Colors.orange.shade700,
                   fontWeight: FontWeight.w500,
@@ -299,7 +305,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          _languageService.isEnglish ? 'Goal Progress' : 'Hedef İlerlemesi',
+          AppLocalizations.of(context)!.translate('ui.goalProgress'),
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -308,7 +314,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
         const SizedBox(height: 16),
         
         _buildProgressCard(
-          title: _languageService.isEnglish ? 'Weekly' : 'Haftalık',
+          title: AppLocalizations.of(context)!.goalsWeekly,
           current: _currentWeekly,
           target: _weeklyGoal,
           icon: Icons.calendar_view_week,
@@ -318,7 +324,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
         const SizedBox(height: 12),
         
         _buildProgressCard(
-          title: _languageService.isEnglish ? 'Monthly' : 'Aylık',
+          title: AppLocalizations.of(context)!.goalsMonthly,
           current: _currentMonthly,
           target: _monthlyGoal,
           icon: Icons.calendar_month,
@@ -328,7 +334,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
         const SizedBox(height: 12),
         
         _buildProgressCard(
-          title: _languageService.isEnglish ? 'Yearly' : 'Yıllık',
+          title: AppLocalizations.of(context)!.translate('ui.yearly'),
           current: _currentYearly,
           target: _yearlyGoal,
           icon: Icons.calendar_today,
@@ -403,7 +409,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${(progress * 100).toStringAsFixed(1)}% ${_languageService.isEnglish ? 'complete' : 'tamamlandı'}',
+'${(progress * 100).toStringAsFixed(1)}% ${AppLocalizations.of(context)!.translate('ui.completeShort')}',
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).brightness == Brightness.dark
@@ -428,7 +434,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Weekly Progress Trend' : 'Haftalık İlerleme Trendi',
+              AppLocalizations.of(context)!.translate('ui.weeklyProgressTrend'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -447,8 +453,9 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                     children: List.generate(7, (index) {
                       // Sample data for demonstration
                       final values = [8.2, 12.1, 9.8, 15.4, 7.3, 11.2, _currentDaily];
-                      final dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-                      final dayNamesTr = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+                      final firstDayOfWeek = DateTime.now().subtract(Duration(days: (DateTime.now().weekday + 6) % 7));
+                      final dayNames = List.generate(7, (i) => DateFormat.E(Localizations.localeOf(context).toString())
+                          .format(firstDayOfWeek.add(Duration(days: i))));
                       
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -463,7 +470,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _languageService.isEnglish ? dayNames[index] : dayNamesTr[index],
+                            dayNames[index],
                             style: const TextStyle(fontSize: 10),
                           ),
                         ],
@@ -479,7 +486,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _languageService.isEnglish ? 'Goal: ${_dailyGoal.toStringAsFixed(0)} kg/day' : 'Hedef: ${_dailyGoal.toStringAsFixed(0)} kg/gün',
+                  '${AppLocalizations.of(context)!.translate('goals.target')}: ${_dailyGoal.toStringAsFixed(0)} kg',
                   style: TextStyle(
                     fontSize: 12,
                     color: Theme.of(context).brightness == Brightness.dark
@@ -506,7 +513,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        _languageService.isEnglish ? 'On track' : 'Hedefteyiz',
+                        AppLocalizations.of(context)!.translate('goals.onTrack'),
                         style: const TextStyle(fontSize: 10),
                       ),
                     ],
@@ -534,7 +541,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _languageService.isEnglish ? 'Goal Achievements' : 'Hedef Başarıları',
+                  AppLocalizations.of(context)!.translate('ui.goalAchievements'),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -543,13 +550,11 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(_languageService.isEnglish 
-                          ? 'More achievements coming soon!'
-                          : 'Daha fazla başarı yakında!'),
+                        content: Text(AppLocalizations.of(context)!.translate('ui.moreAchievementsSoon')),
                       ),
                     );
                   },
-                  child: Text(_languageService.isEnglish ? 'View All' : 'Tümünü Gör'),
+                  child: Text(AppLocalizations.of(context)!.translate('common.viewAll')),
                 ),
               ],
             ),
@@ -613,20 +618,13 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
   }
 
   Widget _buildTipsSection() {
-    final tips = _languageService.isEnglish ? [
-      '🚶‍♂️ Walk or bike instead of driving short distances',
-      '💡 Switch to LED bulbs to save energy',
-      '🌱 Eat more plant-based meals',
-      '♻️ Reduce, reuse, and recycle whenever possible',
-      '🚗 Use public transport or carpool',
-      '🏠 Improve home insulation',
-    ] : [
-      '🚶‍♂️ Kısa mesafelerde araba yerine yürü veya bisiklet kullan',
-      '💡 Enerji tasarrufu için LED ampuller kullan',
-      '🌱 Daha fazla bitki bazlı yemek ye',
-      '♻️ Mümkün olduğunca azalt, yeniden kullan ve geri dönüştür',
-      '🚗 Toplu taşıma kullan veya araç paylaş',
-      '🏠 Ev yalıtımını iyileştir',
+    final tips = [
+      AppLocalizations.of(context)!.translate('tips.walkMore'),
+      AppLocalizations.of(context)!.translate('tips.usePublicTransport'),
+      AppLocalizations.of(context)!.translate('tips.energyEfficient'),
+      AppLocalizations.of(context)!.translate('tips.reduceWaste'),
+      AppLocalizations.of(context)!.translate('tips.localProducts'),
+      AppLocalizations.of(context)!.translate('tips.smartThermostat'),
     ];
 
     return Card(
@@ -636,7 +634,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Tips to Reduce Carbon' : 'Karbonu Azaltma İpuçları',
+              AppLocalizations.of(context)!.translate('ui.carbonReductionTips'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -670,13 +668,11 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
             _monthlyGoal = monthly;
             _yearlyGoal = yearly;
           });
-          // Save to preferences in real app
           _progressAnimationController.reset();
           _chartAnimationController.reset();
           _progressAnimationController.forward();
           _chartAnimationController.forward();
         },
-        languageService: _languageService,
       ),
     );
   }
@@ -710,7 +706,7 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'Close' : 'Kapat'),
+            child: Text(AppLocalizations.of(context)!.translate('common.close')),
           ),
         ],
       ),
@@ -724,7 +720,6 @@ class _GoalEditDialog extends StatefulWidget {
   final double currentMonthly;
   final double currentYearly;
   final Function(double, double, double, double) onSave;
-  final LanguageService languageService;
 
   const _GoalEditDialog({
     required this.currentDaily,
@@ -732,7 +727,6 @@ class _GoalEditDialog extends StatefulWidget {
     required this.currentMonthly,
     required this.currentYearly,
     required this.onSave,
-    required this.languageService,
   });
 
   @override
@@ -757,42 +751,42 @@ class _GoalEditDialogState extends State<_GoalEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(widget.languageService.isEnglish ? 'Edit Goals' : 'Hedefleri Düzenle'),
+      title: Text(AppLocalizations.of(context)!.translate('ui.editGoals')),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildSlider(
-              label: widget.languageService.isEnglish ? 'Daily Goal' : 'Günlük Hedef',
+              label: AppLocalizations.of(context)!.translate('goals.daily'),
               value: _daily,
               min: 1.0,
               max: 50.0,
               onChanged: (value) => setState(() => _daily = value),
-              unit: 'kg/day',
+              unit: 'kg',
             ),
             _buildSlider(
-              label: widget.languageService.isEnglish ? 'Weekly Goal' : 'Haftalık Hedef',
+              label: AppLocalizations.of(context)!.translate('goals.weekly'),
               value: _weekly,
               min: 10.0,
               max: 350.0,
               onChanged: (value) => setState(() => _weekly = value),
-              unit: 'kg/week',
+              unit: 'kg',
             ),
             _buildSlider(
-              label: widget.languageService.isEnglish ? 'Monthly Goal' : 'Aylık Hedef',
+              label: AppLocalizations.of(context)!.translate('goals.monthly'),
               value: _monthly,
               min: 50.0,
               max: 1500.0,
               onChanged: (value) => setState(() => _monthly = value),
-              unit: 'kg/month',
+              unit: 'kg',
             ),
             _buildSlider(
-              label: widget.languageService.isEnglish ? 'Yearly Goal' : 'Yıllık Hedef',
+              label: AppLocalizations.of(context)!.translate('ui.yearly'),
               value: _yearly,
               min: 500.0,
               max: 18000.0,
               onChanged: (value) => setState(() => _yearly = value),
-              unit: 'kg/year',
+              unit: 'kg',
             ),
           ],
         ),
@@ -800,14 +794,14 @@ class _GoalEditDialogState extends State<_GoalEditDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(widget.languageService.isEnglish ? 'Cancel' : 'İptal'),
+          child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
         ),
         ElevatedButton(
           onPressed: () {
             widget.onSave(_daily, _weekly, _monthly, _yearly);
             Navigator.of(context).pop();
           },
-          child: Text(widget.languageService.isEnglish ? 'Save' : 'Kaydet'),
+          child: Text(AppLocalizations.of(context)!.translate('common.save')),
         ),
       ],
     );

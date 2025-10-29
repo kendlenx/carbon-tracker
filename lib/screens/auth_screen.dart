@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/firebase_service.dart';
-import '../services/language_service.dart';
+// removed LanguageService import – using AppLocalizations exclusively
+import '../l10n/app_localizations.dart';
 import 'dart:async';
 
 class AuthScreen extends StatefulWidget {
@@ -14,7 +15,6 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   final FirebaseService _firebaseService = FirebaseService();
-  final LanguageService _languageService = LanguageService.instance;
 
   late AnimationController _fadeController;
   late AnimationController _slideController;
@@ -115,12 +115,11 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _handleForgotPassword() async {
+    final l = AppLocalizations.of(context)!;
     final email = _emailController.text.trim();
     if (email.isEmpty) {
       setState(() {
-        _errorMessage = _languageService.isEnglish 
-          ? 'Please enter your email address first'
-          : 'Lütfen önce e-posta adresinizi girin';
+        _errorMessage = l.translate('auth.emailRequired');
       });
       return;
     }
@@ -131,9 +130,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _languageService.isEnglish 
-              ? 'Password reset email sent to $email'
-              : 'Şifre sıfırlama e-postası $email adresine gönderildi',
+            '${l.translate('auth.resetEmailSentTo')} $email',
           ),
           backgroundColor: Colors.green,
         ),
@@ -158,45 +155,45 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   String? _validateEmail(String? value) {
+    final l = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return _languageService.isEnglish ? 'Email is required' : 'E-posta gerekli';
+      return l.translate('auth.emailRequired');
     }
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return _languageService.isEnglish ? 'Please enter a valid email' : 'Geçerli bir e-posta girin';
+      return l.translate('auth.emailInvalid');
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
+    final l = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return _languageService.isEnglish ? 'Password is required' : 'Şifre gerekli';
+      return l.translate('auth.passwordRequired');
     }
     if (value.length < 6) {
-      return _languageService.isEnglish 
-        ? 'Password must be at least 6 characters' 
-        : 'Şifre en az 6 karakter olmalı';
+      return l.translate('auth.passwordTooShort');
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
+    final l = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return _languageService.isEnglish ? 'Please confirm your password' : 'Şifrenizi onaylayın';
+      return l.translate('auth.confirmRequired');
     }
     if (value != _passwordController.text) {
-      return _languageService.isEnglish ? 'Passwords do not match' : 'Şifreler eşleşmiyor';
+      return l.translate('auth.confirmMismatch');
     }
     return null;
   }
 
   String? _validateName(String? value) {
+    final l = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return _languageService.isEnglish ? 'Name is required' : 'İsim gerekli';
+      return l.translate('auth.nameRequired');
     }
     if (value.length < 2) {
-      return _languageService.isEnglish 
-        ? 'Name must be at least 2 characters' 
-        : 'İsim en az 2 karakter olmalı';
+      return l.translate('auth.nameTooShort');
     }
     return null;
   }
@@ -303,8 +300,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         // Title
         Text(
           _isSignUp
-            ? (_languageService.isEnglish ? 'Create Account' : 'Hesap Oluştur')
-            : (_languageService.isEnglish ? 'Sign In' : 'Giriş Yap'),
+            ? AppLocalizations.of(context)!.translate('auth.titleSignUp')
+            : AppLocalizations.of(context)!.translate('auth.titleSignIn'),
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -316,12 +313,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         // Subtitle
         Text(
           _isSignUp
-            ? (_languageService.isEnglish 
-                ? 'Join Carbon Tracker and secure your data'
-                : 'Carbon Tracker\'a katılın ve verilerinizi güvende tutun')
-            : (_languageService.isEnglish 
-                ? 'Welcome back to Carbon Tracker'
-                : 'Carbon Tracker\'a tekrar hoş geldiniz'),
+            ? AppLocalizations.of(context)!.translate('auth.subtitleSignUp')
+            : AppLocalizations.of(context)!.translate('auth.subtitleSignIn'),
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Colors.white.withValues(alpha: 0.8),
           ),
@@ -340,7 +333,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           if (_isSignUp) ...[
             _buildTextField(
               controller: _nameController,
-              label: _languageService.isEnglish ? 'Full Name' : 'Ad Soyad',
+              label: AppLocalizations.of(context)!.translate('auth.fullName'),
               icon: Icons.person,
               validator: _validateName,
             ),
@@ -350,7 +343,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           // Email Field
           _buildTextField(
             controller: _emailController,
-            label: _languageService.isEnglish ? 'Email Address' : 'E-posta Adresi',
+            label: AppLocalizations.of(context)!.translate('auth.email'),
             icon: Icons.email,
             keyboardType: TextInputType.emailAddress,
             validator: _validateEmail,
@@ -360,7 +353,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           // Password Field
           _buildTextField(
             controller: _passwordController,
-            label: _languageService.isEnglish ? 'Password' : 'Şifre',
+            label: AppLocalizations.of(context)!.translate('auth.password'),
             icon: Icons.lock,
             obscureText: _obscurePassword,
             validator: _validatePassword,
@@ -382,7 +375,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
             const SizedBox(height: 16),
             _buildTextField(
               controller: _confirmPasswordController,
-              label: _languageService.isEnglish ? 'Confirm Password' : 'Şifreyi Onayla',
+              label: AppLocalizations.of(context)!.translate('auth.confirmPassword'),
               icon: Icons.lock_outline,
               obscureText: _obscureConfirmPassword,
               validator: _validateConfirmPassword,
@@ -474,8 +467,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 const SizedBox(width: 12),
                 Text(
                   _isSignUp
-                    ? (_languageService.isEnglish ? 'Create Account' : 'Hesap Oluştur')
-                    : (_languageService.isEnglish ? 'Sign In' : 'Giriş Yap'),
+                    ? AppLocalizations.of(context)!.translate('auth.createAccount')
+                    : AppLocalizations.of(context)!.translate('auth.signIn'),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -494,8 +487,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         textAlign: TextAlign.center,
         text: TextSpan(
           text: _isSignUp
-            ? (_languageService.isEnglish ? 'Already have an account? ' : 'Zaten hesabınız var mı? ')
-            : (_languageService.isEnglish ? 'Don\'t have an account? ' : 'Hesabınız yok mu? '),
+            ? AppLocalizations.of(context)!.translate('auth.alreadyHaveAccount') + ' '
+            : AppLocalizations.of(context)!.translate('auth.dontHaveAccount') + ' ',
           style: TextStyle(
             color: Colors.white.withValues(alpha: 0.8),
             fontSize: 16,
@@ -503,8 +496,8 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
           children: [
             TextSpan(
               text: _isSignUp
-                ? (_languageService.isEnglish ? 'Sign In' : 'Giriş Yap')
-                : (_languageService.isEnglish ? 'Sign Up' : 'Kayıt Ol'),
+                ? AppLocalizations.of(context)!.translate('auth.signIn')
+                : AppLocalizations.of(context)!.translate('auth.signUp'),
               style: const TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
@@ -520,7 +513,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     return TextButton(
       onPressed: _handleForgotPassword,
       child: Text(
-        _languageService.isEnglish ? 'Forgot Password?' : 'Şifremi Unuttum?',
+        AppLocalizations.of(context)!.translate('auth.forgotPassword'),
         style: TextStyle(
           color: Colors.blue.withValues(alpha: 0.8),
           fontSize: 14,

@@ -2,6 +2,11 @@ import WidgetKit
 import SwiftUI
 import Foundation
 
+fileprivate func loc(_ en: String, _ tr: String) -> String {
+    if let code = Locale.preferredLanguages.first, code.hasPrefix("tr") { return tr }
+    return en
+}
+
 // MARK: - Widget Entry
 struct CarbonEntry: TimelineEntry {
     let date: Date
@@ -118,7 +123,7 @@ struct SmallWidgetView: View {
                     .font(.system(size: 18, weight: .bold, design: .rounded))
                     .foregroundColor(.primary)
                 
-                Text("Today")
+Text(loc("Today", "Bugün"))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
@@ -165,7 +170,7 @@ struct MediumWidgetView: View {
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundColor(.primary)
                     
-                    Text("Today's Footprint")
+Text(loc("Today's Footprint", "Bugünün Ayak İzi"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -194,7 +199,7 @@ struct MediumWidgetView: View {
             // Right side - Additional info
             VStack(alignment: .leading, spacing: 6) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Weekly Avg")
+Text(loc("Weekly Avg", "Haftalık Ort."))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     Text("\(entry.weeklyAverage, specifier: "%.1f") kg")
@@ -203,7 +208,7 @@ struct MediumWidgetView: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Top Category")
+Text(loc("Top Category", "En Yüksek Kategori"))
                         .font(.caption2)
                         .foregroundColor(.secondary)
                     HStack {
@@ -317,9 +322,9 @@ struct LargeWidgetView: View {
             
             // Stats row
             HStack {
-                StatBox(title: "Weekly Avg", value: "\(entry.weeklyAverage, specifier: "%.1f") kg", color: .blue)
-                StatBox(title: "Monthly Goal", value: "\(entry.monthlyGoal, specifier: "%.0f") kg", color: .purple)
-                StatBox(title: "Top Category", value: entry.topCategory, color: .orange)
+StatBox(title: loc("Weekly Avg", "Haftalık Ort."), value: "\(entry.weeklyAverage, specifier: "%.1f") kg", color: .blue)
+                StatBox(title: loc("Monthly Goal", "Aylık Hedef"), value: "\(entry.monthlyGoal, specifier: "%.0f") kg", color: .purple)
+                StatBox(title: loc("Top Category", "En Yüksek Kategori"), value: entry.topCategory, color: .orange)
             }
             
             // Achievements

@@ -3,8 +3,8 @@ import '../screens/transport_screen.dart';
 import '../screens/energy_screen.dart';
 import '../screens/food_screen.dart';
 import '../screens/shopping_screen.dart';
-import '../services/language_service.dart';
 import '../widgets/micro_interactions.dart';
+import '../l10n/app_localizations.dart';
 
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key});
@@ -16,7 +16,6 @@ class AddActivityScreen extends StatefulWidget {
 class _AddActivityScreenState extends State<AddActivityScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  final LanguageService _languageService = LanguageService.instance;
 
   @override
   void initState() {
@@ -42,7 +41,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          _languageService.isEnglish ? '➕ New Activity' : '➕ Yeni Aktivite',
+          '${AppLocalizations.of(context)!.translate('ui.addActivity')}',
         ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
@@ -92,18 +91,14 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _languageService.isEnglish 
-                                ? 'Add New Activity' 
-                                : 'Yeni Aktivite Ekle',
+                            AppLocalizations.of(context)!.translate('ui.addActivity'),
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _languageService.isEnglish
-                                ? 'Choose a category to start tracking'
-                                : 'Takip etmek için bir kategori seçin',
+                            AppLocalizations.of(context)!.translate('ui.chooseCategory'),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.grey.shade600,
                             ),
@@ -117,7 +112,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
               const SizedBox(height: 32),
               // Categories section
               Text(
-                _languageService.isEnglish ? 'Categories' : 'Kategoriler',
+                AppLocalizations.of(context)!.dashboardCategories,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -134,10 +129,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                 children: [
                   _buildCategoryTile(
                     context: context,
-                    title: _languageService.isEnglish ? 'Transport' : 'Ulaşım',
-                    subtitle: _languageService.isEnglish 
-                        ? 'Car, metro, walking' 
-                        : 'Araç, metro, yürüme',
+                    title: AppLocalizations.of(context)!.navTransport,
+                    subtitle: AppLocalizations.of(context)!.transportSubtitle,
                     icon: Icons.directions_car,
                     color: Colors.blue,
                     isAvailable: true,
@@ -152,10 +145,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                   ),
                   _buildCategoryTile(
                     context: context,
-                    title: _languageService.isEnglish ? 'Energy' : 'Enerji',
-                    subtitle: _languageService.isEnglish 
-                        ? 'Electricity, gas' 
-                        : 'Elektrik, doğal gaz',
+                    title: AppLocalizations.of(context)!.energyTitle,
+                    subtitle: AppLocalizations.of(context)!.energySubtitle,
                     icon: Icons.flash_on,
                     color: Colors.orange,
                     isAvailable: true,
@@ -170,10 +161,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                   ),
                   _buildCategoryTile(
                     context: context,
-                    title: _languageService.isEnglish ? 'Food' : 'Yemek',
-                    subtitle: _languageService.isEnglish 
-                        ? 'Nutrition habits' 
-                        : 'Beslenme alışkanlıkları',
+                    title: AppLocalizations.of(context)!.translate('navigation.food'),
+                    subtitle: AppLocalizations.of(context)!.translate('food.subtitle'),
                     icon: Icons.restaurant,
                     color: Colors.green,
                     isAvailable: true,
@@ -188,10 +177,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                   ),
                   _buildCategoryTile(
                     context: context,
-                    title: _languageService.isEnglish ? 'Shopping' : 'Alışveriş',
-                    subtitle: _languageService.isEnglish 
-                        ? 'Consumer goods' 
-                        : 'Tüketim malları',
+                    title: AppLocalizations.of(context)!.translate('navigation.shopping'),
+                    subtitle: AppLocalizations.of(context)!.translate('shopping.subtitle'),
                     icon: Icons.shopping_bag,
                     color: Colors.purple,
                     isAvailable: true,
@@ -211,7 +198,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
               
               // Quick actions section
               Text(
-                _languageService.isEnglish ? 'Quick Actions' : 'Hızlı İşlemler',
+                AppLocalizations.of(context)!.uiQuickActions,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -239,7 +226,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          _languageService.isEnglish ? 'Quick Add' : 'Hızlı Ekle',
+                          AppLocalizations.of(context)!.translate('ui.quickAdd'),
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
@@ -248,9 +235,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _languageService.isEnglish
-                          ? 'Common activities for quick logging'
-                          : 'Hızlı kayıt için yaygın aktiviteler',
+                      AppLocalizations.of(context)!.translate('ui.quickAddCommon'),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey.shade600,
                       ),
@@ -262,22 +247,22 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
                       children: [
                         _buildQuickAddChip(
                           context: context,
-                          label: _languageService.isEnglish ? '🚗 Car (5 km)' : '🚗 Araba (5 km)',
+                          label: '🚗 ${AppLocalizations.of(context)!.transportCar} (5 ${AppLocalizations.of(context)!.transportKm})',
                           onTap: () => _quickAddTransport(context, 'car_gasoline', 5.0),
                         ),
                         _buildQuickAddChip(
                           context: context,
-                          label: _languageService.isEnglish ? '🚇 Metro (10 km)' : '🚇 Metro (10 km)',
+                          label: '🚇 ${AppLocalizations.of(context)!.translate('transport.publicTransport')} (10 ${AppLocalizations.of(context)!.transportKm})',
                           onTap: () => _quickAddTransport(context, 'metro', 10.0),
                         ),
                         _buildQuickAddChip(
                           context: context,
-                          label: _languageService.isEnglish ? '🚶 Walk (2 km)' : '🚶 Yürüyüş (2 km)',
+                          label: '🚶 ${AppLocalizations.of(context)!.transportWalking} (2 ${AppLocalizations.of(context)!.transportKm})',
                           onTap: () => _quickAddTransport(context, 'walking', 2.0),
                         ),
                         _buildQuickAddChip(
                           context: context,
-                          label: _languageService.isEnglish ? '🚴 Bike (8 km)' : '🚴 Bisiklet (8 km)',
+                          label: '🚴 ${AppLocalizations.of(context)!.transportCycling} (8 ${AppLocalizations.of(context)!.transportKm})',
                           onTap: () => _quickAddTransport(context, 'bicycle', 8.0),
                         ),
                       ],
@@ -416,9 +401,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> with TickerProvid
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              _languageService.isEnglish 
-                ? '✅ Activity added successfully!'
-                : '✅ Aktivite başarıyla eklendi!',
+              AppLocalizations.of(context)!.translate('common.success'),
             ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 2),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/firebase_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 import '../services/security_service.dart';
 import '../widgets/liquid_pull_refresh.dart';
 
@@ -16,7 +16,7 @@ class UserProfileScreen extends StatefulWidget {
 
 class _UserProfileScreenState extends State<UserProfileScreen> with TickerProviderStateMixin {
   final FirebaseService _firebaseService = FirebaseService();
-  final LanguageService _languageService = LanguageService.instance;
+  // final LanguageService _languageService = LanguageService.instance;
   final SecurityService _securityService = SecurityService();
 
   late AnimationController _fadeController;
@@ -96,7 +96,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
         }
       }
     } catch (e) {
-      _showErrorSnackBar('Error loading user data: $e');
+      _showErrorSnackBar('${AppLocalizations.of(context)!.translate('common.error')}: $e');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -106,7 +106,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
   Future<void> _updateProfile() async {
     if (_nameController.text.trim().isEmpty) {
-      _showErrorSnackBar(_languageService.isEnglish ? 'Name cannot be empty' : 'İsim boş olamaz');
+      _showErrorSnackBar(AppLocalizations.of(context)!.translate('profile.nameEmpty'));
       return;
     }
 
@@ -126,15 +126,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
       });
 
       _showSuccessSnackBar(
-        _languageService.isEnglish 
-          ? 'Profile updated successfully!' 
-          : 'Profil başarıyla güncellendi!'
+        AppLocalizations.of(context)!.translate('profile.profileUpdated')
       );
     } catch (e) {
       _showErrorSnackBar(
-        _languageService.isEnglish 
-          ? 'Failed to update profile: $e' 
-          : 'Profil güncellenemedi: $e'
+        '${AppLocalizations.of(context)!.translate('profile.profileUpdateFailed')}: $e'
       );
     } finally {
       if (mounted) {
@@ -145,19 +141,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
   Future<void> _changePassword() async {
     if (_currentPasswordController.text.isEmpty || _newPasswordController.text.isEmpty) {
-      _showErrorSnackBar(
-        _languageService.isEnglish 
-          ? 'Please fill all password fields' 
-          : 'Lütfen tüm şifre alanlarını doldurun'
-      );
+      _showErrorSnackBar(AppLocalizations.of(context)!.translate('profile.fillAllPasswordFields'));
       return;
     }
 
     if (_newPasswordController.text.length < 6) {
       _showErrorSnackBar(
-        _languageService.isEnglish 
-          ? 'New password must be at least 6 characters' 
-          : 'Yeni şifre en az 6 karakter olmalı'
+        AppLocalizations.of(context)!.translate('profile.passwordMinLen')
       );
       return;
     }
@@ -186,16 +176,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
       });
 
       _showSuccessSnackBar(
-        _languageService.isEnglish 
-          ? 'Password changed successfully!' 
-          : 'Şifre başarıyla değiştirildi!'
+        AppLocalizations.of(context)!.translate('profile.passwordChanged')
       );
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.contains('wrong-password')) {
-        errorMessage = _languageService.isEnglish 
-          ? 'Current password is incorrect' 
-          : 'Mevcut şifre yanlış';
+        errorMessage = AppLocalizations.of(context)!.translate('profile.currentPasswordIncorrect');
       }
       _showErrorSnackBar(errorMessage);
     } finally {
@@ -224,16 +210,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
         });
 
         _showSuccessSnackBar(
-          _languageService.isEnglish 
-            ? 'Profile picture updated!' 
-            : 'Profil resmi güncellendi!'
+          AppLocalizations.of(context)!.translate('profile.pictureUpdated')
         );
       }
     } catch (e) {
       _showErrorSnackBar(
-        _languageService.isEnglish 
-          ? 'Failed to update profile picture' 
-          : 'Profil resmi güncellenemedi'
+        AppLocalizations.of(context)!.translate('profile.pictureUpdateFailed')
       );
     }
   }
@@ -242,15 +224,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     try {
       await _currentUser!.sendEmailVerification();
       _showSuccessSnackBar(
-        _languageService.isEnglish 
-          ? 'Verification email sent!' 
-          : 'Doğrulama e-postası gönderildi!'
+        AppLocalizations.of(context)!.translate('profile.verificationEmailSent')
       );
     } catch (e) {
       _showErrorSnackBar(
-        _languageService.isEnglish 
-          ? 'Failed to send verification email' 
-          : 'Doğrulama e-postası gönderilemedi'
+        AppLocalizations.of(context)!.translate('profile.verificationEmailFailed')
       );
     }
   }
@@ -312,24 +290,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
           children: [
             const Icon(Icons.warning, color: Colors.red),
             const SizedBox(width: 8),
-            Text(_languageService.isEnglish ? 'Delete Account' : 'Hesabı Sil'),
+            Text(AppLocalizations.of(context)!.translate('profile.deleteAccount')),
           ],
         ),
         content: Text(
-          _languageService.isEnglish 
-            ? 'This will permanently delete your account and all data. This action cannot be undone. Are you sure?'
-            : 'Bu işlem hesabınızı ve tüm verilerinizi kalıcı olarak silecektir. Bu işlem geri alınamaz. Emin misiniz?'
+          AppLocalizations.of(context)!.translate('profile.deleteConfirmMessage')
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(
-              _languageService.isEnglish ? 'Delete Account' : 'Hesabı Sil',
+              AppLocalizations.of(context)!.translate('profile.deleteAccount'),
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -344,21 +320,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isEnglish ? 'Confirm Password' : 'Şifreyi Onayla'),
+        title: Text(AppLocalizations.of(context)!.translate('profile.confirmPasswordTitle')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              _languageService.isEnglish 
-                ? 'Please enter your password to confirm account deletion:'
-                : 'Hesap silme işlemini onaylamak için şifrenizi girin:'
+              AppLocalizations.of(context)!.translate('profile.confirmPasswordBody')
             ),
             const SizedBox(height: 16),
             TextField(
               controller: passwordController,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: _languageService.isEnglish ? 'Password' : 'Şifre',
+                labelText: AppLocalizations.of(context)!.translate('auth.password'),
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -367,13 +341,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.of(context).pop(passwordController.text),
             child: Text(
-              _languageService.isEnglish ? 'Confirm' : 'Onayla',
+              AppLocalizations.of(context)!.translate('common.confirm'),
               style: const TextStyle(color: Colors.white),
             ),
           ),
@@ -415,22 +389,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
   }
 
   String _formatDateTime(DateTime? dateTime) {
-    if (dateTime == null) return _languageService.isEnglish ? 'Unknown' : 'Bilinmiyor';
+    if (dateTime == null) return AppLocalizations.of(context)!.translate('common.unknown');
     
     final now = DateTime.now();
     final difference = now.difference(dateTime);
     
-    if (difference.inDays > 0) {
-      return _languageService.isEnglish 
-        ? '${difference.inDays} days ago'
-        : '${difference.inDays} gün önce';
-    } else if (difference.inHours > 0) {
-      return _languageService.isEnglish
-        ? '${difference.inHours} hours ago'
-        : '${difference.inHours} saat önce';
-    } else {
-      return _languageService.isEnglish ? 'Just now' : 'Şimdi';
-    }
+    // Use localized date formatting to avoid missing relative strings
+    return MaterialLocalizations.of(context).formatMediumDate(dateTime);
   }
 
   @override
@@ -438,7 +403,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     if (_currentUser == null) {
       return Scaffold(
         appBar: AppBar(
-          title: Text(_languageService.isEnglish ? 'Profile' : 'Profil'),
+          title: Text(AppLocalizations.of(context)!.translate('profile.title')),
         ),
         body: Center(
           child: Column(
@@ -447,7 +412,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
               const Icon(Icons.person_off, size: 80, color: Colors.grey),
               const SizedBox(height: 16),
               Text(
-                _languageService.isEnglish ? 'Please sign in to view profile' : 'Profili görüntülemek için giriş yapın',
+                AppLocalizations.of(context)!.translate('profile.signInToView'),
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ],
@@ -458,7 +423,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Profile' : 'Profil'),
+        title: Text(AppLocalizations.of(context)!.translate('profile.title')),
         backgroundColor: Colors.blue.withValues(alpha: 0.1),
         foregroundColor: Colors.blue,
         actions: [
@@ -466,7 +431,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () => setState(() => _isEditing = true),
-              tooltip: _languageService.isEnglish ? 'Edit Profile' : 'Profili Düzenle',
+              tooltip: AppLocalizations.of(context)!.translate('profile.editProfile'),
             ),
         ],
       ),
@@ -519,7 +484,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                       : null,
                     child: _profileImagePath == null
                       ? Text(
-                          (_userProfile['displayName'] as String? ?? 'U')[0].toUpperCase(),
+                          (_userProfile['displayName'] as String? ?? AppLocalizations.of(context)!.translate('profile.userInitial'))[0].toUpperCase(),
                           style: const TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
@@ -550,7 +515,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             ),
             const SizedBox(height: 16),
             Text(
-              _userProfile['displayName'] ?? 'User',
+              _userProfile['displayName'] ?? AppLocalizations.of(context)!.translate('profile.user'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -583,9 +548,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                 onPressed: _sendEmailVerification,
                 icon: const Icon(Icons.email, size: 16),
                 label: Text(
-                  _languageService.isEnglish 
-                    ? 'Verify Email' 
-                    : 'E-postayı Doğrula',
+                  AppLocalizations.of(context)!.translate('profile.verifyEmail'),
                 ),
                 style: TextButton.styleFrom(
                   foregroundColor: Colors.orange,
@@ -606,7 +569,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Profile Information' : 'Profil Bilgileri',
+              AppLocalizations.of(context)!.translate('profile.infoTitle'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -617,7 +580,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
               controller: _nameController,
               enabled: _isEditing,
               decoration: InputDecoration(
-                labelText: _languageService.isEnglish ? 'Full Name' : 'Ad Soyad',
+                labelText: AppLocalizations.of(context)!.translate('profile.fullName'),
                 prefixIcon: const Icon(Icons.person),
                 border: const OutlineInputBorder(),
               ),
@@ -629,12 +592,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
               controller: _emailController,
               enabled: false, // Email cannot be changed
               decoration: InputDecoration(
-                labelText: _languageService.isEnglish ? 'Email Address' : 'E-posta Adresi',
+                labelText: AppLocalizations.of(context)!.translate('profile.emailAddress'),
                 prefixIcon: const Icon(Icons.email),
                 border: const OutlineInputBorder(),
-                helperText: _languageService.isEnglish 
-                  ? 'Email cannot be changed' 
-                  : 'E-posta değiştirilemez',
+                helperText: AppLocalizations.of(context)!.translate('profile.emailImmutable'),
               ),
             ),
             
@@ -650,14 +611,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                           _nameController.text = _userProfile['displayName'] ?? '';
                         });
                       },
-                      child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+                      child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _updateProfile,
-                      child: Text(_languageService.isEnglish ? 'Save Changes' : 'Değişiklikleri Kaydet'),
+                      child: Text(AppLocalizations.of(context)!.translate('common.save')),
                     ),
                   ),
                 ],
@@ -677,7 +638,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Security' : 'Güvenlik',
+              AppLocalizations.of(context)!.translate('profile.securityTitle'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -687,8 +648,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             if (!_isChangingPassword) ...[
               ListTile(
                 leading: const Icon(Icons.lock_outline),
-                title: Text(_languageService.isEnglish ? 'Change Password' : 'Şifre Değiştir'),
-                subtitle: Text(_languageService.isEnglish ? 'Update your account password' : 'Hesap şifrenizi güncelleyin'),
+                title: Text(AppLocalizations.of(context)!.translate('profile.changePassword')),
+                subtitle: Text(AppLocalizations.of(context)!.translate('profile.updatePasswordSubtitle')),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () => setState(() => _isChangingPassword = true),
               ),
@@ -697,7 +658,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                 controller: _currentPasswordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: _languageService.isEnglish ? 'Current Password' : 'Mevcut Şifre',
+                  labelText: AppLocalizations.of(context)!.translate('profile.currentPassword'),
                   prefixIcon: const Icon(Icons.lock),
                   border: const OutlineInputBorder(),
                 ),
@@ -707,12 +668,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                 controller: _newPasswordController,
                 obscureText: true,
                 decoration: InputDecoration(
-                  labelText: _languageService.isEnglish ? 'New Password' : 'Yeni Şifre',
+                  labelText: AppLocalizations.of(context)!.translate('profile.newPassword'),
                   prefixIcon: const Icon(Icons.lock_outline),
                   border: const OutlineInputBorder(),
-                  helperText: _languageService.isEnglish 
-                    ? 'At least 6 characters' 
-                    : 'En az 6 karakter',
+                  helperText: AppLocalizations.of(context)!.translate('profile.passwordHint'),
                 ),
               ),
               const SizedBox(height: 16),
@@ -727,14 +686,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                           _newPasswordController.clear();
                         });
                       },
-                      child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+                      child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: _changePassword,
-                      child: Text(_languageService.isEnglish ? 'Change Password' : 'Şifre Değiştir'),
+                      child: Text(AppLocalizations.of(context)!.translate('profile.changePassword')),
                     ),
                   ),
                 ],
@@ -754,7 +713,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish ? 'Account Statistics' : 'Hesap İstatistikleri',
+              AppLocalizations.of(context)!.translate('profile.statsTitle'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -766,7 +725,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                 Expanded(
                   child: _buildStatItem(
                     icon: Icons.list_alt,
-                    title: _languageService.isEnglish ? 'Total Activities' : 'Toplam Aktivite',
+                    title: AppLocalizations.of(context)!.translate('ui.totalActivities'),
                     value: (_userStats['totalActivities'] ?? 0).toString(),
                     color: Colors.blue,
                   ),
@@ -774,7 +733,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                 Expanded(
                   child: _buildStatItem(
                     icon: Icons.cloud,
-                    title: _languageService.isEnglish ? 'CO₂ Tracked' : 'Takip Edilen CO₂',
+                    title: AppLocalizations.of(context)!.translate('ui.totalCO2'),
                     value: '${(_userStats['totalCO2'] ?? 0.0).toStringAsFixed(1)} kg',
                     color: Colors.green,
                   ),
@@ -787,7 +746,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             const SizedBox(height: 16),
             
             _buildInfoRow(
-              _languageService.isEnglish ? 'Member Since' : 'Üye Olma Tarihi',
+              AppLocalizations.of(context)!.translate('profile.memberSince'),
               _formatDateTime(_userProfile['createdAt']),
               Icons.calendar_today,
             ),
@@ -795,7 +754,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             const SizedBox(height: 8),
             
             _buildInfoRow(
-              _languageService.isEnglish ? 'Last Sign In' : 'Son Giriş',
+              AppLocalizations.of(context)!.translate('profile.lastSignIn'),
               _formatDateTime(_userProfile['lastSignInAt']),
               Icons.login,
             ),
@@ -874,7 +833,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                 const Icon(Icons.warning, color: Colors.red),
                 const SizedBox(width: 8),
                 Text(
-                  _languageService.isEnglish ? 'Danger Zone' : 'Tehlikeli Alan',
+                  AppLocalizations.of(context)!.translate('profile.dangerZone'),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.red,
@@ -887,13 +846,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             ListTile(
               leading: const Icon(Icons.delete_forever, color: Colors.red),
               title: Text(
-                _languageService.isEnglish ? 'Delete Account' : 'Hesabı Sil',
+                AppLocalizations.of(context)!.translate('profile.deleteAccount'),
                 style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
               ),
               subtitle: Text(
-                _languageService.isEnglish 
-                  ? 'Permanently delete your account and all data'
-                  : 'Hesabınızı ve tüm verilerinizi kalıcı olarak silin',
+                AppLocalizations.of(context)!.translate('profile.deleteAccountSubtitle'),
               ),
               onTap: _deleteAccount,
               trailing: const Icon(Icons.chevron_right, color: Colors.red),

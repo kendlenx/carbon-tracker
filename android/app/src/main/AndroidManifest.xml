@@ -79,6 +79,68 @@
             android:name="flutterEmbedding"
             android:value="2" />
         
+        <!-- Home Widgets Providers -->
+        <receiver
+            android:name="com.kendlenx.carbonstep.widgets.CarbonTodayWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/carbon_today_widget_info" />
+        </receiver>
+        <receiver
+            android:name="com.kendlenx.carbonstep.widgets.WeeklyProgressWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/weekly_progress_widget_info" />
+        </receiver>
+        <receiver
+            android:name="com.kendlenx.carbonstep.widgets.GoalProgressWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/goal_progress_widget_info" />
+        </receiver>
+        <receiver
+            android:name="com.kendlenx.carbonstep.widgets.AchievementsWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/achievements_widget_info" />
+        </receiver>
+        <receiver
+            android:name="com.kendlenx.carbonstep.widgets.QuickStatsWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_stats_widget_info" />
+        </receiver>
+        <receiver
+            android:name="com.kendlenx.carbonstep.widgets.LevelProgressWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/level_progress_widget_info" />
+        </receiver>
+
         <!-- AdMob App ID - Production ID -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"

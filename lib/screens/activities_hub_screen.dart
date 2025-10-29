@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/voice_command_widget.dart';
 import 'transport_screen.dart';
@@ -22,7 +23,6 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Activities' : 'Aktiviteler'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -32,7 +32,7 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
           children: [
             // Quick Actions Header
             Text(
-              _languageService.isEnglish ? 'Quick Actions' : 'Hızlı İşlemler',
+              AppLocalizations.of(context)!.translate('ui.quickActions'),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -41,10 +41,8 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
 
             // Quick Add Button
             _buildQuickActionCard(
-              title: _languageService.isEnglish ? 'Add Activity' : 'Aktivite Ekle',
-              subtitle: _languageService.isEnglish 
-                  ? 'Quickly log any activity' 
-                  : 'Herhangi bir aktiviteyi hızlıca kaydet',
+              title: AppLocalizations.of(context)!.translate('ui.addActivity'),
+              subtitle: AppLocalizations.of(context)!.translate('ui.quickLogAnyActivity'),
               icon: Icons.add_circle,
               color: Colors.green,
               onTap: () async {
@@ -65,7 +63,7 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
 
             // Categories Header
             Text(
-              _languageService.isEnglish ? 'Categories' : 'Kategoriler',
+              AppLocalizations.of(context)!.dashboardCategories,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -82,37 +80,29 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
               childAspectRatio: 1.2,
               children: [
                 _buildCategoryCard(
-                  title: _languageService.isEnglish ? 'Transport' : 'Ulaşım',
-                  subtitle: _languageService.isEnglish 
-                      ? 'Car, metro, walking' 
-                      : 'Araç, metro, yürüme',
+                  title: AppLocalizations.of(context)!.transportTitle,
+                  subtitle: AppLocalizations.of(context)!.transportSubtitle,
                   icon: Icons.directions_car,
                   color: Colors.blue,
                   onTap: () => _navigateToScreen(const TransportScreen()),
                 ),
                 _buildCategoryCard(
-                  title: _languageService.isEnglish ? 'Energy' : 'Enerji',
-                  subtitle: _languageService.isEnglish 
-                      ? 'Electricity, gas' 
-                      : 'Elektrik, doğal gaz',
+                  title: AppLocalizations.of(context)!.energyTitle,
+                  subtitle: AppLocalizations.of(context)!.energySubtitle,
                   icon: Icons.flash_on,
                   color: Colors.orange,
                   onTap: () => _navigateToScreen(const EnergyScreen()),
                 ),
                 _buildCategoryCard(
-                  title: _languageService.isEnglish ? 'Food' : 'Yemek',
-                  subtitle: _languageService.isEnglish 
-                      ? 'Nutrition habits' 
-                      : 'Beslenme alışkanlıkları',
+                  title: AppLocalizations.of(context)!.navFood,
+                  subtitle: AppLocalizations.of(context)!.translate('smartHome.optimizations'),
                   icon: Icons.restaurant,
                   color: Colors.green,
                   onTap: () => _navigateToScreen(const FoodScreen()),
                 ),
                 _buildCategoryCard(
-                  title: _languageService.isEnglish ? 'Shopping' : 'Alışveriş',
-                  subtitle: _languageService.isEnglish 
-                      ? 'Consumer goods' 
-                      : 'Tüketim malları',
+                  title: AppLocalizations.of(context)!.navShopping,
+                  subtitle: AppLocalizations.of(context)!.translate('tips.reduceWaste'),
                   icon: Icons.shopping_bag,
                   color: Colors.purple,
                   onTap: () => _navigateToScreen(const ShoppingScreen()),
@@ -123,7 +113,7 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
 
             // Voice Commands Section
             Text(
-              _languageService.isEnglish ? 'Voice Commands' : 'Sesli Komutlar',
+              AppLocalizations.of(context)!.voiceTitle,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),

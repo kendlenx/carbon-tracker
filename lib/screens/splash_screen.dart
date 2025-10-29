@@ -10,9 +10,11 @@ import '../services/achievement_service.dart';
 import '../services/smart_features_service.dart';
 import '../services/onboarding_service.dart';
 import '../services/smart_notification_service.dart';
+import '../services/lifecycle_service.dart';
 import '../main.dart';
 import 'onboarding_screen.dart';
 import 'onboarding_flow_screen.dart';
+import '../l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -34,7 +36,9 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<Color?> _backgroundGradientStart;
   late Animation<Color?> _backgroundGradientEnd;
 
-  String _statusText = 'Carbon Step\'i başlatıyoruz...';
+  String _statusText = ''; // will be set from l10n at runtime
+
+  String _t(String key) => AppLocalizations.of(context)!.translate(key);
 
   @override
   void initState() {
@@ -134,49 +138,51 @@ class _SplashScreenState extends State<SplashScreen>
     try {
       // Simulate service initialization with status updates
       setState(() {
-        _statusText = 'Servisleri yüklüyoruz...';
+        _statusText = _t('splash.loadingServices');
       });
       await Future.delayed(const Duration(milliseconds: 800));
 
       setState(() {
-        _statusText = 'Dil ayarlarını kontrol ediyoruz...';
+        _statusText = _t('splash.checkingLanguage');
       });
       await LanguageService.instance.initialize();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
-        _statusText = 'Tema ayarlarını yüklüyoruz...';
+        _statusText = _t('splash.loadingTheme');
       });
       await ThemeService.instance.loadThemePreference();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
-        _statusText = 'İzinleri kontrol ediyoruz...';
+        _statusText = _t('splash.checkingPermissions');
       });
       await PermissionService.instance.initialize();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
-        _statusText = 'Bildirimler ayarlanıyor...';
+        _statusText = _t('splash.configuringNotifications');
       });
       await NotificationService.instance.initialize();
+      // Start lifecycle observer to wire unlock/usage triggers
+      LifecycleService.instance.start();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
-        _statusText = 'Başarılar yükleniyor...';
+        _statusText = _t('splash.loadingAchievements');
       });
       await AchievementService.instance.initialize();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
-        _statusText = 'Akıllı özellikler hazırlanıyor...';
+        _statusText = _t('splash.preparingSmartFeatures');
       });
       await SmartFeaturesService.instance.initialize();
       await SmartNotificationService.instance.initialize();
       await Future.delayed(const Duration(milliseconds: 600));
 
       setState(() {
-        _statusText = 'Hazırlanıyoruz...';
+        _statusText = _t('ui.preparing');
       });
       await Future.delayed(const Duration(milliseconds: 800));
 
@@ -188,7 +194,7 @@ class _SplashScreenState extends State<SplashScreen>
       }
     } catch (e) {
       setState(() {
-        _statusText = 'Hata oluştu: $e';
+        _statusText = '${_t('common.error')}: $e';
       });
       // Still navigate after a delay even if there's an error
       await Future.delayed(const Duration(milliseconds: 2000));
@@ -203,10 +209,10 @@ class _SplashScreenState extends State<SplashScreen>
     final onboardingComplete = await OnboardingService.instance.isOnboardingComplete();
     
     if (!onboardingComplete) {
-      // Navigate to new onboarding flow
+      // Navigate to old onboarding (preferred design) with language picker
       Navigator.of(context).pushReplacement(
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => const OnboardingFlowScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => const OnboardingScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return FadeTransition(
               opacity: animation,
@@ -231,22 +237,6 @@ class _SplashScreenState extends State<SplashScreen>
         ),
       );
     }
-    final prefs = await SharedPreferences.getInstance();
-    final showOnboarding = !(prefs.getBool('onboarding_completed') ?? false);
-    final targetScreen = showOnboarding ? const OnboardingScreen() : const CarbonTrackerHome();
-    
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => targetScreen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-        transitionDuration: const Duration(milliseconds: 800),
-      ),
-    );
   }
 
   @override
@@ -322,7 +312,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Column(
                           children: [
                             Text(
-                              'Carbon Step',
+                              AppLocalizations.of(context)!.appTitle,
                               style: TextStyle(
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
@@ -332,7 +322,7 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '🌍 Karbon ayak izini takip et',
+                              '🌍 ' + AppLocalizations.of(context)!.appSubtitle,
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.white.withValues(alpha: 0.8),
@@ -384,8 +374,8 @@ class _SplashScreenState extends State<SplashScreen>
                   right: 0,
                   child: FadeTransition(
                     opacity: _textFade,
-                    child: Text(
-                      '🌱 Çevre dostu bir gelecek için',
+                      child: Text(
+                      AppLocalizations.of(context)!.translate('splash.tagline'),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.white.withValues(alpha: 0.6),

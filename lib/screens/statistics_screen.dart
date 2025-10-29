@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import '../services/database_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -14,7 +14,6 @@ class StatisticsScreen extends StatefulWidget {
 class _StatisticsScreenState extends State<StatisticsScreen> with TickerProviderStateMixin {
   late TabController _tabController;
   late AnimationController _animationController;
-  final LanguageService _languageService = LanguageService.instance;
   bool isLoading = true;
   
   // Veri listeleri
@@ -108,9 +107,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Statistics' : 'İstatistikler'),
+        title: Text(l10n.statisticsTitle),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         leading: IconButton(
@@ -174,15 +174,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           tabs: [
             Tab(
               icon: const Icon(Icons.calendar_view_week),
-              text: _languageService.isEnglish ? 'Weekly' : 'Haftalık',
+              text: l10n.statisticsThisWeek,
             ),
             Tab(
               icon: const Icon(Icons.calendar_month),
-              text: _languageService.isEnglish ? 'Monthly' : 'Aylık',
+              text: l10n.statisticsThisMonth,
             ),
             Tab(
               icon: const Icon(Icons.pie_chart),
-              text: _languageService.isEnglish ? 'Categories' : 'Kategoriler',
+              text: l10n.translate('statistics.categories'),
             ),
           ],
         ),
@@ -198,7 +198,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         children: [
           // Header with summary
           Text(
-            _languageService.isEnglish ? 'Weekly Overview' : 'Haftalık Özet',
+            AppLocalizations.of(context)!.translate('statistics.weeklyOverview'),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -216,25 +216,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
             mainAxisSpacing: 12,
             children: [
               _buildStatCard(
-                title: _languageService.isEnglish ? 'Total CO₂' : 'Toplam CO₂',
+                title: AppLocalizations.of(context)!.translate('statistics.totalCO2'),
                 value: '${totalWeekCO2.toStringAsFixed(1)} kg',
                 icon: Icons.eco,
                 color: Colors.green,
               ),
               _buildStatCard(
-                title: _languageService.isEnglish ? 'Daily Average' : 'Günlük Ort.',
+                title: AppLocalizations.of(context)!.translate('statistics.dailyAverage'),
                 value: '${averageDaily.toStringAsFixed(1)} kg',
                 icon: Icons.calendar_today,
                 color: Colors.blue,
               ),
               _buildStatCard(
-                title: _languageService.isEnglish ? 'Best Day' : 'En İyi Gün',
+                title: AppLocalizations.of(context)!.translate('statistics.bestDay'),
                 value: _getBestDay(),
                 icon: Icons.trending_down,
                 color: Colors.orange,
               ),
               _buildStatCard(
-                title: _languageService.isEnglish ? 'Progress' : 'İlerleme',
+                title: AppLocalizations.of(context)!.translate('statistics.progress'),
                 value: _getProgress(),
                 icon: Icons.show_chart,
                 color: Colors.purple,
@@ -274,7 +274,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _languageService.isEnglish ? '7-Day Trend' : '7 Günlük Trend',
+                      AppLocalizations.of(context)!.translate('statistics.sevenDayTrend'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -400,7 +400,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         children: [
           // Header with proper theme support
           Text(
-            _languageService.isEnglish ? 'Monthly Overview' : 'Aylık Özet',
+            AppLocalizations.of(context)!.translate('statistics.monthlyOverview'),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).textTheme.headlineSmall?.color,
@@ -411,7 +411,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           
           // Monthly summary card
           _buildStatCard(
-            title: _languageService.isEnglish ? 'Monthly Total' : 'Aylık Toplam',
+            title: AppLocalizations.of(context)!.translate('statistics.monthlyTotal'),
             value: '${totalMonthCO2.toStringAsFixed(1)} kg CO₂',
             icon: Icons.calendar_month,
             color: Colors.orange,
@@ -421,7 +421,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
           const SizedBox(height: 24),
           
           Text(
-            _languageService.isEnglish ? '30-Day CO₂ Trend' : 'Son 30 Gün CO₂ Trendi',
+            AppLocalizations.of(context)!.translate('statistics.sevenDayTrend').replaceAll('7', '30'),
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
               color: Theme.of(context).textTheme.titleLarge?.color,
@@ -442,7 +442,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                     gridData: FlGridData(show: true),
                     titlesData: FlTitlesData(
                       leftTitles: AxisTitles(
-                        axisNameWidget: const Text('kg CO₂'),
+                        axisNameWidget: Text(AppLocalizations.of(context)!.dashboardCarbonEmission),
                         sideTitles: SideTitles(
                           showTitles: true,
                           reservedSize: 40,
@@ -506,7 +506,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _languageService.isEnglish ? 'Transport Category Distribution (Last 7 Days)' : 'Ulaşım Türü Dağılımı (Son 7 Gün)',
+            AppLocalizations.of(context)!.translate('statistics.transportCategoryDistributionLast7Days'),
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -524,13 +524,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                       const Icon(Icons.bar_chart, size: 48, color: Colors.grey),
                       const SizedBox(height: 16),
                       Text(
-                        _languageService.isEnglish ? 'No data yet' : 'Henüz veri yok',
+                        AppLocalizations.of(context)!.translate('common.noData'),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        _languageService.isEnglish 
-                            ? 'Add activities to view charts.'
-                            : 'Aktivite ekleyerek grafiği görüntüleyebilirsiniz.',
+                        AppLocalizations.of(context)!.translate('statistics.addActivitiesToViewCharts'),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Colors.grey.shade400
@@ -671,8 +669,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                     color: color,
                   ),
                 ),
-                TextSpan(
-                  text: ' $unit',
+                    TextSpan(
+                      text: AppLocalizations.of(context)!.translate('statistics.sevenDaysShort'),
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? Theme.of(context).textTheme.bodySmall?.color : Colors.grey.shade600,
@@ -873,7 +871,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _languageService.isEnglish ? 'Performance Status' : 'Performans Durumu',
+                    AppLocalizations.of(context)!.translate('statistics.performanceStatus'),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -885,12 +883,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> with TickerProvider
               const SizedBox(height: 12),
               Text(
                 isGoodPerformance
-                    ? (_languageService.isEnglish
-                        ? 'Great job! Your carbon footprint is below average.'
-                        : 'Harika! Karbon ayak iziniz ortalamanın altında.')
-                    : (_languageService.isEnglish
-                        ? 'There\'s room for improvement in your carbon footprint.'
-                        : 'Karbon ayak izinizde iyileştirme yapılabilir.'),
+                    ? AppLocalizations.of(context)!.translate('statistics.goodPerformanceMessage')
+                    : AppLocalizations.of(context)!.translate('statistics.needsImprovementMessage'),
                 style: TextStyle(
                   color: isDark ? Theme.of(context).textTheme.bodyMedium?.color : Colors.grey.shade700,
                   height: 1.4,

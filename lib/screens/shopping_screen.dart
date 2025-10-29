@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/micro_interactions.dart';
 import '../widgets/liquid_pull_refresh.dart';
 
@@ -18,57 +18,50 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
   double totalCarbonWeek = 0.0;
   double totalCarbonMonth = 0.0;
 
-  final LanguageService _languageService = LanguageService.instance;
 
   // Shopping categories with carbon factors (kg CO₂)
   final List<ShoppingCategory> shoppingCategories = [
     ShoppingCategory(
       id: 'clothing',
-      nameEn: 'Clothing & Fashion',
-      nameTr: 'Giyim ve Moda',
+      titleKey: 'shopping.categoryNames.clothing',
       icon: Icons.shopping_bag,
       color: Colors.purple,
-      carbonPerItem: 15.0, // kg CO₂ per clothing item average
+      carbonPerItem: 15.0,
     ),
     ShoppingCategory(
       id: 'electronics',
-      nameEn: 'Electronics',
-      nameTr: 'Elektronik',
+      titleKey: 'shopping.categoryNames.electronics',
       icon: Icons.devices,
       color: Colors.blue,
-      carbonPerItem: 200.0, // kg CO₂ per electronic device average
+      carbonPerItem: 200.0,
     ),
     ShoppingCategory(
       id: 'books',
-      nameEn: 'Books & Media',
-      nameTr: 'Kitap ve Medya',
+      titleKey: 'shopping.categoryNames.books',
       icon: Icons.book,
       color: Colors.green,
-      carbonPerItem: 2.5, // kg CO₂ per book
+      carbonPerItem: 2.5,
     ),
     ShoppingCategory(
       id: 'cosmetics',
-      nameEn: 'Beauty & Personal Care',
-      nameTr: 'Kozmetik ve Bakım',
+      titleKey: 'shopping.categoryNames.cosmetics',
       icon: Icons.face,
       color: Colors.pink,
-      carbonPerItem: 5.0, // kg CO₂ per cosmetic product
+      carbonPerItem: 5.0,
     ),
     ShoppingCategory(
       id: 'home',
-      nameEn: 'Home & Garden',
-      nameTr: 'Ev ve Bahçe',
+      titleKey: 'shopping.categoryNames.home',
       icon: Icons.home,
       color: Colors.orange,
-      carbonPerItem: 25.0, // kg CO₂ per home item average
+      carbonPerItem: 25.0,
     ),
     ShoppingCategory(
       id: 'sports',
-      nameEn: 'Sports & Outdoor',
-      nameTr: 'Spor ve Outdoor',
+      titleKey: 'shopping.categoryNames.sports',
       icon: Icons.sports,
       color: Colors.teal,
-      carbonPerItem: 12.0, // kg CO₂ per sports item
+      carbonPerItem: 12.0,
     ),
   ];
 
@@ -137,7 +130,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       await DatabaseService.instance.insertActivity({
         'category': 'shopping',
         'subcategory': category.id,
-        'description': '${category.getName(_languageService.isEnglish)} x$quantity',
+'description': '${AppLocalizations.of(context)!.translate(category.titleKey)} x$quantity',
         'co2_amount': carbonAmount,
         'created_at': DateTime.now().toIso8601String(),
         'metadata': {
@@ -150,17 +143,13 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            _languageService.isEnglish 
-              ? 'Added $quantity ${category.nameEn} (+${carbonAmount.toStringAsFixed(1)} kg CO₂)'
-              : '$quantity ${category.nameTr} eklendi (+${carbonAmount.toStringAsFixed(1)} kg CO₂)',
-          ),
+          content: Text(AppLocalizations.of(context)!.translate('common.success')),
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(_languageService.isEnglish ? 'Error adding item' : 'Öğe eklenirken hata oluştu'),
+          content: Text(AppLocalizations.of(context)!.translate('errors.saveError')),
         ),
       );
     }
@@ -170,7 +159,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_languageService.isEnglish ? 'Shopping Carbon' : 'Alışveriş Karbonu'),
+        title: Text(AppLocalizations.of(context)!.translate('shopping.title')),
         backgroundColor: Colors.purple.withValues(alpha: 0.1),
         foregroundColor: Colors.purple,
       ),
@@ -190,7 +179,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
 
                     // Categories Grid
                     Text(
-                      _languageService.isEnglish ? 'Shopping Categories' : 'Alışveriş Kategorileri',
+                      AppLocalizations.of(context)!.translate('shopping.categories'),
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -202,7 +191,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
                     // Recent Activities
                     if (shoppingActivities.isNotEmpty) ...[
                       Text(
-                        _languageService.isEnglish ? 'Recent Activities' : 'Son Aktiviteler',
+                        AppLocalizations.of(context)!.translate('shopping.recentActivities'),
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -222,7 +211,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       children: [
         Expanded(
           child: _buildStatCard(
-            _languageService.isEnglish ? 'Today' : 'Bugün',
+            AppLocalizations.of(context)!.translate('statistics.today'),
             totalCarbonToday,
             Colors.purple,
             Icons.today,
@@ -231,7 +220,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            _languageService.isEnglish ? 'This Week' : 'Bu Hafta',
+            AppLocalizations.of(context)!.translate('statistics.thisWeek'),
             totalCarbonWeek,
             Colors.deepPurple,
             Icons.calendar_view_week,
@@ -240,7 +229,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatCard(
-            _languageService.isEnglish ? 'This Month' : 'Bu Ay',
+            AppLocalizations.of(context)!.translate('statistics.thisMonth'),
             totalCarbonMonth,
             Colors.indigo,
             Icons.calendar_month,
@@ -321,7 +310,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              category.getName(_languageService.isEnglish),
+              AppLocalizations.of(context)!.translate(category.titleKey),
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -351,12 +340,12 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
-          title: Text(category.getName(_languageService.isEnglish)),
+          title: Text(AppLocalizations.of(context)!.translate(category.titleKey)),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _languageService.isEnglish ? 'How many items?' : 'Kaç adet?',
+                AppLocalizations.of(context)!.translate('common.howMany'),
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 16),
@@ -383,7 +372,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                '${_languageService.isEnglish ? 'Total CO₂:' : 'Toplam CO₂:'} ${(category.carbonPerItem * quantity).toStringAsFixed(1)} kg',
+'${AppLocalizations.of(context)!.translate('statistics.totalCO2')}: ${(category.carbonPerItem * quantity).toStringAsFixed(1)} kg',
                 style: TextStyle(
                   color: category.color,
                   fontWeight: FontWeight.bold,
@@ -394,14 +383,14 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+              child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
                 _addShoppingItem(category, quantity);
               },
-              child: Text(_languageService.isEnglish ? 'Add' : 'Ekle'),
+              child: Text(AppLocalizations.of(context)!.translate('common.add')),
             ),
           ],
         ),
@@ -422,7 +411,7 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
               backgroundColor: Colors.purple.withValues(alpha: 0.1),
               child: const Icon(Icons.shopping_bag, color: Colors.purple),
             ),
-            title: Text(activity['description'] ?? 'Shopping Item'),
+            title: Text(activity['description'] ?? AppLocalizations.of(context)!.translate('shopping.title')),
             subtitle: Text(
               DateTime.parse(activity['created_at']).toString().split(' ')[0],
             ),
@@ -442,20 +431,17 @@ class _ShoppingScreenState extends State<ShoppingScreen> {
 
 class ShoppingCategory {
   final String id;
-  final String nameEn;
-  final String nameTr;
+  final String titleKey;
   final IconData icon;
   final Color color;
   final double carbonPerItem;
 
   ShoppingCategory({
     required this.id,
-    required this.nameEn,
-    required this.nameTr,
+    required this.titleKey,
     required this.icon,
     required this.color,
     required this.carbonPerItem,
   });
 
-  String getName(bool isEnglish) => isEnglish ? nameEn : nameTr;
 }

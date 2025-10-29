@@ -28,6 +28,7 @@ import 'services/widget_data_provider.dart';
 import 'services/admob_service.dart';
 import 'services/performance_service.dart';
 import 'services/background_init_service.dart';
+import 'services/gamification_service.dart';
 import 'l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'widgets/achievement_widgets.dart';
@@ -37,6 +38,7 @@ import 'widgets/page_transitions.dart';
 import 'widgets/micro_interactions.dart';
 import 'widgets/carbon_tracker_logo.dart';
 import 'widgets/banner_ad_widget.dart';
+import 'widgets/export_share_widgets.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -136,6 +138,11 @@ class _CarbonTrackerAppState extends State<CarbonTrackerApp> {
           checkerboardRasterCacheImages: kDebugMode,
           checkerboardOffscreenLayers: kDebugMode,
           showPerformanceOverlay: false,
+          builder: (context, child) {
+            final l10n = AppLocalizations.of(context)!;
+            NotificationService.instance.setTranslator((key) => l10n.translate(key));
+            return child!;
+          },
         );
       },
     );
@@ -205,36 +212,36 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   final PermissionService _permissionService = PermissionService.instance;
 
   List<CategoryData> get categories {
-    final isEnglish = _languageService.isEnglish;
+    final l10n = AppLocalizations.of(context)!;
     return [
       CategoryData(
         category: CarbonCategory.transport,
-        title: isEnglish ? 'Transport' : 'Ulaşım',
-        subtitle: isEnglish ? 'Car, metro, walking' : 'Araç, metro, yürüme',
+        title: l10n.navTransport,
+        subtitle: l10n.transportSubtitle,
         icon: Icons.directions_car,
         color: Colors.blue,
         todayValue: 8.2,
       ),
       CategoryData(
         category: CarbonCategory.energy,
-        title: isEnglish ? 'Energy' : 'Enerji',
-        subtitle: isEnglish ? 'Electricity, natural gas' : 'Elektrik, doğal gaz',
+        title: l10n.energyTitle,
+        subtitle: l10n.energySubtitle,
         icon: Icons.flash_on,
         color: Colors.orange,
         todayValue: 2.8,
       ),
       CategoryData(
         category: CarbonCategory.food,
-        title: isEnglish ? 'Food' : 'Yemek',
-        subtitle: isEnglish ? 'Nutrition habits' : 'Beslenme alışkanlıkları',
+        title: l10n.translate('navigation.food'),
+        subtitle: l10n.translate('food.subtitle'),
         icon: Icons.restaurant,
         color: Colors.green,
         todayValue: 1.2,
       ),
       CategoryData(
         category: CarbonCategory.shopping,
-        title: isEnglish ? 'Shopping' : 'Alışveriş',
-        subtitle: isEnglish ? 'Consumer goods' : 'Tüketim malları',
+        title: l10n.translate('navigation.shopping'),
+        subtitle: l10n.translate('shopping.subtitle'),
         icon: Icons.shopping_bag,
         color: Colors.purple,
         todayValue: 0.3,
@@ -294,17 +301,35 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       // Check daily achievements
       final dailyAchievements = await achievementService.checkDailyAchievements(totalCarbonToday);
       
+      // Check weekly achievements (streak + transport diversity)
+      final streak = GamificationService.instance.streak;
+      final now = DateTime.now();
+      final weekStart = DateTime(now.year, now.month, now.day).subtract(Duration(days: DateTime.now().weekday - 1));
+      final weekEnd = weekStart.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+      final weekActivities = await DatabaseService.instance.getTransportActivities(
+        startDate: weekStart,
+        endDate: weekEnd,
+      );
+      final differentTransportTypes = weekActivities.map((a) => a.type.name).toSet().length;
+      final weeklyAchievements = await achievementService.checkWeeklyAchievements(
+        consecutiveDays: streak,
+        differentTransportTypes: differentTransportTypes,
+      );
+      
       // Check level achievements
       final levelAchievements = await achievementService.checkLevelAchievements();
       
       // Show unlock dialogs for new achievements
-      final allNewAchievements = <Achievement>[...dailyAchievements, ...levelAchievements];
+      final allNewAchievements = <Achievement>[...dailyAchievements, ...weeklyAchievements, ...levelAchievements];
       if (allNewAchievements.isNotEmpty) {
         // Send notifications for achievements
+        final l = AppLocalizations.of(context)!;
         for (final achievement in allNewAchievements) {
+          final title = l.translate('ach.${achievement.id}.title');
+          final desc = l.translate('ach.${achievement.id}.desc');
           await NotificationService.instance.showAchievementNotification(
-            achievement.title,
-            achievement.description,
+            title,
+            desc,
             achievement.points,
           );
         }
@@ -313,6 +338,83 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
     } catch (e) {
       print('Error checking achievements: $e');
     }
+  }
+  
+  Widget _buildStreakBar() {
+    return AnimatedBuilder(
+      animation: GamificationService.instance,
+      builder: (context, _) {
+        final streak = GamificationService.instance.streak;
+        return Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.local_fire_department, color: Colors.orange, size: 24),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.translate('ui.tabs.streak'),
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 4),
+                      LinearProgressIndicator(
+                        value: (streak % 7) / 7.0,
+                        minHeight: 6,
+                        backgroundColor: Colors.green.withValues(alpha: 0.1),
+                        color: Colors.green,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${streak}${AppLocalizations.of(context)!.translate('ui.daysShort')} ${AppLocalizations.of(context)!.translate('ui.tabs.streak').toLowerCase()} • ${(7 - (streak % 7))} ${AppLocalizations.of(context)!.translate('ui.toNextReward')}',
+                        style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                FutureBuilder<WeeklyChallenge>(
+                  future: GamificationService.instance.getWeeklyChallenge(),
+                  builder: (context, snapshot) {
+                    final completed = (snapshot.data?.completion ?? 0) >= 1.0;
+                    if (!completed) return const SizedBox.shrink();
+                    return Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.emoji_events, color: Colors.amber, size: 16),
+                          const SizedBox(width: 6),
+                          Text(
+                            AppLocalizations.of(context)!.translate('ui.weeklyReward'),
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
   
   void _showAchievementUnlockDialog(List<Achievement> achievements) {
@@ -343,6 +445,8 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               monthlyGoal: monthlyGoal,
               isLoading: false,
             ),
+            const SizedBox(height: 12),
+            _buildStreakBar(),
             const SizedBox(height: 24),
             // Performance comparison
             if (weeklyAverage > 0) ...[
@@ -368,7 +472,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  _languageService.isEnglish ? 'Categories' : 'Kategoriler',
+                  AppLocalizations.of(context)!.dashboardCategories,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -383,7 +487,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    _languageService.isEnglish ? 'Track Activities' : 'Aktiviteleri İzle',
+                    AppLocalizations.of(context)!.translate('navigation.activities'),
                     style: TextStyle(
                       fontSize: 12,
                       color: Theme.of(context).brightness == Brightness.dark
@@ -493,8 +597,8 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Carbon Step',
+                  Text(
+                    AppLocalizations.of(context)!.appTitle,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
@@ -503,7 +607,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   AnimatedBuilder(
                     animation: _languageService,
                     builder: (context, child) => Text(
-                      _languageService.isEnglish ? '🌍 Track your carbon footprint' : '🌍 Karbon ayak izini takip et',
+                      '🌍 ${AppLocalizations.of(context)!.appSubtitle}',
                       style: TextStyle(
                         fontSize: 11,
                         color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
@@ -562,7 +666,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   children: [
                     const Icon(Icons.emoji_events, color: Colors.amber),
                     const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Achievements' : 'Başarılar'),
+                    Text(AppLocalizations.of(context)!.achievementsTitle),
                   ],
                 ),
               ),
@@ -572,7 +676,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   children: [
                     const Icon(Icons.bar_chart, color: Colors.blue),
                     const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Statistics' : 'İstatistikler'),
+                    Text(AppLocalizations.of(context)!.statisticsTitle),
                   ],
                 ),
               ),
@@ -582,7 +686,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   children: [
                     const Icon(Icons.auto_graph, color: Colors.purple),
                     const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Advanced Analytics' : 'Gelişmiş Analitik'),
+                    Text(
+                      AppLocalizations.of(context)!.translate('ui.advancedAnalytics'),
+                    ),
                   ],
                 ),
               ),
@@ -592,7 +698,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   children: [
                     const Icon(Icons.security, color: Colors.orange),
                     const SizedBox(width: 8),
-                    Text(_languageService.isEnglish ? 'Permissions' : 'İzinler'),
+                    Text(AppLocalizations.of(context)!.permissionsTitle),
                   ],
                 ),
               ),
@@ -631,27 +737,27 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           BottomNavigationBarItem(
             icon: const Icon(Icons.home_outlined),
             activeIcon: const Icon(Icons.home),
-            label: _languageService.isEnglish ? 'Home' : 'Ana Sayfa',
+            label: AppLocalizations.of(context)!.navHome,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.add_circle_outline),
             activeIcon: const Icon(Icons.add_circle),
-            label: _languageService.isEnglish ? 'Activities' : 'Aktiviteler',
+            label: AppLocalizations.of(context)!.translate('navigation.activities')
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.emoji_events_outlined),
             activeIcon: const Icon(Icons.emoji_events),
-            label: _languageService.isEnglish ? 'Achievements' : 'Başarılar',
+            label: AppLocalizations.of(context)!.navAchievements,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.flag_outlined),
             activeIcon: const Icon(Icons.flag),
-            label: _languageService.isEnglish ? 'Goals' : 'Hedefler',
+            label: AppLocalizations.of(context)!.goalsTitle,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.settings_outlined),
             activeIcon: const Icon(Icons.settings),
-            label: _languageService.isEnglish ? 'Settings' : 'Ayarlar',
+            label: AppLocalizations.of(context)!.navSettings,
           ),
         ],
       ),
@@ -725,7 +831,10 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
 
   Widget _buildPerformanceCard() {
     final comparison = CarbonCalculatorService.compareWithAverage(weeklyAverage);
-    final tips = CarbonCalculatorService.generateTips(weeklyAverage);
+    final tips = CarbonCalculatorService.generateTips(
+      weeklyAverage,
+      (key) => AppLocalizations.of(context)!.translate(key),
+    );
     
     return Card(
       elevation: 4,
@@ -743,7 +852,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Performans: ${comparison.performanceText}',
+                  '${AppLocalizations.of(context)!.dashboardPerformance}: ${_perfLabel(AppLocalizations.of(context)!, comparison.performanceLevel)}',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -756,9 +865,9 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildComparisonItem('Siz', '${weeklyAverage.toStringAsFixed(1)} kg'),
-                _buildComparisonItem('TR Ort.', '${comparison.turkeyAverage.toStringAsFixed(1)} kg'),
-                _buildComparisonItem('Paris Hedef', '${comparison.parisTarget.toStringAsFixed(1)} kg'),
+                _buildComparisonItem(AppLocalizations.of(context)!.statisticsYourAverage, '${weeklyAverage.toStringAsFixed(1)} kg'),
+                _buildComparisonItem(AppLocalizations.of(context)!.statisticsTurkeyAverage, '${comparison.turkeyAverage.toStringAsFixed(1)} kg'),
+                _buildComparisonItem(AppLocalizations.of(context)!.statisticsParisTarget, '${comparison.parisTarget.toStringAsFixed(1)} kg'),
               ],
             ),
             
@@ -767,7 +876,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               const Divider(),
               const SizedBox(height: 8),
               Text(
-                '💡 Öneriler',
+                '💡 ${AppLocalizations.of(context)!.translate('ui.ecoTip')}',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -825,6 +934,52 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
         ),
       ],
     );
+  }
+
+  String _translateRecommendationTitle(String title) {
+    final l = AppLocalizations.of(context)!;
+    switch (title) {
+      case 'LED Dönüşümü':
+        return l.translate('smartTips.ledConversion.title');
+      case 'Yürüyüş Hedefi':
+        return l.translate('smartTips.walkGoal.title');
+      case 'Toplu Taşıma Avantajı':
+        return l.translate('smartTips.publicTransport.title');
+      case 'Akıllı Termostat':
+        return l.translate('smartTips.smartThermostat.title');
+      case 'Elektronik Cihaz Yönetimi':
+        return l.translate('smartTips.electronicsManagement.title');
+      case 'Bisiklet Kullanımı':
+        return l.translate('smartTips.cycling.title');
+      default:
+        return title;
+    }
+  }
+
+  String _translateRecommendationDesc(String desc) {
+    final l = AppLocalizations.of(context)!;
+    if (desc.contains('LED')) return l.translate('smartTips.ledConversion.desc');
+    if (desc.contains('1 km') || desc.contains('yürüyerek')) return l.translate('smartTips.walkGoal.desc');
+    if (desc.contains('toplu taşıma')) return l.translate('smartTips.publicTransport.desc');
+    if (desc.contains('Termostat')) return l.translate('smartTips.smartThermostat.desc');
+    if (desc.contains('cihazları')) return l.translate('smartTips.electronicsManagement.desc');
+    if (desc.contains('bisiklet')) return l.translate('smartTips.cycling.desc');
+    return desc;
+  }
+
+  String _perfLabel(AppLocalizations l, PerformanceLevel level) {
+    switch (level) {
+      case PerformanceLevel.excellent:
+        return l.translate('ui.performance.excellent');
+      case PerformanceLevel.good:
+        return l.translate('ui.performance.good');
+      case PerformanceLevel.average:
+        return l.translate('ui.performance.average');
+      case PerformanceLevel.poor:
+        return l.translate('ui.performance.poor');
+      case PerformanceLevel.critical:
+        return l.translate('ui.performance.critical');
+    }
   }
 
   IconData _getPerformanceIcon(PerformanceLevel level) {
@@ -894,13 +1049,13 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _languageService.isEnglish ? 'Achievements' : 'Başarılar',
+                        AppLocalizations.of(context)!.achievementsTitle,
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                         Text(
-                          _languageService.isEnglish ? 'Your recent milestones' : 'Son kazandığınız rozetler',
+                          AppLocalizations.of(context)!.translate('ui.recentMilestones'),
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(context).brightness == Brightness.dark
@@ -921,7 +1076,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                 },
                 icon: const Icon(Icons.arrow_forward_ios, size: 14),
                 label: Text(
-                  _languageService.isEnglish ? 'All' : 'Tümü',
+                  AppLocalizations.of(context)!.translate('common.all'),
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: TextButton.styleFrom(
@@ -1058,7 +1213,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _languageService.isEnglish ? 'Eco Tip' : 'Eko İpucu',
+                          AppLocalizations.of(context)!.translate('ui.ecoTip'),
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -1119,51 +1274,52 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   }
 
   List<Map<String, dynamic>> _getRandomAchievements() {
+    final l = AppLocalizations.of(context)!;
     final allAchievements = [
       {
-        'title': _languageService.isEnglish ? 'First Steps' : 'İlk Adımlar',
+        'title': l.translate('homeAch.firstSteps'),
         'icon': Icons.eco,
         'color': Colors.green,
         'isNew': true,
       },
       {
-        'title': _languageService.isEnglish ? 'Week Warrior' : 'Hafta Savaşçısı',
+        'title': l.translate('homeAch.weekWarrior'),
         'icon': Icons.calendar_view_week,
         'color': Colors.blue,
         'isNew': false,
       },
       {
-        'title': _languageService.isEnglish ? 'Green Commuter' : 'Yeşil Yolcu',
+        'title': l.translate('homeAch.greenCommuter'),
         'icon': Icons.directions_bike,
         'color': Colors.teal,
         'isNew': true,
       },
       {
-        'title': _languageService.isEnglish ? 'Energy Saver' : 'Enerji Tasarrufçusu',
+        'title': l.translate('homeAch.energySaver'),
         'icon': Icons.flash_off,
         'color': Colors.orange,
         'isNew': false,
       },
       {
-        'title': _languageService.isEnglish ? 'Food Hero' : 'Yemek Kahramanı',
+        'title': l.translate('homeAch.foodHero'),
         'icon': Icons.restaurant,
         'color': Colors.red,
         'isNew': false,
       },
       {
-        'title': _languageService.isEnglish ? 'Mindful Shopper' : 'Bilinçli Alışverişçi',
+        'title': l.translate('homeAch.mindfulShopper'),
         'icon': Icons.shopping_basket,
         'color': Colors.purple,
         'isNew': true,
       },
       {
-        'title': _languageService.isEnglish ? 'Carbon Crusher' : 'Karbon Ezici',
+        'title': l.translate('homeAch.carbonCrusher'),
         'icon': Icons.trending_down,
         'color': Colors.indigo,
         'isNew': false,
       },
       {
-        'title': _languageService.isEnglish ? 'Planet Protector' : 'Gezegen Koruyucusu',
+        'title': l.translate('homeAch.planetProtector'),
         'icon': Icons.public,
         'color': Colors.cyan,
         'isNew': true,
@@ -1175,62 +1331,49 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
   }
 
   Map<String, dynamic> _getRandomTip() {
+    final l10n = AppLocalizations.of(context)!;
     final allTips = [
       {
-        'text': _languageService.isEnglish ? 'Walk or cycle for trips under 5km. It\'s healthier and reduces emissions by up to 2.6 kg CO₂ per day.' : '5 km altındaki yolculuklarda yürüyün veya bisiklet kullanın. Daha sağlıklı ve günde 2.6 kg CO₂ tasarrufu sağlar.',
-        'category': _languageService.isEnglish ? 'Transport' : 'Ulaşım',
+        'text': l10n.translate('tips.walkMore'),
+        'category': l10n.navTransport,
         'icon': Icons.directions_bike,
         'color': Colors.green,
-        'impact': _languageService.isEnglish ? 'Save up to 2.6 kg CO₂/day' : 'Günde 2.6 kg CO₂ tasarrufu',
+        'impact': null,
       },
       {
-        'text': _languageService.isEnglish ? 'Switch to LED bulbs throughout your home. They use 75% less energy and last 25 times longer.' : 'Evinizdeki tüm ampulleri LED ile değiştirin. %75 daha az enerji kullanır ve 25 kat daha uzun sürer.',
-        'category': _languageService.isEnglish ? 'Energy' : 'Enerji',
-        'icon': Icons.lightbulb,
-        'color': Colors.orange,
-        'impact': _languageService.isEnglish ? 'Save 75% energy' : '%75 enerji tasarrufu',
-      },
-      {
-        'text': _languageService.isEnglish ? 'Try "Meatless Monday" - reducing meat consumption by one day saves 3.3 kg CO₂ weekly.' : '"Etsiz Pazartesi" deneyin - haftada bir gün et tüketimini azaltmak 3.3 kg CO₂ tasarrufu sağlar.',
-        'category': _languageService.isEnglish ? 'Food' : 'Beslenme',
-        'icon': Icons.restaurant,
-        'color': Colors.red,
-        'impact': _languageService.isEnglish ? 'Save 3.3 kg CO₂/week' : 'Haftada 3.3 kg CO₂ tasarrufu',
-      },
-      {
-        'text': _languageService.isEnglish ? 'Buy local produce when possible. Food transport accounts for 11% of food-related emissions.' : 'Mümkün olduğunca yerel ürünler alın. Gıda taşımacılığı, gıdayla ilgili emisyonların %11\'ini oluşturur.',
-        'category': _languageService.isEnglish ? 'Shopping' : 'Alışveriş',
-        'icon': Icons.local_grocery_store,
-        'color': Colors.green,
-        'impact': _languageService.isEnglish ? 'Reduce transport emissions' : 'Taşıma emisyonlarını azaltır',
-      },
-      {
-        'text': _languageService.isEnglish ? 'Unplug electronics when not in use. "Vampire" power consumption can add 10% to your electricity bill.' : 'Kullanmadığınızda elektronik cihazları prizden çekin. "Vampir" güç tüketimi elektrik faturanıza %10 ekleyebilir.',
-        'category': _languageService.isEnglish ? 'Energy' : 'Enerji',
-        'icon': Icons.power_off,
-        'color': Colors.blue,
-        'impact': _languageService.isEnglish ? 'Save 10% on electricity' : 'Elektrikte %10 tasarruf',
-      },
-      {
-        'text': _languageService.isEnglish ? 'Use public transport or carpool. A full bus can take 40 cars off the road, saving 80 kg CO₂ per trip.' : 'Toplu taşıma kullanın veya araç paylaşın. Dolu bir otobüs yoldan 40 arabayı çıkarır, yolculuk başına 80 kg CO₂ tasarrufu.',
-        'category': _languageService.isEnglish ? 'Transport' : 'Ulaşım',
+        'text': l10n.translate('tips.usePublicTransport'),
+        'category': l10n.navTransport,
         'icon': Icons.bus_alert,
         'color': Colors.teal,
-        'impact': _languageService.isEnglish ? 'Save 80 kg CO₂/trip' : 'Yolculuk başına 80 kg CO₂ tasarrufu',
+        'impact': null,
       },
       {
-        'text': _languageService.isEnglish ? 'Fix leaky faucets promptly. A single drip per second wastes over 3,000 gallons per year.' : 'Sızıntılı muslukları hemen tamir edin. Saniyede bir damla, yılda 11.000 litreden fazla su israfi yapar.',
-        'category': _languageService.isEnglish ? 'Home' : 'Ev',
-        'icon': Icons.water_drop,
-        'color': Colors.lightBlue,
-        'impact': _languageService.isEnglish ? 'Save thousands of gallons' : 'Binlerce litre tasarruf',
+        'text': l10n.translate('tips.energyEfficient'),
+        'category': l10n.energyTitle,
+        'icon': Icons.lightbulb,
+        'color': Colors.orange,
+        'impact': null,
       },
       {
-        'text': _languageService.isEnglish ? 'Start composting kitchen scraps. It reduces methane emissions and creates nutrient-rich soil.' : 'Mutfak artıklarını kompostlamaya başlayın. Metan emisyonlarını azaltır ve besin açısından zengin toprak oluşturur.',
-        'category': _languageService.isEnglish ? 'Waste' : 'Atık',
-        'icon': Icons.compost,
+        'text': l10n.translate('tips.localProducts'),
+        'category': l10n.translate('navigation.shopping'),
+        'icon': Icons.local_grocery_store,
+        'color': Colors.green,
+        'impact': null,
+      },
+      {
+        'text': l10n.translate('tips.reduceWaste'),
+        'category': l10n.translate('navigation.shopping'),
+        'icon': Icons.delete_sweep,
         'color': Colors.brown,
-        'impact': _languageService.isEnglish ? 'Reduce methane emissions' : 'Metan emisyonlarını azaltır',
+        'impact': null,
+      },
+      {
+        'text': l10n.translate('tips.smartThermostat'),
+        'category': l10n.energyTitle,
+        'icon': Icons.thermostat,
+        'color': Colors.blue,
+        'impact': null,
       },
     ];
     
@@ -1250,14 +1393,12 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           ],
         ),
         content: Text(
-          _languageService.isEnglish 
-            ? 'Congratulations on earning this achievement! Keep up the great work in reducing your carbon footprint.'
-            : 'Bu başarıyı kazandığınız için tebrikler! Karbon ayak izinizi azaltmada harika işler çıkarmaya devam edin.',
+          AppLocalizations.of(context)!.translate('achievements.detailMessage'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'Close' : 'Kapat'),
+            child: Text(AppLocalizations.of(context)!.translate('common.close')),
           ),
         ],
       ),
@@ -1321,13 +1462,13 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _languageService.isEnglish ? 'Smart Tips' : 'Akıllı Öneriler',
+                        AppLocalizations.of(context)!.translate('ui.smartTips'),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        _languageService.isEnglish ? 'AI-powered suggestions' : 'Yapay zeka destekli öneriler',
+                        AppLocalizations.of(context)!.translate('ui.aiPoweredSuggestions'),
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context).brightness == Brightness.dark
@@ -1379,7 +1520,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                recommendation.title,
+                                _translateRecommendationTitle(recommendation.title),
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w600,
@@ -1389,7 +1530,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                recommendation.description,
+                                _translateRecommendationDesc(recommendation.description),
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Theme.of(context).brightness == Brightness.dark
@@ -1449,7 +1590,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                recommendation.title,
+                _translateRecommendationTitle(recommendation.title),
                 style: TextStyle(
                   color: recommendation.color,
                   fontWeight: FontWeight.bold,
@@ -1462,7 +1603,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(recommendation.description),
+            Text(_translateRecommendationDesc(recommendation.description)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -1479,9 +1620,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    _languageService.isEnglish 
-                        ? 'Potential saving: ${recommendation.potentialSaving.toStringAsFixed(1)} kg CO₂'
-                        : 'Potansiyel tasarruf: ${recommendation.potentialSaving.toStringAsFixed(1)} kg CO₂',
+                    '${AppLocalizations.of(context)!.translate('ui.potentialSaving')}: ${recommendation.potentialSaving.toStringAsFixed(1)} kg CO₂',
                     style: const TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.w600,
@@ -1499,7 +1638,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               // Mark as read
               SmartFeaturesService.instance.markRecommendationAsRead(recommendation.id);
             },
-            child: Text(_languageService.isEnglish ? 'Got it!' : 'Anladım!'),
+            child: Text(AppLocalizations.of(context)!.translate('ui.gotIt')),
           ),
         ],
       ),

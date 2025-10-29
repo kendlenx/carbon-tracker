@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io';
+import 'dart:math' as math;
 
 enum NotificationType {
   dailyReminder,
@@ -17,6 +18,8 @@ enum NotificationType {
 }
 
 class NotificationService extends ChangeNotifier {
+  String Function(String key) _t = (k) => k;
+  void setTranslator(String Function(String key) t) { _t = t; }
   static NotificationService? _instance;
   static NotificationService get instance => _instance ??= NotificationService._();
   
@@ -30,7 +33,27 @@ class NotificationService extends ChangeNotifier {
   bool _weeklyReportsEnabled = true;
   bool _smartSuggestionsEnabled = true;
   
+  // Legacy single time (kept for backward compatibility)
   TimeOfDay _dailyReminderTime = const TimeOfDay(hour: 20, minute: 0);
+
+  // Smart window scheduling (randomization within window)
+  TimeOfDay _windowStart = const TimeOfDay(hour: 8, minute: 0);
+  TimeOfDay _windowEnd = const TimeOfDay(hour: 21, minute: 0);
+
+  // Quiet hours (no notifications)
+  TimeOfDay _quietStart = const TimeOfDay(hour: 23, minute: 0);
+  TimeOfDay _quietEnd = const TimeOfDay(hour: 7, minute: 0);
+
+  // Frequency caps
+  int _dailyCap = 3;
+  int _weeklyCap = 15;
+
+  // Runtime counters and last sent tracking
+  final Map<String, DateTime> _lastSentByChannel = {};
+  DateTime _lastDailyReset = DateTime.now();
+  int _sentToday = 0;
+  int _sentThisWeek = 0;
+  final Duration _minInterval = const Duration(minutes: 20);
   
   // Getters
   bool get notificationsEnabled => _notificationsEnabled;
@@ -39,6 +62,12 @@ class NotificationService extends ChangeNotifier {
   bool get weeklyReportsEnabled => _weeklyReportsEnabled;
   bool get smartSuggestionsEnabled => _smartSuggestionsEnabled;
   TimeOfDay get dailyReminderTime => _dailyReminderTime;
+  TimeOfDay get windowStart => _windowStart;
+  TimeOfDay get windowEnd => _windowEnd;
+  TimeOfDay get quietStart => _quietStart;
+  TimeOfDay get quietEnd => _quietEnd;
+  int get dailyCap => _dailyCap;
+  int get weeklyCap => _weeklyCap;
 
   /// Initialize notifications
   Future<void> initialize() async {
@@ -68,6 +97,7 @@ class NotificationService extends ChangeNotifier {
       await _requestPermissions();
       await _loadSettings();
       await _scheduleDefaultNotifications();
+      _resetCountersIfNeeded(force: true);
     } catch (e) {
       debugPrint('Error initializing notifications: $e');
       // Don't throw - continue app startup even if notifications fail
@@ -135,10 +165,31 @@ class NotificationService extends ChangeNotifier {
       _weeklyReportsEnabled = prefs.getBool('weekly_reports_enabled') ?? true;
       _smartSuggestionsEnabled = prefs.getBool('smart_suggestions_enabled') ?? true;
       
-      // Load daily reminder time
+      // Load daily reminder time (legacy)
       final hour = prefs.getInt('daily_reminder_hour') ?? 20;
       final minute = prefs.getInt('daily_reminder_minute') ?? 0;
       _dailyReminderTime = TimeOfDay(hour: hour, minute: minute);
+
+      // Load smart window and quiet hours
+      _windowStart = TimeOfDay(
+        hour: prefs.getInt('notify_window_start_h') ?? 18,
+        minute: prefs.getInt('notify_window_start_m') ?? 0,
+      );
+      _windowEnd = TimeOfDay(
+        hour: prefs.getInt('notify_window_end_h') ?? 21,
+        minute: prefs.getInt('notify_window_end_m') ?? 0,
+      );
+      _quietStart = TimeOfDay(
+        hour: prefs.getInt('quiet_start_h') ?? 23,
+        minute: prefs.getInt('quiet_start_m') ?? 0,
+      );
+      _quietEnd = TimeOfDay(
+        hour: prefs.getInt('quiet_end_h') ?? 7,
+        minute: prefs.getInt('quiet_end_m') ?? 0,
+      );
+
+      _dailyCap = prefs.getInt('notify_daily_cap') ?? 3;
+      _weeklyCap = prefs.getInt('notify_weekly_cap') ?? 15;
       
       notifyListeners();
     } catch (e) {
@@ -159,6 +210,18 @@ class NotificationService extends ChangeNotifier {
       
       await prefs.setInt('daily_reminder_hour', _dailyReminderTime.hour);
       await prefs.setInt('daily_reminder_minute', _dailyReminderTime.minute);
+
+      // Save smart window & quiet hours + caps
+      await prefs.setInt('notify_window_start_h', _windowStart.hour);
+      await prefs.setInt('notify_window_start_m', _windowStart.minute);
+      await prefs.setInt('notify_window_end_h', _windowEnd.hour);
+      await prefs.setInt('notify_window_end_m', _windowEnd.minute);
+      await prefs.setInt('quiet_start_h', _quietStart.hour);
+      await prefs.setInt('quiet_start_m', _quietStart.minute);
+      await prefs.setInt('quiet_end_h', _quietEnd.hour);
+      await prefs.setInt('quiet_end_m', _quietEnd.minute);
+      await prefs.setInt('notify_daily_cap', _dailyCap);
+      await prefs.setInt('notify_weekly_cap', _weeklyCap);
     } catch (e) {
       debugPrint('Error saving notification settings: $e');
     }
@@ -175,49 +238,109 @@ class NotificationService extends ChangeNotifier {
     }
   }
 
-  /// Schedule daily carbon goal reminder
+  DateTime _combine(DateTime day, TimeOfDay t) => DateTime(day.year, day.month, day.day, t.hour, t.minute);
+
+  bool _isWithinQuietHours(DateTime dt) {
+    final start = _combine(dt, _quietStart);
+    final end = _combine(dt, _quietEnd);
+    if (_quietStart.hour <= _quietEnd.hour) {
+      // Same-day window
+      return dt.isAfter(start) && dt.isBefore(end);
+    } else {
+      // Overnight window
+      return dt.isAfter(start) || dt.isBefore(end);
+    }
+  }
+
+  void _resetCountersIfNeeded({bool force = false}) {
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final startOfWeek = startOfDay.subtract(Duration(days: startOfDay.weekday - 1));
+    if (force || _lastDailyReset.isBefore(startOfDay)) {
+      _sentToday = 0;
+      _lastDailyReset = startOfDay;
+    }
+    if (_lastDailyReset.isBefore(startOfWeek)) {
+      _sentThisWeek = 0;
+    }
+  }
+
+  bool _canSend(String channelKey) {
+    _resetCountersIfNeeded();
+    final now = DateTime.now();
+    if (_isWithinQuietHours(now)) return false;
+    if (_sentToday >= _dailyCap) return false;
+    if (_sentThisWeek >= _weeklyCap) return false;
+    final last = _lastSentByChannel[channelKey];
+    if (last != null && now.difference(last) < _minInterval) return false;
+    return true;
+  }
+
+  void _recordSend(String channelKey) {
+    _lastSentByChannel[channelKey] = DateTime.now();
+    _sentToday += 1;
+    _sentThisWeek += 1;
+  }
+
+  DateTime _randomInWindow(DateTime baseDay) {
+    final start = _combine(baseDay, _windowStart);
+    final end = _combine(baseDay, _windowEnd);
+    final span = end.difference(start).inMinutes;
+    final rnd = math.Random().nextInt(math.max(1, span));
+    return start.add(Duration(minutes: rnd));
+  }
+
+  /// Schedule daily carbon goal reminders (3 random times in window)
   Future<void> _scheduleDailyReminder() async {
     try {
-      await _notifications.cancel(1); // Cancel existing
+      // Cancel previous daily reminders (IDs 1..3)
+      for (int id = 1; id <= 3; id++) {
+        await _notifications.cancel(id);
+      }
       
       if (!_dailyRemindersEnabled || !_notificationsEnabled) return;
       
       final now = DateTime.now();
-      final scheduledDate = DateTime(
-        now.year, 
-        now.month, 
-        now.day,
-        _dailyReminderTime.hour,
-        _dailyReminderTime.minute,
-      );
+      // Determine target day (today if window not passed, otherwise tomorrow)
+      final windowEndToday = _combine(now, _windowEnd);
+      final baseDay = now.isAfter(windowEndToday) ? now.add(const Duration(days: 1)) : now;
+      final start = _combine(baseDay, _windowStart);
+      final end = _combine(baseDay, _windowEnd);
+      final span = end.difference(start).inMinutes;
+      if (span <= 0) return;
       
-      // If the time has passed today, schedule for tomorrow
-      final scheduleTime = scheduledDate.isBefore(now) 
-          ? scheduledDate.add(const Duration(days: 1))
-          : scheduledDate;
+      // Pick 3 dispersed times within the window
+      final rnd = math.Random();
+      List<int> offsets = [
+        (span * 0.2).round() + rnd.nextInt(20),
+        (span * 0.5).round() + rnd.nextInt(20),
+        (span * 0.8).round() + rnd.nextInt(20),
+      ];
+      offsets.sort();
       
-      await _notifications.zonedSchedule(
-        1,
-        '🌱 Karbon Takibi Hatırlaıcısı',
-        'Bugün karbon ayak izinizi kaydetmeyi unutmayın!',
-        tz.TZDateTime.from(scheduleTime, tz.local),
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'daily_reminder',
-            'Günlük Hatırlaıcılar',
-            channelDescription: 'Günlük karbon takibi hatırlaıcıları',
-            importance: Importance.defaultImportance,
-            priority: Priority.defaultPriority,
-            icon: '@mipmap/launcher_icon',
+      for (int i = 0; i < offsets.length; i++) {
+        final candidate = start.add(Duration(minutes: offsets[i]));
+        await _notifications.zonedSchedule(
+          1 + i,
+          _t('notifications.dailyReminderTitle'),
+          _t('notifications.dailyReminderBody'),
+          tz.TZDateTime.from(candidate, tz.local),
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              'daily_reminder',
+              _t('notifications.channels.dailyReminder.name'),
+              channelDescription: _t('notifications.channels.dailyReminder.desc'),
+              importance: Importance.defaultImportance,
+              priority: Priority.defaultPriority,
+            ),
+            iOS: DarwinNotificationDetails(
+              categoryIdentifier: 'daily_reminder',
+            ),
           ),
-          iOS: DarwinNotificationDetails(
-            categoryIdentifier: 'daily_reminder',
-          ),
-        ),
-        payload: 'daily_reminder',
-        matchDateTimeComponents: DateTimeComponents.time,
-        uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      );
+          payload: 'daily_reminder',
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+        );
+      }
     } catch (e) {
       debugPrint('Error scheduling daily reminder: $e');
       // Disable scheduled notifications if exact alarms are not permitted
@@ -229,7 +352,7 @@ class NotificationService extends ChangeNotifier {
     }
   }
 
-  /// Show a generic notification
+  /// Show a generic notification (respects quiet hours and caps)
   Future<void> showNotification({
     required int id,
     required String title,
@@ -239,11 +362,12 @@ class NotificationService extends ChangeNotifier {
     if (!_notificationsEnabled) return;
     
     try {
+      if (!_canSend('general')) return;
       await _notifications.show(
         id,
         title,
         body,
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'general',
             'General Notifications',
@@ -255,6 +379,7 @@ class NotificationService extends ChangeNotifier {
         ),
         payload: payload,
       );
+      _recordSend('general');
     } catch (e) {
       debugPrint('Error showing notification: $e');
     }
@@ -264,18 +389,18 @@ class NotificationService extends ChangeNotifier {
   Future<void> showAchievementNotification(String title, String description, int points) async {
     if (!_achievementNotificationsEnabled || !_notificationsEnabled) return;
     
+    if (!_canSend('achievements')) return;
     await _notifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
-      '🏆 Başarı Kazandın!',
+      _t('notifications.achievementTitle'),
       '$title - +$points XP',
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'achievements',
-          'Başarılar',
-          channelDescription: 'Başarı bildirimleri',
+          _t('notifications.channels.achievements.name'),
+          channelDescription: _t('notifications.channels.achievements.desc'),
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
           color: Colors.amber,
           playSound: true,
         ),
@@ -286,24 +411,25 @@ class NotificationService extends ChangeNotifier {
       ),
       payload: 'achievement|$title',
     );
+    _recordSend('achievements');
   }
   
   /// Send smart suggestion notification
   Future<void> showSmartSuggestionNotification(String title, String description, double potentialSaving) async {
     if (!_smartSuggestionsEnabled || !_notificationsEnabled) return;
     
+    if (!_canSend('smart_suggestions')) return;
     await _notifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000, // Unique ID
-      '💡 Akıllı Öneri',
+      _t('notifications.smartTipTitle'),
       '$description\n🌱 -${potentialSaving.toStringAsFixed(1)} kg CO₂',
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'smart_suggestions',
-          'Akıllı Öneriler',
-          channelDescription: 'Yapay zeka destekli öneriler',
+          _t('notifications.channels.smartSuggestions.name'),
+          channelDescription: _t('notifications.channels.smartSuggestions.desc'),
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/launcher_icon',
           color: Colors.blue,
         ),
         iOS: DarwinNotificationDetails(
@@ -312,6 +438,7 @@ class NotificationService extends ChangeNotifier {
       ),
       payload: 'smart_suggestion|$title',
     );
+    _recordSend('smart_suggestions');
   }
   
   /// Send goal milestone notification
@@ -320,18 +447,18 @@ class NotificationService extends ChangeNotifier {
     
     final progress = (currentValue / goalValue * 100).round();
     
+    if (!_canSend('goal_milestones')) return;
     await _notifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      '🎆 Hedefe Ulaştın!',
-      '$milestone\n📊 $progress% tamamlandı!',
-      const NotificationDetails(
+      _t('notifications.goalReachedTitle'),
+      '$milestone\n📊 $progress% ${_t('notifications.completedShort')}',
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'goal_milestones',
-          'Hedef Kilometre Taşları',
-          channelDescription: 'Hedef ilerlemesi bildirimleri',
+          _t('notifications.channels.goalMilestones.name'),
+          channelDescription: _t('notifications.channels.goalMilestones.desc'),
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
           color: Colors.green,
           playSound: true,
         ),
@@ -342,9 +469,10 @@ class NotificationService extends ChangeNotifier {
       ),
       payload: 'goal_milestone|$milestone',
     );
+    _recordSend('goal_milestones');
   }
   
-  /// Schedule smart reminders based on user patterns
+  /// Triggers & smart reminders
   Future<void> scheduleSmartReminders(Map<String, dynamic> userPatterns) async {
     if (!_notificationsEnabled) return;
     
@@ -363,14 +491,14 @@ class NotificationService extends ChangeNotifier {
       
       await _notifications.zonedSchedule(
         100,
-        '🚌 Ulaşım Planını Yaptın mı?',
-        'Bugün hangi ulaşım türlerini kullanacağını planla ve kaydet!',
+        _t('notifications.transportPlanTitle'),
+        _t('notifications.transportPlanBody'),
         tz.TZDateTime.from(morningTime, tz.local),
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'smart_reminders',
-            'Akıllı Hatırlatmalar',
-            channelDescription: 'Kişiselleştirilmiş hatırlatmalar',
+            _t('notifications.channels.smartReminders.name'),
+            channelDescription: _t('notifications.channels.smartReminders.desc'),
             importance: Importance.defaultImportance,
             priority: Priority.defaultPriority,
             icon: '@mipmap/launcher_icon',
@@ -390,10 +518,10 @@ class NotificationService extends ChangeNotifier {
       
       await _notifications.zonedSchedule(
         101,
-        '⚡ Enerji Tasarrufu Zamanı',
-        'Bugün enerji tüketimini azaltmak için neler yaptın? Kayıtlarını güncelle!',
+        _t('notifications.energyReminderTitle'),
+        _t('notifications.energyReminderBody'),
         tz.TZDateTime.from(eveningTime, tz.local),
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'smart_reminders',
             'Akıllı Hatırlatmalar',
@@ -408,6 +536,34 @@ class NotificationService extends ChangeNotifier {
         uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
       );
     }
+  }
+
+  // Platform/event hooks (to be wired from native/usage listeners)
+  Future<void> onScreenUnlock() async {
+    await showNotification(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: _t('notifications.quickLogTitle'),
+      body: _t('notifications.quickLogBody'),
+      payload: 'trigger|unlock',
+    );
+  }
+
+  Future<void> onLongUsage() async {
+    await showNotification(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: _t('notifications.takeABreakTitle'),
+      body: _t('notifications.takeABreakBody'),
+      payload: 'trigger|usage',
+    );
+  }
+
+  Future<void> onNetworkBackOnline() async {
+    await showNotification(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: _t('notifications.syncDoneTitle'),
+      body: _t('notifications.syncDoneBody'),
+      payload: 'trigger|sync',
+    );
   }
   
   /// Send weekly summary notification
@@ -429,9 +585,9 @@ class NotificationService extends ChangeNotifier {
     
     await _notifications.show(
       DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      '📈 Haftalık Karbon Raporu',
-      'Toplam: ${totalCO2.toStringAsFixed(1)} kg CO₂\n$message\n🌟 En iyi gün: $bestDay',
-      const NotificationDetails(
+      _t('notifications.weeklyReportTitle'),
+      '${_t('notifications.total')}: ${totalCO2.toStringAsFixed(1)} kg CO₂\n$message\n🌟 ${_t('notifications.bestDay')}: $bestDay',
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'weekly_reports',
           'Haftalık Raporlar',
@@ -469,17 +625,16 @@ class NotificationService extends ChangeNotifier {
     
     await _notifications.zonedSchedule(
       2,
-      '📊 Haftalık Karbon Raporu',
-      'Bu haftaki performansınızı görüntüleyin ve hedeflerinizi kontrol edin!',
+      _t('notifications.weeklyReportTitle'),
+      _t('notifications.weeklyReportBody'),
       tz.TZDateTime.from(scheduledDate, tz.local),
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'weekly_report',
           'Haftalık Raporlar',
           channelDescription: 'Haftalık karbon performans raporları',
           importance: Importance.defaultImportance,
           priority: Priority.defaultPriority,
-          icon: '@mipmap/launcher_icon',
         ),
         iOS: DarwinNotificationDetails(
           categoryIdentifier: 'weekly_report',
@@ -498,9 +653,9 @@ class NotificationService extends ChangeNotifier {
     
     await _notifications.show(
       DateTime.now().millisecondsSinceEpoch.remainder(100000),
-      '💡 Akıllı Öneri',
+      _t('notifications.smartTipTitle'),
       suggestion,
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
           'smart_suggestions',
           'Akıllı Öneriler',
@@ -549,7 +704,6 @@ class NotificationService extends ChangeNotifier {
           channelDescription: 'Hedef ilerleme bildirimleri',
           importance: Importance.high,
           priority: Priority.high,
-          icon: '@mipmap/launcher_icon',
           color: Colors.orange,
           playSound: true,
         ),

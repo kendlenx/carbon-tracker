@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
-import '../providers/language_provider.dart';
+import '../l10n/app_localizations.dart';
 import '../services/error_handler_service.dart';
 import '../services/feedback_service.dart';
 import '../utils/app_colors.dart';
@@ -50,11 +49,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        final language = languageProvider.currentLanguage;
-        
-        return Screenshot(
+    final languageCode = Localizations.localeOf(context).languageCode;
+    return Screenshot(
           controller: _screenshotController,
           child: AlertDialog(
             shape: RoundedRectangleBorder(
@@ -70,7 +66,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    language == 'tr' ? 'Geri Bildirim' : 'Feedback',
+                    AppLocalizations.of(context)!.translate('ui.feedback'),
                     style: TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
@@ -87,36 +83,36 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Feedback type selection
-                    _buildFeedbackTypeSection(language),
+                    _buildFeedbackTypeSection(languageCode),
                     const SizedBox(height: 16),
                     
                     // Rating section (for general feedback)
                     if (_selectedType == FeedbackType.general) ...[
-                      _buildRatingSection(language),
+                      _buildRatingSection(languageCode),
                       const SizedBox(height: 16),
                     ],
                     
                     // Email field
-                    _buildEmailField(language),
+                    _buildEmailField(languageCode),
                     const SizedBox(height: 16),
                     
                     // Feedback text
-                    _buildFeedbackTextField(language),
+                    _buildFeedbackTextField(languageCode),
                     const SizedBox(height: 16),
                     
                     // Options
-                    _buildOptionsSection(language),
+                    _buildOptionsSection(languageCode),
                     
                     // Screenshot preview
                     if (_includeScreenshot && _screenshotFile != null) ...[
                       const SizedBox(height: 16),
-                      _buildScreenshotPreview(language),
+                      _buildScreenshotPreview(languageCode),
                     ],
                     
                     // System info preview
                     if (widget.includeSystemInfo) ...[
                       const SizedBox(height: 16),
-                      _buildSystemInfoPreview(language),
+                      _buildSystemInfoPreview(languageCode),
                     ],
                   ],
                 ),
@@ -126,13 +122,13 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               TextButton(
                 onPressed: _isSubmitting ? null : () => Navigator.of(context).pop(),
                 child: Text(
-                  language == 'tr' ? 'İptal' : 'Cancel',
+                  AppLocalizations.of(context)!.translate('common.cancel'),
                 ),
               ),
               ElevatedButton.icon(
                 onPressed: _isSubmitting || _feedbackController.text.trim().isEmpty
                   ? null 
-                  : () => _submitFeedback(language),
+                  : () => _submitFeedback(languageCode),
                 icon: _isSubmitting 
                   ? const SizedBox(
                       width: 16,
@@ -141,7 +137,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                     )
                   : const Icon(Icons.send),
                 label: Text(
-                  language == 'tr' ? 'Gönder' : 'Send',
+                  AppLocalizations.of(context)!.translate('common.send'),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
@@ -150,9 +146,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               ),
             ],
           ),
-        );
-      },
-    );
+          );
   }
 
   Widget _buildFeedbackTypeSection(String language) {
@@ -160,7 +154,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          language == 'tr' ? 'Geri bildirim türü:' : 'Feedback type:',
+          AppLocalizations.of(context)!.translate('feedback.typeLabel'),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -194,9 +188,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          language == 'tr' 
-            ? 'Uygulamayı nasıl değerlendirirsiniz?' 
-            : 'How would you rate the app?',
+          AppLocalizations.of(context)!.translate('feedback.ratingQuestion'),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -226,10 +218,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       decoration: InputDecoration(
-        labelText: language == 'tr' ? 'E-posta (isteğe bağlı)' : 'Email (optional)',
-        hintText: language == 'tr' 
-          ? 'Yanıt almak için e-posta adresiniz' 
-          : 'Your email for response',
+        labelText: AppLocalizations.of(context)!.translate('feedback.emailOptional'),
+        hintText: AppLocalizations.of(context)!.translate('feedback.emailHint'),
         border: const OutlineInputBorder(),
         prefixIcon: const Icon(Icons.email),
       ),
@@ -241,7 +231,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       controller: _feedbackController,
       maxLines: 4,
       decoration: InputDecoration(
-        labelText: language == 'tr' ? 'Geri bildiriminiz' : 'Your feedback',
+        labelText: AppLocalizations.of(context)!.translate('feedback.messageLabel'),
         hintText: _getFeedbackHint(language),
         border: const OutlineInputBorder(),
         alignLabelWithHint: true,
@@ -254,7 +244,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          language == 'tr' ? 'Ek bilgiler:' : 'Additional information:',
+          AppLocalizations.of(context)!.translate('feedback.additionalInfo'),
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -263,7 +253,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         ),
         CheckboxListTile(
           title: Text(
-            language == 'tr' ? 'Ekran görüntüsü ekle' : 'Include screenshot',
+            AppLocalizations.of(context)!.translate('feedback.includeScreenshot'),
             style: const TextStyle(fontSize: 14),
           ),
           value: _includeScreenshot,
@@ -273,7 +263,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         ),
         CheckboxListTile(
           title: Text(
-            language == 'tr' ? 'Hata günlüklerini ekle' : 'Include error logs',
+            AppLocalizations.of(context)!.translate('feedback.includeErrorLogs'),
             style: const TextStyle(fontSize: 14),
           ),
           value: _includeErrorLogs,
@@ -300,7 +290,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               const Icon(Icons.screenshot, size: 16),
               const SizedBox(width: 8),
               Text(
-                language == 'tr' ? 'Ekran görüntüsü:' : 'Screenshot:',
+                AppLocalizations.of(context)!.translate('feedback.screenshot'),
                 style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ],
@@ -333,7 +323,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   Widget _buildSystemInfoPreview(String language) {
     return ExpansionTile(
       title: Text(
-        language == 'tr' ? 'Sistem bilgileri' : 'System information',
+        AppLocalizations.of(context)!.translate('feedback.systemInfo'),
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
       leading: const Icon(Icons.info, size: 16),
@@ -357,34 +347,26 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   String _getFeedbackTypeLabel(FeedbackType type, String language) {
     switch (type) {
       case FeedbackType.bug:
-        return language == 'tr' ? 'Hata' : 'Bug';
+        return AppLocalizations.of(context)!.translate('feedback.type.bug');
       case FeedbackType.feature:
-        return language == 'tr' ? 'Özellik İsteği' : 'Feature Request';
+        return AppLocalizations.of(context)!.translate('feedback.type.feature');
       case FeedbackType.general:
-        return language == 'tr' ? 'Genel' : 'General';
+        return AppLocalizations.of(context)!.translate('feedback.type.general');
       case FeedbackType.performance:
-        return language == 'tr' ? 'Performans' : 'Performance';
+        return AppLocalizations.of(context)!.translate('feedback.type.performance');
     }
   }
 
   String _getFeedbackHint(String language) {
     switch (_selectedType) {
       case FeedbackType.bug:
-        return language == 'tr'
-          ? 'Hatayı detaylı olarak açıklayın...'
-          : 'Describe the bug in detail...';
+        return AppLocalizations.of(context)!.translate('feedback.hint.bug');
       case FeedbackType.feature:
-        return language == 'tr'
-          ? 'Hangi özelliği istiyorsunuz?'
-          : 'What feature would you like to see?';
+        return AppLocalizations.of(context)!.translate('feedback.hint.feature');
       case FeedbackType.performance:
-        return language == 'tr'
-          ? 'Performans sorunu nerede yaşanıyor?'
-          : 'Where are you experiencing performance issues?';
+        return AppLocalizations.of(context)!.translate('feedback.hint.performance');
       case FeedbackType.general:
-        return language == 'tr'
-          ? 'Düşüncelerinizi paylaşın...'
-          : 'Share your thoughts...';
+        return AppLocalizations.of(context)!.translate('feedback.hint.general');
     }
   }
 
@@ -452,9 +434,7 @@ Timestamp: ${DateTime.now().toIso8601String()}
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              language == 'tr'
-                ? 'Geri bildiriminiz başarıyla gönderildi. Teşekkürler!'
-                : 'Your feedback has been sent successfully. Thank you!',
+              AppLocalizations.of(context)!.translate('feedback.sentSuccess'),
             ),
             backgroundColor: Colors.green,
             behavior: SnackBarBehavior.floating,
@@ -472,9 +452,7 @@ Timestamp: ${DateTime.now().toIso8601String()}
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              language == 'tr'
-                ? 'Geri bildirim gönderilemedi: ${e.toString()}'
-                : 'Failed to send feedback: ${e.toString()}',
+              '${AppLocalizations.of(context)!.translate('feedback.sentFailed')}: ${e.toString()}',
             ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
@@ -505,20 +483,15 @@ class QuickFeedbackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LanguageProvider>(
-      builder: (context, languageProvider, child) {
-        final language = languageProvider.currentLanguage;
-        
-        return FloatingActionButton.extended(
-          onPressed: () => _showFeedbackDialog(context),
-          icon: const Icon(Icons.feedback),
-          label: Text(
-            language == 'tr' ? 'Geri Bildirim' : 'Feedback',
-          ),
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-        );
-      },
+    final language = Localizations.localeOf(context).languageCode;
+    return FloatingActionButton.extended(
+      onPressed: () => _showFeedbackDialog(context),
+      icon: const Icon(Icons.feedback),
+      label: Text(
+        AppLocalizations.of(context)!.translate('ui.feedback'),
+      ),
+      backgroundColor: AppColors.primary,
+      foregroundColor: Colors.white,
     );
   }
 

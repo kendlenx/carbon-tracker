@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/widget_data_provider.dart';
 import '../models/transport_activity.dart';
 import '../services/database_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 import '../widgets/micro_interactions.dart';
 
 class TransportScreen extends StatefulWidget {
@@ -25,7 +25,6 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
   TransportType? selectedTransportType;
   final TextEditingController distanceController = TextEditingController();
   final TextEditingController notesController = TextEditingController();
-  final LanguageService _languageService = LanguageService.instance;
   
   late AnimationController _animationController;
   late AnimationController _resultAnimationController;
@@ -140,9 +139,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _languageService.isEnglish 
-                ? 'Please select transport type and distance' 
-                : 'Lütfen ulaşım türü ve mesafe seçin'
+            AppLocalizations.of(context)!.translate('transport.validation.selectTypeAndDistance')
           ),
           backgroundColor: Colors.orange,
         ),
@@ -155,9 +152,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _languageService.isEnglish 
-                ? 'Please enter a valid distance' 
-                : 'Lütfen geçerli bir mesafe girin'
+            AppLocalizations.of(context)!.translate('transport.validation.enterValidDistance')
           ),
           backgroundColor: Colors.orange,
         ),
@@ -183,9 +178,9 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
       
       // Update widgets with new activity
       await WidgetDataProvider.instance.onActivityAdded(
-        category: 'Transport',
+        category: AppLocalizations.of(context)!.transportTitle,
         co2Amount: activity.co2EmissionKg,
-        description: '${TransportActivity.getTransportTypeDisplayName(activity.type, isEnglish: _languageService.isEnglish)} - ${activity.distanceKm} km',
+        description: '${AppLocalizations.of(context)!.translate('transport.' + activity.type.name)} - ${activity.distanceKm} ${AppLocalizations.of(context)!.transportKm}',
       );
       
       if (mounted) {
@@ -194,9 +189,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              _languageService.isEnglish
-                  ? '✅ Transport activity saved! ${activity.co2EmissionKg.toStringAsFixed(2)} kg CO₂'
-                  : '✅ Ulaşım aktivitesi kaydedildi! ${activity.co2EmissionKg.toStringAsFixed(2)} kg CO₂',
+              '✅ ${AppLocalizations.of(context)!.translate('transport.saved')} ${activity.co2EmissionKg.toStringAsFixed(2)} kg CO₂',
             ),
             backgroundColor: Colors.green,
             duration: const Duration(seconds: 3),
@@ -233,9 +226,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              _languageService.isEnglish
-                  ? '❌ Error: Could not save activity. $e'
-                  : '❌ Hata: Aktivite kaydedilemedi. $e'
+              '❌ ${AppLocalizations.of(context)!.translate('common.error')}: $e'
             ),
             backgroundColor: Colors.red,
             behavior: SnackBarBehavior.floating,
@@ -249,9 +240,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          _languageService.isEnglish ? '🚗 Transport' : '🚗 Ulaşım',
-        ),
+        title: Text('🚗 ${AppLocalizations.of(context)!.transportTitle}'),
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         leading: IconButton(
@@ -300,18 +289,14 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _languageService.isEnglish 
-                                ? 'Track Transport' 
-                                : 'Ulaşımı Takip Et',
+                            AppLocalizations.of(context)!.translate('transport.trackHeader'),
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _languageService.isEnglish
-                                ? 'Select transport type and distance'
-                                : 'Ulaşım türü ve mesafeyi seçin',
+                            AppLocalizations.of(context)!.translate('transport.selectTypeAndDistance'),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.grey.shade600,
                             ),
@@ -326,7 +311,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
               
               // Transport type selection
               Text(
-                _languageService.isEnglish ? 'Transport Type' : 'Ulaşım Türü',
+                AppLocalizations.of(context)!.translate('transport.selectTransportType'),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -384,10 +369,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            TransportActivity.getTransportTypeDisplayName(
-                              transportType, 
-                              isEnglish: _languageService.isEnglish
-                            ),
+                            AppLocalizations.of(context)!.translate('transport.' + transportType.name),
                             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: isSelected ? Colors.blue : null,
@@ -424,7 +406,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
               
               // Distance input
               Text(
-                _languageService.isEnglish ? 'Distance (km)' : 'Mesafe (km)',
+                '${AppLocalizations.of(context)!.transportDistance} (${AppLocalizations.of(context)!.transportKm})',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -434,8 +416,8 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                 controller: distanceController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 decoration: InputDecoration(
-                  hintText: _languageService.isEnglish ? 'e.g: 15.5' : 'Örn: 15.5',
-                  suffixText: 'km',
+                  hintText: '15.5',
+                  suffixText: AppLocalizations.of(context)!.transportKm,
                   prefixIcon: const Icon(Icons.straighten),
                   border: const OutlineInputBorder(),
                   filled: true,
@@ -450,7 +432,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
               
               // Notes (optional)
               Text(
-                _languageService.isEnglish ? 'Notes (Optional)' : 'Notlar (İsteğe bağlı)',
+                AppLocalizations.of(context)!.translate('common.notesOptional'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -460,9 +442,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                 controller: notesController,
                 maxLines: 2,
                 decoration: InputDecoration(
-                  hintText: _languageService.isEnglish 
-                      ? 'e.g: Home to work' 
-                      : 'Örn: Evden işe gidiş',
+                  hintText: AppLocalizations.of(context)!.translate('common.notesOptional'),
                   prefixIcon: const Icon(Icons.note),
                   border: const OutlineInputBorder(),
                   filled: true,
@@ -517,9 +497,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    _languageService.isEnglish 
-                                        ? 'Estimated CO₂ Emission' 
-                                        : 'Tahmini CO₂ Emisyonu',
+                                    AppLocalizations.of(context)!.translate('energy.estimatedEmission'),
                                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -535,17 +513,14 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                                     children: [
                                       Text(
                                         selectedTransportType != null 
-                                            ? TransportActivity.getTransportTypeDisplayName(
-                                                selectedTransportType!, 
-                                                isEnglish: _languageService.isEnglish
-                                              )
+                                            ? AppLocalizations.of(context)!.translate('transport.' + selectedTransportType!.name)
                                             : '',
                                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                           color: Colors.grey.shade700,
                                         ),
                                       ),
                                       Text(
-                                        '${distanceController.text} km',
+                                        '${distanceController.text} ${AppLocalizations.of(context)!.transportKm}',
                                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                           color: Colors.grey.shade600,
                                         ),
@@ -594,7 +569,7 @@ class _TransportScreenState extends State<TransportScreen> with TickerProviderSt
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.save),
-                  label: Text(_languageService.isEnglish ? 'Save Activity' : 'Aktiviteyi Kaydet'),
+                  label: Text(AppLocalizations.of(context)!.translate('common.save')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: showResult ? Colors.green : null,
                     padding: const EdgeInsets.symmetric(vertical: 16),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/advanced_import_service.dart';
 import '../services/error_handler_service.dart';
+import '../l10n/app_localizations.dart';
 
 class DataImportScreen extends StatefulWidget {
   const DataImportScreen({super.key});
@@ -609,8 +610,8 @@ class _DataImportScreenState extends State<DataImportScreen> {
       });
 
       _showResultDialog(
-        'Import Complete',
-        'Successfully imported ${result.importedRecords} out of ${result.totalRecords} records.',
+        AppLocalizations.of(context)!.translate('import.importCompleteTitle'),
+        AppLocalizations.of(context)!.translate('import.success'),
         isError: result.hasErrors,
       );
 
@@ -626,18 +627,18 @@ class _DataImportScreenState extends State<DataImportScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Row(
+        title: Row(
           children: [
-            Icon(Icons.error, color: Colors.red),
-            SizedBox(width: 8),
-            Text('Error'),
+            const Icon(Icons.error, color: Colors.red),
+            const SizedBox(width: 8),
+            Text(AppLocalizations.of(context)!.translate('common.error')),
           ],
         ),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.translate('common.ok')),
           ),
         ],
       ),
@@ -662,7 +663,7 @@ class _DataImportScreenState extends State<DataImportScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(AppLocalizations.of(context)!.translate('common.ok')),
           ),
         ],
       ),

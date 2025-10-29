@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:carbon_step/services/achievement_service.dart';
 import 'package:carbon_step/widgets/animated_widgets.dart';
+import 'package:carbon_step/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class BadgeWidget extends StatefulWidget {
   final Achievement achievement;
@@ -245,12 +247,12 @@ class AchievementCard extends StatelessWidget {
                     ),
                     if (showProgress && !isUnlocked) ...[
                       const SizedBox(height: 8.0),
-                      _buildProgressBar(theme),
+                      _buildProgressBar(context, theme),
                     ],
                     if (isUnlocked && achievement.unlockedAt != null) ...[
                       const SizedBox(height: 4.0),
                       Text(
-                        _formatUnlockDate(achievement.unlockedAt!),
+                        _formatUnlockDate(context, achievement.unlockedAt!),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: achievement.color,
                           fontStyle: FontStyle.italic,
@@ -267,7 +269,7 @@ class AchievementCard extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressBar(ThemeData theme) {
+  Widget _buildProgressBar(BuildContext context, ThemeData theme) {
     final progress = achievement.progressPercentage;
     
     return Column(
@@ -276,8 +278,8 @@ class AchievementCard extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'İlerleme',
+Text(
+              AppLocalizations.of(context)!.translate('achievements.progress'),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               ),
@@ -300,18 +302,18 @@ class AchievementCard extends StatelessWidget {
     );
   }
 
-  String _formatUnlockDate(DateTime date) {
+  String _formatUnlockDate(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
     
-    if (difference.inDays == 0) {
-      return 'Bugün kazanıldı';
+if (difference.inDays == 0) {
+      return AppLocalizations.of(context)!.translate('ui.earnedToday');
     } else if (difference.inDays == 1) {
-      return 'Dün kazanıldı';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} gün önce kazanıldı';
+      return AppLocalizations.of(context)!.translate('ui.earnedYesterday');
     } else {
-      return '${date.day}/${date.month}/${date.year} tarihinde kazanıldı';
+      final locale = Localizations.localeOf(context).toString();
+      final formatted = DateFormat.yMd(locale).format(date);
+      return '${AppLocalizations.of(context)!.translate('ui.earnedOn')} $formatted';
     }
   }
 }
@@ -569,7 +571,7 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                               _currentIndex--;
                             });
                           },
-                          child: const Text('Önceki'),
+child: Text(AppLocalizations.of(context)!.translate('common.previous')),
                         ),
                       ),
                     if (widget.newAchievements.length > 1 && _currentIndex > 0)
@@ -586,7 +588,7 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                                 backgroundColor: achievement.color,
                                 foregroundColor: Colors.white,
                               ),
-                              child: const Text('Sonraki'),
+child: Text(AppLocalizations.of(context)!.translate('common.next')),
                             )
                           : ElevatedButton(
                               onPressed: () {
@@ -597,7 +599,7 @@ class _AchievementUnlockDialogState extends State<AchievementUnlockDialog>
                                 backgroundColor: achievement.color,
                                 foregroundColor: Colors.white,
                               ),
-                              child: const Text('Harika!'),
+child: Text(AppLocalizations.of(context)!.translate('common.ok')),
                             ),
                     ),
                   ],
@@ -673,8 +675,8 @@ class LevelProgressWidget extends StatelessWidget {
                   ],
                 ),
                 child: Center(
-                  child: Text(
-                    '$level',
+child: Text(
+                    '${AppLocalizations.of(context)!.translate('achievements.level')} $level',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -698,7 +700,7 @@ class LevelProgressWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      '$totalPoints XP earned',
+'$totalPoints ${AppLocalizations.of(context)!.translate('ui.xpEarned')}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.amber.shade700,
@@ -718,7 +720,7 @@ class LevelProgressWidget extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  '$pointsForNextLevel XP to go',
+'$pointsForNextLevel ${AppLocalizations.of(context)!.translate('ui.xpToGo')}',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.blue.shade700,
@@ -737,7 +739,7 @@ class LevelProgressWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Progress to Level ${level + 1}',
+'${AppLocalizations.of(context)!.translate('ui.progressToLevelPrefix')} ${level + 1}',
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark ? Colors.white70 : Colors.black54,

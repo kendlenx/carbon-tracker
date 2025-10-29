@@ -17,9 +17,18 @@ class AppLocalizations {
   Map<String, dynamic>? _localizedStrings;
 
   Future<bool> load() async {
-    String jsonString = await rootBundle.loadString(
-      'lib/l10n/app_${locale.languageCode}.json'
-    );
+    String code = locale.languageCode;
+    String jsonString;
+    try {
+      jsonString = await rootBundle.loadString(
+        'lib/l10n/app_$code.json'
+      );
+    } catch (_) {
+      // Fallback to English if specific locale file is missing
+      jsonString = await rootBundle.loadString(
+        'lib/l10n/app_en.json'
+      );
+    }
     Map<String, dynamic> jsonMap = json.decode(jsonString);
     _localizedStrings = jsonMap;
     return true;
@@ -106,6 +115,7 @@ class AppLocalizations {
 
   // Achievements
   String get achievementsTitle => translate('achievements.title');
+  String get uiQuickActions => translate('ui.quickActions');
   String get achievementsUnlocked => translate('achievements.unlocked');
   String get achievementsLocked => translate('achievements.locked');
   String get achievementsProgress => translate('achievements.progress');
@@ -285,7 +295,9 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
   @override
   bool isSupported(Locale locale) {
-    return ['tr', 'en'].contains(locale.languageCode);
+    return [
+      'tr','en','es','de','fr','it','pt','ru'
+    ].contains(locale.languageCode);
   }
 
   @override

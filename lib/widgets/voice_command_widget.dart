@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/voice_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 import 'micro_interactions.dart';
 import 'dart:math' as math;
 
@@ -24,7 +24,6 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
   late Animation<double> _waveAnimation;
 
   final VoiceService _voiceService = VoiceService.instance;
-  final LanguageService _languageService = LanguageService.instance;
 
   @override
   void initState() {
@@ -97,23 +96,19 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isEnglish 
-          ? 'Enable Voice Commands' 
-          : 'Sesli Komutları Etkinleştir'),
-        content: Text(_languageService.isEnglish
-          ? 'Voice commands require microphone permission. Please enable it in settings.'
-          : 'Sesli komutlar mikrofon izni gerektirir. Lütfen ayarlarda etkinleştirin.'),
+        title: Text(AppLocalizations.of(context)!.translate('voice.title')),
+        content: Text(AppLocalizations.of(context)!.translate('voice.permissionRequired')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isEnglish ? 'Cancel' : 'İptal'),
+            child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               _voiceService.initialize();
             },
-            child: Text(_languageService.isEnglish ? 'Enable' : 'Etkinleştir'),
+            child: Text(AppLocalizations.of(context)!.translate('common.enable')),
           ),
         ],
       ),
@@ -233,19 +228,13 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
     Color statusColor;
 
     if (!_voiceService.speechEnabled) {
-      statusText = _languageService.isEnglish 
-          ? 'Voice commands disabled' 
-          : 'Sesli komutlar devre dışı';
+      statusText = AppLocalizations.of(context)!.translate('voice.permissionRequired');
       statusColor = Colors.grey;
     } else if (_voiceService.isListening) {
-      statusText = _languageService.isEnglish 
-          ? 'Listening...' 
-          : 'Dinleniyor...';
+      statusText = AppLocalizations.of(context)!.translate('voice.listening');
       statusColor = Colors.red;
     } else {
-      statusText = _languageService.isEnglish 
-          ? 'Tap to speak' 
-          : 'Konuşmak için dokunun';
+      statusText = AppLocalizations.of(context)!.translate('voice.speak');
       statusColor = Colors.blue;
     }
 
@@ -274,7 +263,7 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
       child: Column(
         children: [
           Text(
-            _languageService.isEnglish ? 'Recognized:' : 'Tanınan:',
+            AppLocalizations.of(context)!.translate('voice.recognized'),
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -311,19 +300,20 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
   }
 
   Widget _buildQuickCommands() {
+    final l = AppLocalizations.of(context)!;
     final commands = [
       {
-        'text': _languageService.isEnglish ? '"Add 5km car trip"' : '"5km araba yolculuğu ekle"',
+        'text': '"${l.translate('voice.logTransport')}"',
         'icon': Icons.directions_car,
         'color': Colors.blue,
       },
       {
-        'text': _languageService.isEnglish ? '"Show my statistics"' : '"İstatistiklerimi göster"',
+        'text': '"${l.translate('voice.getDailyStats')}"',
         'icon': Icons.bar_chart,
         'color': Colors.green,
       },
       {
-        'text': _languageService.isEnglish ? '"Set daily goal to 8kg"' : '"Günlük hedefi 8kg yap"',
+        'text': '"${l.translate('voice.setGoal')}"',
         'icon': Icons.flag,
         'color': Colors.orange,
       },
@@ -334,7 +324,7 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
       child: Column(
         children: [
           Text(
-            _languageService.isEnglish ? 'Try saying:' : 'Şunları deneyin:',
+            AppLocalizations.of(context)!.translate('voice.examples'),
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -383,11 +373,9 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
     // Show processing feedback
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          _languageService.isEnglish 
-              ? 'Processing: $cleanCommand'
-              : 'İşleniyor: $cleanCommand',
-        ),
+          content: Text(
+            '${AppLocalizations.of(context)!.translate('common.loading')} ${cleanCommand}',
+          ),
         duration: const Duration(seconds: 1),
       ),
     );
@@ -399,11 +387,7 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
       // Show success feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            _languageService.isEnglish 
-                ? 'Command executed successfully!'
-                : 'Komut başarıyla çalıştırıldı!',
-          ),
+            content: Text(AppLocalizations.of(context)!.translate('common.success')),
           backgroundColor: Colors.green,
         ),
       );
@@ -413,11 +397,7 @@ class _VoiceCommandWidgetState extends State<VoiceCommandWidget>
       // Show error feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            _languageService.isEnglish 
-                ? 'Error processing command: $e'
-                : 'Komut işlenirken hata: $e',
-          ),
+            content: Text('${AppLocalizations.of(context)!.translate('common.error')}: $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -464,7 +444,6 @@ class VoiceCommandDialog extends StatefulWidget {
 }
 
 class _VoiceCommandDialogState extends State<VoiceCommandDialog> {
-  final LanguageService _languageService = LanguageService.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -499,9 +478,7 @@ class _VoiceCommandDialogState extends State<VoiceCommandDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    _languageService.isEnglish 
-                        ? 'Voice Commands' 
-                        : 'Sesli Komutlar',
+                    AppLocalizations.of(context)!.translate('voice.title'),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

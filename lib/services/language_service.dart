@@ -12,6 +12,12 @@ class LanguageService extends ChangeNotifier {
   static const List<Locale> supportedLocales = [
     Locale('tr', 'TR'), // Turkish (default)
     Locale('en', 'US'), // English
+    Locale('es', 'ES'), // Spanish
+    Locale('de', 'DE'), // German
+    Locale('fr', 'FR'), // French
+    Locale('it', 'IT'), // Italian
+    Locale('pt', 'BR'), // Portuguese (Brazil)
+    Locale('ru', 'RU'), // Russian
   ];
 
   // Current locale
@@ -74,6 +80,19 @@ class LanguageService extends ChangeNotifier {
       case 'en':
         return const Locale('en', 'US');
       case 'tr':
+        return const Locale('tr', 'TR');
+      case 'es':
+        return const Locale('es', 'ES');
+      case 'de':
+        return const Locale('de', 'DE');
+      case 'fr':
+        return const Locale('fr', 'FR');
+      case 'it':
+        return const Locale('it', 'IT');
+      case 'pt':
+        return const Locale('pt', 'BR');
+      case 'ru':
+        return const Locale('ru', 'RU');
       default:
         return const Locale('tr', 'TR');
     }
@@ -116,8 +135,20 @@ class LanguageService extends ChangeNotifier {
         return 'Türkçe';
       case 'en':
         return 'English';
+      case 'es':
+        return 'Español';
+      case 'de':
+        return 'Deutsch';
+      case 'fr':
+        return 'Français';
+      case 'it':
+        return 'Italiano';
+      case 'pt':
+        return 'Português (Brasil)';
+      case 'ru':
+        return 'Русский';
       default:
-        return 'Türkçe';
+        return 'English';
     }
   }
 
@@ -133,8 +164,20 @@ class LanguageService extends ChangeNotifier {
         return '🇹🇷';
       case 'en':
         return '🇺🇸';
+      case 'es':
+        return '🇪🇸';
+      case 'de':
+        return '🇩🇪';
+      case 'fr':
+        return '🇫🇷';
+      case 'it':
+        return '🇮🇹';
+      case 'pt':
+        return '🇧🇷';
+      case 'ru':
+        return '🇷🇺';
       default:
-        return '🇹🇷';
+        return '🏳️';
     }
   }
 

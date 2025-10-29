@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import '../services/advanced_import_service.dart';
 import '../services/backup_management_service.dart';
@@ -266,7 +267,7 @@ class _AdvancedDataManagementScreenState extends State<AdvancedDataManagementScr
                 children: [
                   Expanded(
                     child: _buildStatCard(
-                      'Total Activities',
+                      AppLocalizations.of(context)!.translate('ui.totalActivities'),
                       '${_dataStatistics['total_activities'] ?? 0}',
                       Icons.list,
                       Colors.blue,
@@ -275,7 +276,7 @@ class _AdvancedDataManagementScreenState extends State<AdvancedDataManagementScr
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildStatCard(
-                      'Total CO₂',
+                      AppLocalizations.of(context)!.translate('ui.totalCO2'),
                       '${(_dataStatistics['total_co2'] ?? 0.0).toStringAsFixed(2)} kg',
                       Icons.eco,
                       Colors.green,

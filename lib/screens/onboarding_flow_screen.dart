@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/onboarding_service.dart';
 import '../services/language_service.dart';
+import '../main.dart';
 
 class OnboardingFlowScreen extends StatefulWidget {
   const OnboardingFlowScreen({super.key});
@@ -82,7 +83,15 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
     await _onboardingService.completeOnboarding();
     
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const CarbonTrackerHome(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      );
     }
   }
 
@@ -90,7 +99,15 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
     await _onboardingService.completeOnboarding();
     
     if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => const CarbonTrackerHome(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      );
     }
   }
 
@@ -118,19 +135,49 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
               ),
             ),
             
-            // Skip button
+            // Top bar: language selector + Skip
             Positioned(
               top: 16,
+              left: 16,
               right: 16,
-              child: TextButton(
-                onPressed: _skipOnboarding,
-                child: Text(
-                  isEnglish ? 'Skip' : 'Atla',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Language selector
+                  InkWell(
+                    onTap: _showLanguagePicker,
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceVariant.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(LanguageService.instance.currentLanguageFlag, style: const TextStyle(fontSize: 18)),
+                          const SizedBox(width: 8),
+                          Text(LanguageService.instance.currentLanguageDisplayName,
+                              style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                          const SizedBox(width: 4),
+                          Icon(Icons.keyboard_arrow_down, size: 18, color: theme.colorScheme.onSurfaceVariant),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  TextButton(
+                    onPressed: _skipOnboarding,
+                    child: Text(
+                      isEnglish ? 'Skip' : 'Atla',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             
@@ -289,6 +336,78 @@ class _OnboardingFlowScreenState extends State<OnboardingFlowScreen>
           ],
         ),
       ),
+    );
+  }
+
+  void _showLanguagePicker() {
+    final codes = ['en','tr','es','de','fr','it','pt','ru'];
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.language, color: Theme.of(context).primaryColor),
+                      const SizedBox(width: 8),
+                      Text(
+                        LanguageService.instance.isEnglish ? 'Language' : 'Dil',
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ...codes.map((code) {
+                    final isSelected = LanguageService.instance.currentLanguageCode == code;
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: ListTile(
+                        leading: Text(LanguageService.instance.getLanguageFlag(code), style: const TextStyle(fontSize: 22)),
+                        title: Text(LanguageService.instance.getLanguageDisplayName(code)),
+                        trailing: isSelected
+                            ? const Icon(Icons.check_circle, color: Colors.green)
+                            : const Icon(Icons.circle_outlined, color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.withValues(alpha: 0.3),
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        onTap: () async {
+                          if (!isSelected) {
+                            await LanguageService.instance.setLanguage(code);
+                            if (mounted) {
+                              setState(() {
+                                _steps = _onboardingService.getOnboardingSteps(LanguageService.instance.isEnglish);
+                              });
+                            }
+                          }
+                          if (context.mounted) Navigator.of(context).pop();
+                        },
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
