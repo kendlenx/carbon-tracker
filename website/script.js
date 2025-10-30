@@ -11,14 +11,15 @@ const conn = navigator.connection || navigator.mozConnection || navigator.webkit
 const motionOK = !prefersReduced && !(conn && (conn.saveData || /2g|3g/.test(conn.effectiveType||'')))
 
 function animateCounter(el){
-  const target = parseInt(el.getAttribute('data-target')||'0',10)
+  const decimals = parseInt(el.getAttribute('data-decimals')||'0',10)
+  const target = parseFloat(el.getAttribute('data-target')||'0')
   let start = 0
   const dur = 700
   const t0 = performance.now()
   const step = (t)=>{
     const p = Math.min(1, (t - t0)/dur)
-    const val = Math.floor(start + (target - start) * (0.5 - Math.cos(Math.PI*p)/2))
-    el.textContent = val.toLocaleString()
+    const val = start + (target - start) * (0.5 - Math.cos(Math.PI*p)/2)
+    el.textContent = Number(val).toLocaleString(undefined,{minimumFractionDigits:decimals, maximumFractionDigits:decimals})
     if(p<1) requestAnimationFrame(step)
   }
   requestAnimationFrame(step)

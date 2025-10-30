@@ -197,7 +197,7 @@
           <h2 class="reveal" data-i18n="impact.title">Topluluk etkisi</h2>
           <div class="stats-grid">
             <div class="stat reveal">
-              <div class="num counter" data-target="125000">0</div>
+              <div class="num counter" data-target="125432.7" data-decimals="1">0</div>
               <div class="label" data-i18n="impact.stat1">Bu ay kaydedilen kg CO₂e</div>
             </div>
             <div class="stat reveal">
@@ -215,7 +215,7 @@
       <section id="shortcuts" class="section shortcuts">
         <div class="container">
           <h2 class="reveal" data-i18n="shortcuts.title">Kısayollar ve entegrasyonlar</h2>
-          <div class="grid">
+          <div class="grid shortcuts-grid">
             <article class="card reveal"><h3>Siri</h3><p data-i18n="shortcuts.siri">“Hey Siri, işe gidişimi kaydet.”</p></article>
             <article class="card reveal"><h3>CarPlay</h3><p data-i18n="shortcuts.carplay">Direksiyon başında eller serbest kayıt.</p></article>
             <article class="card reveal"><h3>Widget</h3><p data-i18n="shortcuts.widget">Ana ekrandan tek dokunuşla ekleme.</p></article>
@@ -288,25 +288,27 @@
       </section>
 
       <section id="contact" class="section contact">
-        <h2 data-i18n="contact.title">Bize Ulaşın</h2>
-        <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-          <input type="hidden" name="form-name" value="contact" />
-          <p class="hidden"><label>Don’t fill this out if you’re human: <input name="bot-field" /></label></p>
-          <div class="form-row">
-            <label data-i18n="contact.name">Ad Soyad</label>
-            <input name="name" required />
-          </div>
-          <div class="form-row">
-            <label data-i18n="contact.email">E-posta</label>
-            <input type="email" name="email" required />
-          </div>
-          <div class="form-row">
-            <label data-i18n="contact.message">Mesaj</label>
-            <textarea name="message" rows="4" required></textarea>
-          </div>
-          <button class="btn primary" type="submit" data-i18n="contact.submit">Gönder</button>
-          <p class="small" data-i18n="contact.alt">Veya: <a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></p>
-        </form>
+        <div class="container">
+          <h2 class="reveal" data-i18n="contact.title">Bize Ulaşın</h2>
+          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="reveal">
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="hidden"><label>Don’t fill this out if you’re human: <input name="bot-field" /></label></p>
+            <div class="form-row">
+              <label data-i18n="contact.name">Ad Soyad</label>
+              <input name="name" required />
+            </div>
+            <div class="form-row">
+              <label data-i18n="contact.email">E-posta</label>
+              <input type="email" name="email" required />
+            </div>
+            <div class="form-row">
+              <label data-i18n="contact.message">Mesaj</label>
+              <textarea name="message" rows="4" required></textarea>
+            </div>
+            <button class="btn primary" type="submit" data-i18n="contact.submit">Gönder</button>
+            <p class="small" data-i18n="contact.alt">Veya: <a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></p>
+          </form>
+        </div>
       </section>
     </main>
 
