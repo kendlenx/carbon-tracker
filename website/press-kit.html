@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Basın Kiti — Carbon Step</title>
+  <link rel="canonical" href="https://carbonstepapp.com/press-kit.html" />
+  <meta name="robots" content="index,follow" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    @media print{ .site-header,.site-footer,.btn{ display:none !important } body{ background:#fff; color:#000 } .card{ border:none; box-shadow:none } }
+    .swatch{width:40px;height:40px;border-radius:8px;border:1px solid var(--border)}
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner container">
+      <a class="logo" href="/"><img src="/assets/logo.png" alt="Carbon Step" height="28" /><span>Carbon Step</span></a>
+      <div class="header-ctas"><a class="btn" href="#" onclick="window.print();return false;">PDF indir</a></div>
+    </div>
+  </header>
+  <main class="section container">
+    <div class="card" style="margin-bottom:16px">
+      <h1>Basın Kiti</h1>
+      <p>Carbon Step, kişisel karbon ayak izini takip etmeyi kolaylaştıran iOS/Android uygulamasıdır. Ulaşım, enerji, gıda kayıtları; hedefler, analitikler ve entegrasyonlarla desteklenir.</p>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <h2>Logolar</h2>
+      <div class="grid3">
+        <a href="/assets/logo.png" download><img src="/assets/logo.png" alt="Logo PNG" /></a>
+        <a href="/assets/logo-modern.svg" download><img src="/assets/logo-modern.svg" alt="Logo SVG" /></a>
+        <a href="/assets/favicon.svg" download><img src="/assets/favicon.svg" alt="Simgesi" /></a>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <h2>Renkler</h2>
+      <div class="grid3">
+        <div><div class="swatch" style="background:#22c55e"></div><div class="small">#22C55E</div></div>
+        <div><div class="swatch" style="background:#16a34a"></div><div class="small">#16A34A</div></div>
+        <div><div class="swatch" style="background:#0b0f0d"></div><div class="small">#0B0F0D</div></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px">
+      <h2>Tipografi</h2>
+      <p>Başlıklar: Inter/semibold — Gövde: Inter/regular — Sistem fontları ile uyumlu.</p>
+    </div>
+    <div class="card">
+      <h2>Ekran Görüntüleri</h2>
+      <div class="grid3">
+        <a href="/assets/screen-1.png" download><img src="/assets/screen-1.png" alt="Dashboard" /></a>
+        <a href="/assets/screen-2.png" download><img src="/assets/screen-2.png" alt="Ulaşım" /></a>
+        <a href="/assets/screen-3.png" download><img src="/assets/screen-3.png" alt="Analitik" /></a>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">
+    <div class="footer-bottom"><div class="container">© <span id="year"></span> Carbon Step</div></div>
+  </footer>
+  <script src="/script.js" defer></script>
+</body>
+</html>
