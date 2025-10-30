@@ -2,7 +2,19 @@ const $ = (s,ctx=document)=>ctx.querySelector(s)
 const $$ = (s,ctx=document)=>[...ctx.querySelectorAll(s)]
 
 // Year
-$('#year').textContent = new Date().getFullYear()
+const yearEl = document.getElementById('year');
+if(yearEl) yearEl.textContent = new Date().getFullYear()
+
+// Reveal on scroll
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  })
+},{threshold:.12, rootMargin:'0px 0px -10% 0px'})
+;[...document.querySelectorAll('.reveal')].forEach(el=>io.observe(el))
 
 // i18n
 const dict = {
@@ -44,7 +56,7 @@ const dict = {
   }
 }
 
-const saved = localStorage.getItem('lang') || (navigator.language?.startsWith('tr')?'tr':'tr')
+const saved = localStorage.getItem('lang') || (navigator.language?.startsWith('tr')?'tr':'en')
 let lang = saved
 function applyI18n(){
   $$('[data-i18n]').forEach(el=>{
@@ -53,12 +65,15 @@ function applyI18n(){
   })
   document.documentElement.lang = lang
   const toggle = document.getElementById('lang-toggle')
-  toggle.textContent = lang==='tr'?'EN':'TR'
+  if(toggle) toggle.textContent = lang==='tr'?'EN':'TR'
 }
 applyI18n()
 
-document.getElementById('lang-toggle').addEventListener('click',()=>{
-  lang = lang==='tr'?'en':'tr'
-  localStorage.setItem('lang',lang)
-  applyI18n()
-})
+const langToggle = document.getElementById('lang-toggle')
+if(langToggle){
+  langToggle.addEventListener('click',()=>{
+    lang = lang==='tr'?'en':'tr'
+    localStorage.setItem('lang',lang)
+    applyI18n()
+  })
+}

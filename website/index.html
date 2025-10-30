@@ -38,7 +38,7 @@
   <body>
     <header class="site-header">
       <a class="logo" href="/">
-        <img src="/assets/logo.svg" alt="Carbon Step" height="32" />
+        <img src="/assets/logo-modern.svg" alt="Carbon Step" height="32" />
         <span>Carbon Step</span>
       </a>
       <nav class="nav">
@@ -52,63 +52,75 @@
 
     <main>
       <section class="hero section">
-        <div class="hero-content">
-          <h1 data-i18n="hero.title">Karbon ayak izinizi takip edin ve azaltın</h1>
-          <p class="lead" data-i18n="hero.subtitle">Ulaşım, enerji, gıda ve alışveriş kaynaklı emisyonlarınızı kaydedin; hedefler belirleyin, içgörüler alın, başarımlar kazanın.</p>
-          <div class="cta-row">
-            <a class="btn primary" href="#" aria-label="App Store" data-i18n="hero.appstore">App Store</a>
-            <a class="btn dark" href="#" aria-label="Google Play" data-i18n="hero.playstore">Google Play</a>
+        <div class="container hero-grid">
+          <div class="hero-content reveal">
+            <div class="kicker">Carbon Step</div>
+            <h1 data-i18n="hero.title">Karbon ayak izinizi takip edin ve azaltın</h1>
+            <p class="lead" data-i18n="hero.subtitle">Ulaşım, enerji, gıda ve alışveriş kaynaklı emisyonlarınızı kaydedin; hedefler belirleyin, içgörüler alın, başarımlar kazanın.</p>
+            <div class="cta-row" style="display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 8px">
+              <a class="btn primary" href="#" aria-label="App Store" data-i18n="hero.appstore">
+                <img src="/assets/badge-appstore.svg" alt="App Store" height="24" />
+              </a>
+              <a class="btn dark" href="#" aria-label="Google Play" data-i18n="hero.playstore">
+                <img src="/assets/badge-playstore.svg" alt="Google Play" height="24" />
+              </a>
+            </div>
+            <p class="note" data-i18n="hero.note">Widget'lar, Siri/CarPlay ve yerel bildirimlerle hızlı kayıt deneyimi.</p>
           </div>
-          <p class="note" data-i18n="hero.note">Widget'lar, Siri/CarPlay ve yerel bildirimlerle hızlı kayıt deneyimi.</p>
+          <div class="hero-media reveal" style="background:#0b110f">
+            <img src="/assets/hero-phone.png" alt="Carbon Step uygulama önizlemesi" />
+          </div>
         </div>
-        <div class="hero-media">
-          <img src="/assets/hero-phone.png" alt="Carbon Step uygulama önizlemesi" />
-        </div>
+        <div class="hero-blob" aria-hidden="true"></div>
       </section>
 
       <section id="features" class="features section">
-        <h2 data-i18n="features.title">Özellikler</h2>
-        <div class="grid">
-          <article class="card">
-            <div class="icon">🚶‍♀️</div>
-            <h3 data-i18n="features.transport.title">Ulaşım</h3>
-            <p data-i18n="features.transport.desc">Toplu taşıma, yürüyüş, bisiklet, araç, uçuş: Türkiye odaklı emisyon katsayılarıyla doğru hesap.</p>
-          </article>
-          <article class="card">
-            <div class="icon">⚡️</div>
-            <h3 data-i18n="features.energy.title">Enerji</h3>
-            <p data-i18n="features.energy.desc">Elektrik ve doğal gaz tüketiminden kaynaklı emisyonları kolayca ekleyin ve analiz edin.</p>
-          </article>
-          <article class="card">
-            <div class="icon">🍽️</div>
-            <h3 data-i18n="features.food.title">Gıda</h3>
-            <p data-i18n="features.food.desc">Beslenme tercihlerinizi kaydedin; daha sürdürülebilir seçimler için öneriler alın.</p>
-          </article>
-          <article class="card">
-            <div class="icon">📊</div>
-            <h3 data-i18n="features.analytics.title">Analitik</h3>
-            <p data-i18n="features.analytics.desc">Günlük/haftalık/aylık eğilimler ve hedeflerle ilerlemenizi takip edin.</p>
-          </article>
-          <article class="card">
-            <div class="icon">🎯</div>
-            <h3 data-i18n="features.gamification.title">Oyunlaştırma</h3>
-            <p data-i18n="features.gamification.desc">Başarımlar, hedefler ve rozetlerle motivasyonunuzu yüksek tutun.</p>
-          </article>
-          <article class="card">
-            <div class="icon">🧩</div>
-            <h3 data-i18n="features.integrations.title">Entegrasyonlar</h3>
-            <p data-i18n="features.integrations.desc">Ana ekran widget'ları, Siri/CarPlay ve yerel bildirim desteği.</p>
-          </article>
+        <div class="container">
+          <h2 class="reveal" data-i18n="features.title">Özellikler</h2>
+          <div class="grid">
+            <article class="card reveal">
+              <div class="icon">🚶‍♀️</div>
+              <h3 data-i18n="features.transport.title">Ulaşım</h3>
+              <p data-i18n="features.transport.desc">Toplu taşıma, yürüyüş, bisiklet, araç, uçuş: Türkiye odaklı emisyon katsayılarıyla doğru hesap.</p>
+            </article>
+            <article class="card reveal">
+              <div class="icon">⚡️</div>
+              <h3 data-i18n="features.energy.title">Enerji</h3>
+              <p data-i18n="features.energy.desc">Elektrik ve doğal gaz tüketiminden kaynaklı emisyonları kolayca ekleyin ve analiz edin.</p>
+            </article>
+            <article class="card reveal">
+              <div class="icon">🍽️</div>
+              <h3 data-i18n="features.food.title">Gıda</h3>
+              <p data-i18n="features.food.desc">Beslenme tercihlerinizi kaydedin; daha sürdürülebilir seçimler için öneriler alın.</p>
+            </article>
+            <article class="card reveal">
+              <div class="icon">📊</div>
+              <h3 data-i18n="features.analytics.title">Analitik</h3>
+              <p data-i18n="features.analytics.desc">Günlük/haftalık/aylık eğilimler ve hedeflerle ilerlemenizi takip edin.</p>
+            </article>
+            <article class="card reveal">
+              <div class="icon">🎯</div>
+              <h3 data-i18n="features.gamification.title">Oyunlaştırma</h3>
+              <p data-i18n="features.gamification.desc">Başarımlar, hedefler ve rozetlerle motivasyonunuzu yüksek tutun.</p>
+            </article>
+            <article class="card reveal">
+              <div class="icon">🧩</div>
+              <h3 data-i18n="features.integrations.title">Entegrasyonlar</h3>
+              <p data-i18n="features.integrations.desc">Ana ekran widget'ları, Siri/CarPlay ve yerel bildirim desteği.</p>
+            </article>
+          </div>
         </div>
       </section>
 
       <section id="screens" class="section">
-        <h2 data-i18n="screens.title">Ekran Görüntüleri</h2>
-        <div class="screens-grid">
-          <img src="/assets/screen-1.png" alt="Dashboard" />
-          <img src="/assets/screen-2.png" alt="Ulaşım kaydı" />
-          <img src="/assets/screen-3.png" alt="Analitik" />
-          <img src="/assets/screen-4.png" alt="Başarımlar" />
+        <div class="container">
+          <h2 class="reveal" data-i18n="screens.title">Ekran Görüntüleri</h2>
+          <div class="screens-grid">
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-1.png" alt="Dashboard" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-2.png" alt="Ulaşım kaydı" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-3.png" alt="Analitik" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-4.png" alt="Başarımlar" /></div></div>
+          </div>
         </div>
       </section>
 
