@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Basın Kiti — Carbon Step</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="/"><img src="/assets/logo.png" alt="Carbon Step" height="32" /><span>Carbon Step</span></a>
+    <div style="display:flex; gap:8px; align-items:center">
+      <button id="theme-toggle" class="btn ghost" aria-label="Tema değiştir">☾</button>
+      <button id="lang-toggle" class="btn ghost" aria-label="Change language">EN</button>
+    </div>
+  </header>
+  <main class="section container">
+    <h1>Basın Kiti</h1>
+    <p>Logolar, ekran görüntüleri ve kısa tanıtım metinleri.</p>
+    <div class="grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <a class="card" href="/assets/logo.png" download>
+        <img src="/assets/logo.png" alt="Logo" />
+      </a>
+      <a class="card" href="/assets/og-cover.png" download>
+        <img src="/assets/og-cover.png" alt="Kapak görüntüsü" />
+      </a>
+    </div>
+    <h2>Hakkında</h2>
+    <p>Carbon Step, kişisel karbon ayak izinizi takip etmenizi ve azaltmanızı sağlayan iOS/Android uygulamasıdır. Ulaşım, enerji, gıda ve alışveriş kayıtları; hedefler, analitikler ve entegrasyonlarla desteklenir.</p>
+    <p>İletişim: <a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></p>
+  </main>
+  <footer class="site-footer"><div class="footer-row">© <span id="year"></span> Carbon Step</div></footer>
+  <script src="/script.js" defer></script>
+</body>
+</html>

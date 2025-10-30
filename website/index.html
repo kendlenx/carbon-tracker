@@ -34,6 +34,20 @@
       "url": "https://carbonstepapp.com/"
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"Is the app free?","acceptedAnswer":{"@type":"Answer","text":"Core features are free. Optional support packs may be added later for advanced features."}},
+        {"@type":"Question","name":"Is my data safe?","acceptedAnswer":{"@type":"Answer","text":"Your data is stored locally and can optionally sync to the cloud. We comply with our privacy policy."}},
+        {"@type":"Question","name":"How does sync work?","acceptedAnswer":{"@type":"Answer","text":"With optional sign-in, your logs sync across devices. Offline logging works and reconciles when back online."}},
+        {"@type":"Question","name":"Do you support Widgets, Siri and CarPlay?","acceptedAnswer":{"@type":"Answer","text":"Yes. Home widgets provide quick access; with Siri/CarPlay you can log hands‑free."}},
+        {"@type":"Question","name":"Can I export my data?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use CSV/JSON export options in Settings."}},
+        {"@type":"Question","name":"How do I set goals?","acceptedAnswer":{"@type":"Answer","text":"From Analytics set weekly/monthly goals and track via progress bars and notifications."}}
+      ]
+    }
+    </script>
   </head>
   <body>
     <header class="site-header">
@@ -127,6 +141,46 @@
         </div>
       </section>
 
+      <section id="impact" class="section impact">
+        <div class="container">
+          <h2 class="reveal" data-i18n="impact.title">Topluluk etkisi</h2>
+          <div class="stats-grid">
+            <div class="stat reveal">
+              <div class="num counter" data-target="125000">0</div>
+              <div class="label" data-i18n="impact.stat1">Bu ay kaydedilen kg CO₂e</div>
+            </div>
+            <div class="stat reveal">
+              <div class="num counter" data-target="8420">0</div>
+              <div class="label" data-i18n="impact.stat2">Toplu taşıma yolculuğu</div>
+            </div>
+            <div class="stat reveal">
+              <div class="num counter" data-target="3760">0</div>
+              <div class="label" data-i18n="impact.stat3">Ağaç eşdeğeri tasarruf</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="testimonials" class="section testimonials">
+        <div class="container">
+          <h2 class="reveal" data-i18n="testimonials.title">Kullanıcı yorumları</h2>
+          <div class="grid">
+            <article class="card reveal">
+              <p class="quote" data-i18n="testimonials.q1">“Günlük ulaşımımı kaydetmek çok hızlı, hedefler sayesinde azaltıyorum.”</p>
+              <div class="author">— Aylin</div>
+            </article>
+            <article class="card reveal">
+              <p class="quote" data-i18n="testimonials.q2">“Widget ve bildirimlerle alışkanlık oldu, aylık emisyonum düştü.”</p>
+              <div class="author">— Mert</div>
+            </article>
+            <article class="card reveal">
+              <p class="quote" data-i18n="testimonials.q3">“Analitik ekranındaki içgörüler harika; yemek tercihlerimi değiştirdim.”</p>
+              <div class="author">— Deniz</div>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section id="faq" class="section faq">
         <div class="container">
           <h2 class="reveal" data-i18n="faq.title">Sıkça Sorulan Sorular</h2>
@@ -154,6 +208,20 @@
             <summary data-i18n="faq6.q">Hedefleri nasıl ayarlarım?</summary>
             <p data-i18n="faq6.a">Analitik ekranından aylık/haftalık hedef belirleyebilir, ilerleme çubukları ve bildirimlerle takibini yapabilirsiniz.</p>
           </details>
+        </div>
+      </section>
+
+      <section id="newsletter" class="section contact">
+        <div class="container">
+          <h2 class="reveal" data-i18n="newsletter.title">Güncellemeleri alın</h2>
+          <form name="newsletter" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="reveal" style="max-width:520px">
+            <input type="hidden" name="form-name" value="newsletter" />
+            <p class="hidden"><label>Don’t fill this out if you’re human: <input name="bot-field" /></label></p>
+            <div class="form-row" style="display:flex;gap:10px">
+              <input type="email" name="email" required data-i18n-placeholder="newsletter.placeholder" placeholder="E-postanızı girin" style="flex:1" />
+              <button class="btn primary" type="submit" data-i18n="newsletter.submit">Abone ol</button>
+            </div>
+          </form>
         </div>
       </section>
 
@@ -185,7 +253,7 @@
         <span>© <span id="year"></span> Carbon Step</span>
         <nav>
           <a href="/privacy.html" data-i18n="footer.privacy">Gizlilik</a>
-          <a href="#" rel="nofollow" data-i18n="footer.press">Basın Kiti</a>
+          <a href="/press.html" rel="nofollow" data-i18n="footer.press">Basın Kiti</a>
         </nav>
       </div>
     </footer>

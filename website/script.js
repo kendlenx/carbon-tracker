@@ -14,7 +14,7 @@ const io = new IntersectionObserver((entries)=>{
     }
   })
 },{threshold:.12, rootMargin:'0px 0px -10% 0px'})
-;[...document.querySelectorAll('.reveal')].forEach(el=>io.observe(el))
+;[...document.querySelectorAll('.reveal')].forEach((el,i)=>{ el.style.transitionDelay = (i*0.05)+'s'; io.observe(el) })
 
 // Theme
 const themeSaved = localStorage.getItem('theme') || 'dark'
@@ -28,6 +28,54 @@ if(themeBtn){
     document.documentElement.setAttribute('data-theme', next)
     localStorage.setItem('theme', next)
     setThemeIcon(next)
+  })
+}
+
+// Parallax (reduced motion aware)
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+if(!prefersReduced){
+  let ticking=false
+  const onScroll=()=>{
+    if(ticking) return; ticking=true
+    requestAnimationFrame(()=>{
+      const y=window.scrollY||0
+      const blob=document.querySelector('.hero-blob')
+      const media=document.querySelector('.hero-media')
+      if(blob) blob.style.transform = `translateY(${y*0.04}px)`
+      if(media) media.style.transform = `translateY(${Math.min(16,y*0.02)}px)`
+      ticking=false
+    })
+  }
+  window.addEventListener('scroll',onScroll,{passive:true})
+}
+
+// Counters
+function animateCounter(el){
+  const target = parseInt(el.getAttribute('data-target')||'0',10)
+  let start = 0
+  const dur = 1200
+  const t0 = performance.now()
+  const step = (t)=>{
+    const p = Math.min(1, (t - t0)/dur)
+    const val = Math.floor(start + (target - start) * (0.5 - Math.cos(Math.PI*p)/2))
+    el.textContent = val.toLocaleString()
+    if(p<1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+[...document.querySelectorAll('.counter')].forEach(c=>{
+  io.observe(c)
+})
+
+// Extend IO to trigger counters when entering
+const oldCallback = io.callback
+io.callback = (entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in')
+      if(e.target.classList.contains('counter')) animateCounter(e.target)
+      io.unobserve(e.target)
+    }
   })
 }
 
@@ -53,7 +101,10 @@ const dict = {
     'faq5.q':'Verilerimi dışa aktarabilir miyim?','faq5.a':'Evet. Ayarlar bölümünden CSV/JSON dışa aktarma seçeneklerini kullanabilirsiniz.',
     'faq6.q':'Hedefleri nasıl ayarlarım?','faq6.a':'Analitik ekranından aylık/haftalık hedef belirleyebilir, ilerleme çubukları ve bildirimlerle takibini yapabilirsiniz.',
     'contact.title':'Bize Ulaşın','contact.name':'Ad Soyad','contact.email':'E-posta','contact.message':'Mesaj','contact.submit':'Gönder','contact.alt':'Veya:',
-    'footer.privacy':'Gizlilik','footer.press':'Basın Kiti'
+'footer.privacy':'Gizlilik','footer.press':'Basın Kiti',
+    'impact.title':'Topluluk etkisi','impact.stat1':'Bu ay kaydedilen kg CO₂e','impact.stat2':'Toplu taşıma yolculuğu','impact.stat3':'Ağaç eşdeğeri tasarruf',
+    'testimonials.title':'Kullanıcı yorumları','testimonials.q1':'“Günlük ulaşımımı kaydetmek çok hızlı, hedefler sayesinde azaltıyorum.”','testimonials.q2':'“Widget ve bildirimlerle alışkanlık oldu, aylık emisyonum düştü.”','testimonials.q3':'“Analitik ekranındaki içgörüler harika; yemek tercihlerimi değiştirdim.”',
+    'newsletter.title':'Güncellemeleri alın','newsletter.placeholder':'E-postanızı girin','newsletter.submit':'Abone ol'
   },
   en: {
     'nav.features':'Features','nav.screens':'Screens','nav.faq':'FAQ','nav.contact':'Contact',
@@ -75,7 +126,10 @@ const dict = {
     'faq5.q':'Can I export my data?','faq5.a':'Yes. Use CSV/JSON export options in Settings.',
     'faq6.q':'How do I set goals?','faq6.a':'From Analytics set weekly/monthly goals and track via progress bars and notifications.',
     'contact.title':'Contact Us','contact.name':'Name','contact.email':'Email','contact.message':'Message','contact.submit':'Send','contact.alt':'Or:',
-    'footer.privacy':'Privacy','footer.press':'Press Kit'
+'footer.privacy':'Privacy','footer.press':'Press Kit',
+    'impact.title':'Community impact','impact.stat1':'kg CO₂e logged this month','impact.stat2':'Public transit trips','impact.stat3':'Trees saved equivalent',
+    'testimonials.title':'What users say','testimonials.q1':'“Logging daily transport is super fast, goals help me reduce.”','testimonials.q2':'“With widgets and notifications it became a habit; my monthly emissions dropped.”','testimonials.q3':'“Insights are great; I changed my dietary choices.”',
+    'newsletter.title':'Get updates','newsletter.placeholder':'Enter your email','newsletter.submit':'Subscribe'
   }
 }
 
@@ -85,6 +139,10 @@ function applyI18n(){
   $$('[data-i18n]').forEach(el=>{
     const key = el.getAttribute('data-i18n')
     if(dict[lang] && dict[lang][key]) el.textContent = dict[lang][key]
+  })
+  $$('[data-i18n-placeholder]').forEach(el=>{
+    const key = el.getAttribute('data-i18n-placeholder')
+    if(dict[lang] && dict[lang][key]) el.setAttribute('placeholder', dict[lang][key])
   })
   document.documentElement.lang = lang
   const toggle = document.getElementById('lang-toggle')
