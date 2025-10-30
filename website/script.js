@@ -16,6 +16,21 @@ const io = new IntersectionObserver((entries)=>{
 },{threshold:.12, rootMargin:'0px 0px -10% 0px'})
 ;[...document.querySelectorAll('.reveal')].forEach(el=>io.observe(el))
 
+// Theme
+const themeSaved = localStorage.getItem('theme') || 'dark'
+document.documentElement.setAttribute('data-theme', themeSaved)
+const themeBtn = document.getElementById('theme-toggle')
+const setThemeIcon = (t)=>{ if(!themeBtn) return; themeBtn.textContent = t==='dark' ? '☾' : '☀︎' }
+setThemeIcon(themeSaved)
+if(themeBtn){
+  themeBtn.addEventListener('click',()=>{
+    const next = (document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark'
+    document.documentElement.setAttribute('data-theme', next)
+    localStorage.setItem('theme', next)
+    setThemeIcon(next)
+  })
+}
+
 // i18n
 const dict = {
   tr: {
