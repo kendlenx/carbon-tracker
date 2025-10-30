@@ -38,6 +38,13 @@ a{color:inherit;text-decoration:none}
 .btn.primary:hover{transform:translateY(-1px);box-shadow:0 14px 34px rgba(34,197,94,.32)}
 .btn.dark{background:var(--bg-soft)}
 .btn.ghost{background:transparent}
+/* Header visibility fixes */
+.site-header .logo span{color:var(--text)}
+.site-header .nav a{color:var(--text);opacity:.95}
+.site-header .nav a:hover{opacity:1}
+.site-header .btn.ghost{color:var(--text);border-color:rgba(255,255,255,.14)}
+:root[data-theme="light"] .site-header .btn.ghost{border-color:#e2ebe6;color:var(--text)}
+
 .note{color:var(--muted);margin-top:8px}
 .lead{font-size:1.2rem;color:var(--muted)}
 .hero{position:relative}
@@ -58,6 +65,8 @@ a{color:inherit;text-decoration:none}
 .contact form{max-width:560px}
 .form-row{display:flex;flex-direction:column;gap:6px;margin:10px 0}
 input,textarea{background:#0e1411;border:1px solid var(--border);color:var(--text);padding:12px;border-radius:12px}
+:root[data-theme="light"] input, :root[data-theme="light"] textarea{background:#ffffff;border-color:#e2ebe6;color:#0b110f}
+:root[data-theme="light"] input::placeholder, :root[data-theme="light"] textarea::placeholder{color:#6b7d75}
 .small{font-size:.9rem;color:var(--muted)}
 .site-footer{padding:30px 20px;border-top:1px solid var(--border);background:var(--bg-soft)}
 .footer-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
