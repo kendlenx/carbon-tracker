@@ -8,10 +8,11 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="logo" href="/"><img src="/assets/logo.png" alt="Carbon Step" height="32" /><span>Carbon Step</span></a>
-    <div style="display:flex; gap:8px; align-items:center">
-      <button id="theme-toggle" class="btn ghost" aria-label="Tema değiştir">☾</button>
-      <button id="lang-toggle" class="btn ghost" aria-label="Change language">EN</button>
+    <div class="header-inner container">
+      <a class="logo" href="/"><img src="/assets/logo.png" alt="Carbon Step" height="32" /><span>Carbon Step</span></a>
+      <div class="header-ctas">
+        <button id="lang-toggle" class="btn ghost" aria-label="Change language">🇹🇷</button>
+      </div>
     </div>
   </header>
   <main class="section container">
@@ -32,7 +33,42 @@
       <li>Harici entegrasyonlar</li>
     </ul>
   </main>
-  <footer class="site-footer"><div class="footer-row">© <span id="year"></span> Carbon Step</div></footer>
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="f-brand">
+        <div class="brand-row">
+          <img src="/assets/logo.png" alt="Carbon Step" height="28" />
+          <span>Carbon Step</span>
+        </div>
+        <p class="small">Karbon ayak izinizi takip edin ve azaltın.</p>
+        <div class="socials">
+          <a href="https://github.com/kendlenx" target="_blank" rel="noopener" aria-label="GitHub" class="social">GitHub</a>
+          <a href="https://instagram.com/carbonsteppapp" target="_blank" rel="noopener" aria-label="Instagram" class="social">Instagram</a>
+        </div>
+      </div>
+      <div class="f-links">
+        <h4>Bağlantılar</h4>
+        <ul>
+          <li><a href="/privacy.html" data-i18n="footer.privacy">Gizlilik</a></li>
+          <li><a href="/terms.html" data-i18n="footer.terms">Kullanım Şartları</a></li>
+          <li><a href="/accessibility.html" data-i18n="footer.a11y">Erişilebilirlik</a></li>
+        </ul>
+      </div>
+      <div class="f-more">
+        <h4>Daha Fazla</h4>
+        <ul>
+          <li><a href="/press.html" rel="nofollow" data-i18n="footer.press">Basın Kiti</a></li>
+          <li><a href="/roadmap.html" data-i18n="footer.roadmap">Yol Haritası</a></li>
+          <li><a href="#contact" data-i18n="nav.contact">İletişim</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© <span id="year"></span> Carbon Step</span>
+      </div>
+    </div>
+  </footer>
   <script src="/script.js" defer></script>
 </body>
 </html>
