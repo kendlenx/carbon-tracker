@@ -10,6 +10,9 @@ project 'Runner', {
   'Release' => :release,
 }
 
+# Silence all CocoaPods warnings from third-party pods
+inhibit_all_warnings!
+
 # Ensure pods expose modules when statically linked
 use_modular_headers!
 def flutter_root
@@ -42,5 +45,46 @@ end
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    # Force all pods to use iOS 15.0+ to avoid mixed deployment target build errors
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+      # Build all pods with Swift 5.9 to avoid Swift 6 breaking changes
+      config.build_settings['SWIFT_VERSION'] = '5.9'
+      # Relax strict concurrency checks for third-party pods not yet updated
+      config.build_settings['SWIFT_STRICT_CONCURRENCY'] = 'minimal'
+      # Do not treat warnings as errors and suppress them
+      config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+      config.build_settings['GCC_WARN_INHIBIT_ALL_WARNINGS'] = 'YES'
+      config.build_settings['SWIFT_SUPPRESS_WARNINGS'] = 'YES'
+    end
+
+    # Add dummy outputs to shell script phases without outputs to silence Xcode notes
+    target.shell_script_build_phases.each do |phase|
+      begin
+        outputs = phase.output_paths || []
+        if outputs.empty?
+          safe_name = target.name.to_s.gsub(/\W+/, '_') + '-' + phase.name.to_s.gsub(/\W+/, '_')
+          stamp = "$(DERIVED_FILE_DIR)/#{safe_name}.stamp"
+          phase.output_paths = [stamp]
+          phase.shell_script = "#{phase.shell_script}\n# stamp output to satisfy Xcode script outputs\nif [ -n \"$SCRIPT_OUTPUT_FILE_0\" ]; then\n  echo OK > \"$SCRIPT_OUTPUT_FILE_0\"\nfi\n"
+        end
+      rescue
+        # ignore phases we can't modify
+      end
+    end
+
+    # Workaround for pods shipping PrivacyInfo.xcprivacy without correct build phase
+    if target.name.include?('geocoding_ios')
+      target.build_configurations.each do |config|
+        excluded = config.build_settings['EXCLUDED_SOURCE_FILE_NAMES']
+        value = 'PrivacyInfo.xcprivacy'
+        if excluded.nil? || excluded.empty?
+          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = value
+        elsif !excluded.include?(value)
+          config.build_settings['EXCLUDED_SOURCE_FILE_NAMES'] = excluded + ' ' + value
+        end
+      end
+    end
   end
 end

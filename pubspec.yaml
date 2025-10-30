@@ -55,14 +55,14 @@ dependencies:
   
   # Smart Notifications & Reminders
   flutter_local_notifications: ^17.2.3
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
   
   # Location Services & GPS
-  geolocator: ^13.0.1
-  geocoding: ^3.0.0
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
   
   # Device Integration
-  device_info_plus: ^10.1.2
+  device_info_plus: ^12.2.0
   package_info_plus: ^8.0.2
   
   # Speech & Voice
@@ -70,7 +70,7 @@ dependencies:
   flutter_tts: ^4.1.0
   
   # Home Screen Widgets
-  home_widget: ^0.6.0
+  home_widget: ^0.8.1
   
   # Connectivity & Network
   connectivity_plus: ^6.0.5
@@ -86,7 +86,7 @@ dependencies:
   cross_file: ^0.3.4+2
   
   # File Operations
-  file_picker: ^8.1.2
+  file_picker: ^10.3.3
   path_provider: ^2.1.4
   
   # Image & Camera
@@ -99,13 +99,13 @@ dependencies:
   csv: ^6.0.0
   
   # Health & Fitness Integration
-  health: ^13.1.4
+  health: ^13.2.1
   
   # HTTP requests for integrations
   http: ^1.2.0
   
   # Google Mobile Ads - AdMob Integration
-  google_mobile_ads: ^5.1.0
+  google_mobile_ads: ^6.0.0
   
   # Testing dependencies  
   mockito: ^5.4.4
@@ -135,6 +135,12 @@ dev_dependencies:
   # App icon and splash screen
   flutter_launcher_icons: ^0.14.1
   flutter_native_splash: ^2.4.1
+
+dependency_overrides:
+  # Pin WebView plugin to an existing version and use our local patch
+  webview_flutter_wkwebview: 3.23.1
+  # Optionally keep webview_flutter in sync if pulled transitively
+  webview_flutter: ^4.10.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -182,6 +188,7 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
+  remove_alpha_ios: true
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
   web:
