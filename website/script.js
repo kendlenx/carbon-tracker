@@ -93,7 +93,7 @@ const dict = {
     'contact.title':'Bize Ulaşın','contact.name':'Ad Soyad','contact.email':'E-posta','contact.message':'Mesaj','contact.submit':'Gönder','contact.alt':'Veya:',
 'footer.privacy':'Gizlilik','footer.press':'Basın Kiti',
 'impact.title':'Topluluk etkisi','impact.stat1':'Bu ay kaydedilen kg CO₂e','impact.stat2':'Toplu taşıma yolculuğu','impact.stat3':'Ağaç eşdeğeri tasarruf',
-    'shortcuts.title':'Kısayollar ve entegrasyonlar','shortcuts.siri':'“Hey Siri, işe gidişimi kaydet.”','shortcuts.carplay':'Direksiyon başında eller serbest kayıt.','shortcuts.widget':'Ana ekrandan tek dokunuşla ekleme.',
+'shortcuts.title':'Kısayollar ve entegrasyonlar','shortcuts.blurb':'Siri, CarPlay ve widget\'larla tek dokunuşla kayıt ve hızlı erişim.','shortcuts.siri':'“Hey Siri, işe gidişimi kaydet.”','shortcuts.carplay':'Direksiyon başında eller serbest kayıt.','shortcuts.widget':'Ana ekrandan tek dokunuşla ekleme.','shortcuts.cta':'Kur','shortcuts.learn':'Daha fazla','shortcuts.manage':'Yönet',
     'testimonials.title':'Kullanıcı yorumları','testimonials.q1':'“Günlük ulaşımımı kaydetmek çok hızlı, hedefler sayesinde azaltıyorum.”','testimonials.q2':'“Widget ve bildirimlerle alışkanlık oldu, aylık emisyonum düştü.”','testimonials.q3':'“Analitik ekranındaki içgörüler harika; yemek tercihlerimi değiştirdim.”',
     'newsletter.title':'Güncellemeleri alın','newsletter.placeholder':'E-postanızı girin','newsletter.submit':'Abone ol'
   },
@@ -123,7 +123,7 @@ const dict = {
     'contact.title':'Contact Us','contact.name':'Name','contact.email':'Email','contact.message':'Message','contact.submit':'Send','contact.alt':'Or:',
 'footer.privacy':'Privacy','footer.press':'Press Kit','footer.terms':'Terms','footer.a11y':'Accessibility','footer.roadmap':'Roadmap',
 'impact.title':'Community impact','impact.stat1':'kg CO₂e logged this month','impact.stat2':'Public transit trips','impact.stat3':'Trees saved equivalent',
-    'shortcuts.title':'Shortcuts and integrations','shortcuts.siri':'“Hey Siri, log my commute.”','shortcuts.carplay':'Hands‑free logging while driving.','shortcuts.widget':'One‑tap from Home screen.',
+'shortcuts.title':'Shortcuts and integrations','shortcuts.blurb':'One‑tap logging and quick access with Siri, CarPlay and widgets.','shortcuts.siri':'“Hey Siri, log my commute.”','shortcuts.carplay':'Hands‑free logging while driving.','shortcuts.widget':'One‑tap from Home screen.','shortcuts.cta':'Set up','shortcuts.learn':'Learn more','shortcuts.manage':'Manage',
     'testimonials.title':'What users say','testimonials.q1':'“Logging daily transport is super fast, goals help me reduce.”','testimonials.q2':'“With widgets and notifications it became a habit; my monthly emissions dropped.”','testimonials.q3':'“Insights are great; I changed my dietary choices.”',
     'newsletter.title':'Get updates','newsletter.placeholder':'Enter your email','newsletter.submit':'Subscribe'
   }
