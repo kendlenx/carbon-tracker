@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teşekkürler — Carbon Step</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner container">
+      <a class="logo" href="/"><img src="/assets/logo.png" alt="Carbon Step" height="28" /><span>Carbon Step</span></a>
+    </div>
+  </header>
+  <main class="section container">
+    <div class="card reveal">
+      <h1>Teşekkürler!</h1>
+      <p id="msg">Talebiniz alındı.</p>
+      <p class="small"><a href="/">Ana sayfaya dön</a></p>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const from = params.get('from');
+    const el = document.getElementById('msg');
+    if(from === 'newsletter') el.textContent = 'Bülten aboneliğiniz alındı.';
+    else if(from === 'contact') el.textContent = 'Mesajınız alındı. En kısa sürede döneceğiz.';
+  </script>
+</body>
+</html>

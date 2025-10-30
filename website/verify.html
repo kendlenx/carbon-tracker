@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>E-posta Doğrulama — Carbon Step</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner container">
+      <a class="logo" href="/"><img src="/assets/logo.png" alt="Carbon Step" height="28" /><span>Carbon Step</span></a>
+    </div>
+  </header>
+  <main class="section container">
+    <div class="card reveal">
+      <h1>E-posta Doğrulama</h1>
+      <p id="verify-text">E-postanızı doğrulamak için linke tıklayın.</p>
+      <p class="small">Sorun yaşıyorsanız: <a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></p>
+    </div>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const status = params.get('status');
+    const email = params.get('email');
+    const el = document.getElementById('verify-text');
+    if(status === 'ok'){
+      el.textContent = (email? email + ' doğrulandı.' : 'E-posta adresiniz doğrulandı.');
+    } else if(status === 'sent') {
+      el.textContent = (email? email + ' adresine doğrulama e-postası gönderildi.' : 'Doğrulama e-postası gönderildi.');
+    }
+  </script>
+</body>
+</html>
