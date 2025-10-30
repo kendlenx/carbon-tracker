@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://carbonstepapp.com/sitemap.xml

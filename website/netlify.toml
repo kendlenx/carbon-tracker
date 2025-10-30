@@ -1,0 +1,27 @@
+[build]
+  # This file lives under the Netlify Base directory (website/), so publish the current dir
+  publish = "."
+
+# Force HTTPS for apex
+[[redirects]]
+  from = "http://carbonstepapp.com/*"
+  to = "https://carbonstepapp.com/:splat"
+  status = 301
+  force = true
+
+# Pretty URLs
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; font-src 'self' data:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
