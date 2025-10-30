@@ -149,45 +149,32 @@ function showToast(msg){
   setTimeout(()=>{ t.classList.remove('show') }, 3000)
 }
 
-// Newsletter AJAX submit
+// Generic AJAX submit for all Netlify forms (newsletter, contact, future ones)
 (function(){
-  const form = document.querySelector('form[name="newsletter"]')
-  if(!form) return
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault()
-    try{
-      const data = new FormData(form)
-      const body = new URLSearchParams()
-      for(const [k,v] of data.entries()){ body.append(k, v) }
-      const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded', 'Accept':'text/html,application/xhtml+xml'}, body, redirect:'follow' })
-      if(res.status >= 400) throw new Error('netlify')
-      form.reset()
-      showToast(lang==='tr' ? 'Teşekkürler! Abone oldunuz.' : 'Thanks! You are subscribed.')
-      try{ if(window.plausible){ window.plausible('newsletter_subscribed') } }catch(_){ }
-    }catch(err){
-      showToast(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.')
-    }
-  })
-})()
-
-// Contact AJAX submit
-(function(){
-  const form = document.querySelector('form[name="contact"]')
-  if(!form) return
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault()
-    try{
-      const data = new FormData(form)
-      const body = new URLSearchParams()
-      for(const [k,v] of data.entries()){ body.append(k, v) }
-      const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded', 'Accept':'text/html,application/xhtml+xml'}, body, redirect:'follow' })
-      if(res.status >= 400) throw new Error('netlify')
-      form.reset()
-      showToast(lang==='tr' ? 'Teşekkürler! Mesajınızı aldık.' : 'Thanks! We received your message.')
-      try{ if(window.plausible){ window.plausible('contact_submitted') } }catch(_){ }
-    }catch(err){
-      showToast(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.')
-    }
+  const forms = $$('form[data-netlify]')
+  forms.forEach((form)=>{
+    if(form.dataset.ajaxBound==='1') return
+    form.dataset.ajaxBound='1'
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault()
+      try{
+        const data = new FormData(form)
+        const body = new URLSearchParams()
+        for(const [k,v] of data.entries()){ body.append(k, v) }
+        const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded', 'Accept':'text/html,application/xhtml+xml'}, body, redirect:'follow' })
+        if(res.status >= 400) throw new Error('netlify')
+        form.reset()
+        const name = (form.getAttribute('name')||'').toLowerCase()
+        let msg = '✓'
+        if(name==='newsletter') msg = lang==='tr' ? 'Teşekkürler! Abone oldunuz.' : 'Thanks! You are subscribed.'
+        else if(name==='contact') msg = lang==='tr' ? 'Teşekkürler! Mesajınızı aldık.' : 'Thanks! We received your message.'
+        else msg = lang==='tr' ? 'Gönderildi.' : 'Submitted.'
+        showToast(msg)
+        try{ if(window.plausible){ window.plausible(`form_${name||'generic'}_submitted`) } }catch(_){ }
+      }catch(err){
+        showToast(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.')
+      }
+    })
   })
 })()
 
