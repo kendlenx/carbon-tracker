@@ -116,6 +116,13 @@ function getParam(name){
   const m = new URLSearchParams(location.search).get(name)
   return m && m.trim() ? m : null
 }
+function setUrlLangParam(current){
+  try{
+    const url = new URL(location.href)
+    url.searchParams.set('lang', current)
+    history.replaceState({}, '', url)
+  }catch(_){}
+}
 const urlLang = getParam('lang')
 const saved = localStorage.getItem('lang') || (navigator.language?.startsWith('tr')?'tr':'en')
 let lang = (urlLang==='tr' || urlLang==='en') ? urlLang : saved
@@ -129,6 +136,7 @@ function applyI18n(){
     if(dict[lang] && dict[lang][key]) el.setAttribute('placeholder', dict[lang][key])
   })
   document.documentElement.lang = lang
+  setUrlLangParam(lang)
   const toggle = document.getElementById('lang-toggle')
   if(toggle) toggle.textContent = lang==='tr'?'🇬🇧':'🇹🇷'
 }
@@ -151,5 +159,6 @@ if(langToggle){
     lang = lang==='tr'?'en':'tr'
     localStorage.setItem('lang',lang)
     applyI18n()
+    if(location.hash){ const id = location.hash; location.hash=''; location.hash=id }
   })
 }
