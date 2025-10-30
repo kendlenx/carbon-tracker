@@ -197,7 +197,7 @@
           <h2 class="reveal" data-i18n="impact.title">Topluluk etkisi</h2>
           <div class="stats-grid">
             <div class="stat reveal">
-              <div class="num counter" data-target="125432.7" data-decimals="1">0</div>
+<div class="num counter" data-target="124.532" data-decimals="3">0</div>
               <div class="label" data-i18n="impact.stat1">Bu ay kaydedilen kg CO₂e</div>
             </div>
             <div class="stat reveal">
@@ -215,10 +215,28 @@
       <section id="shortcuts" class="section shortcuts">
         <div class="container">
           <h2 class="reveal" data-i18n="shortcuts.title">Kısayollar ve entegrasyonlar</h2>
-          <div class="grid shortcuts-grid">
-            <article class="card reveal"><h3>Siri</h3><p data-i18n="shortcuts.siri">“Hey Siri, işe gidişimi kaydet.”</p></article>
-            <article class="card reveal"><h3>CarPlay</h3><p data-i18n="shortcuts.carplay">Direksiyon başında eller serbest kayıt.</p></article>
-            <article class="card reveal"><h3>Widget</h3><p data-i18n="shortcuts.widget">Ana ekrandan tek dokunuşla ekleme.</p></article>
+          <div class="shortcuts-list">
+            <article class="shortcut reveal">
+              <div class="s-icon" aria-hidden="true">🗣️</div>
+              <div class="s-body">
+                <h3>Siri</h3>
+                <p data-i18n="shortcuts.siri">“Hey Siri, işe gidişimi kaydet.”</p>
+              </div>
+            </article>
+            <article class="shortcut reveal">
+              <div class="s-icon" aria-hidden="true">🚗</div>
+              <div class="s-body">
+                <h3>CarPlay</h3>
+                <p data-i18n="shortcuts.carplay">Direksiyon başında eller serbest kayıt.</p>
+              </div>
+            </article>
+            <article class="shortcut reveal">
+              <div class="s-icon" aria-hidden="true">📱</div>
+              <div class="s-body">
+                <h3>Widget</h3>
+                <p data-i18n="shortcuts.widget">Ana ekrandan tek dokunuşla ekleme.</p>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -227,16 +245,16 @@
         <div class="container">
           <h2 class="reveal" data-i18n="testimonials.title">Kullanıcı yorumları</h2>
           <div class="grid">
-            <article class="card reveal">
-              <p class="quote" data-i18n="testimonials.q1">“Günlük ulaşımımı kaydetmek çok hızlı, hedefler sayesinde azaltıyorum.”</p>
+            <article class="quote-card reveal">
+              <blockquote class="quote" data-i18n="testimonials.q1">“Günlük ulaşımımı kaydetmek çok hızlı, hedefler sayesinde azaltıyorum.”</blockquote>
               <div class="author">— Aylin</div>
             </article>
-            <article class="card reveal">
-              <p class="quote" data-i18n="testimonials.q2">“Widget ve bildirimlerle alışkanlık oldu, aylık emisyonum düştü.”</p>
+            <article class="quote-card reveal">
+              <blockquote class="quote" data-i18n="testimonials.q2">“Widget ve bildirimlerle alışkanlık oldu, aylık emisyonum düştü.”</blockquote>
               <div class="author">— Mert</div>
             </article>
-            <article class="card reveal">
-              <p class="quote" data-i18n="testimonials.q3">“Analitik ekranındaki içgörüler harika; yemek tercihlerimi değiştirdim.”</p>
+            <article class="quote-card reveal">
+              <blockquote class="quote" data-i18n="testimonials.q3">“Analitik ekranındaki içgörüler harika; yemek tercihlerimi değiştirdim.”</blockquote>
               <div class="author">— Deniz</div>
             </article>
           </div>
@@ -290,41 +308,81 @@
       <section id="contact" class="section contact">
         <div class="container">
           <h2 class="reveal" data-i18n="contact.title">Bize Ulaşın</h2>
-          <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="reveal">
-            <input type="hidden" name="form-name" value="contact" />
-            <p class="hidden"><label>Don’t fill this out if you’re human: <input name="bot-field" /></label></p>
-            <div class="form-row">
-              <label data-i18n="contact.name">Ad Soyad</label>
-              <input name="name" required />
+          <div class="contact-grid">
+            <div class="contact-card reveal">
+              <form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" aria-labelledby="contact-title">
+                <input type="hidden" name="form-name" value="contact" />
+                <p class="hidden"><label>Don’t fill this out if you’re human: <input name="bot-field" /></label></p>
+                <div class="input-row">
+                  <div class="form-row">
+                    <label for="name" data-i18n="contact.name">Ad Soyad</label>
+                    <input id="name" name="name" required autocomplete="name" />
+                  </div>
+                  <div class="form-row">
+                    <label for="email" data-i18n="contact.email">E-posta</label>
+                    <input id="email" type="email" name="email" required autocomplete="email" inputmode="email" />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label for="message" data-i18n="contact.message">Mesaj</label>
+                  <textarea id="message" name="message" rows="5" required placeholder="Merhaba..." ></textarea>
+                </div>
+                <div class="actions">
+                  <button class="btn primary" type="submit" data-i18n="contact.submit">Gönder</button>
+                  <span class="small" data-i18n="contact.alt">Veya: <a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></span>
+                </div>
+              </form>
             </div>
-            <div class="form-row">
-              <label data-i18n="contact.email">E-posta</label>
-              <input type="email" name="email" required />
-            </div>
-            <div class="form-row">
-              <label data-i18n="contact.message">Mesaj</label>
-              <textarea name="message" rows="4" required></textarea>
-            </div>
-            <button class="btn primary" type="submit" data-i18n="contact.submit">Gönder</button>
-            <p class="small" data-i18n="contact.alt">Veya: <a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></p>
-          </form>
+            <aside class="contact-aside reveal" aria-label="İletişim alternatifleri">
+              <div class="aside-card">
+                <h3>Alternatifler</h3>
+                <ul>
+                  <li><a href="mailto:contact@carbonstepapp.com">contact@carbonstepapp.com</a></li>
+                  <li><a href="https://instagram.com/carbonsteppapp" target="_blank" rel="noopener">Instagram</a></li>
+                  <li><a href="https://github.com/kendlenx" target="_blank" rel="noopener">GitHub</a></li>
+                </ul>
+                <p class="small">Genelde 24 saat içinde dönüş yapıyoruz.</p>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <div class="footer-row">
-        <span>© <span id="year"></span> Carbon Step</span>
-        <nav>
-          <a href="/privacy.html" data-i18n="footer.privacy">Gizlilik</a>
-          <a href="/terms.html" data-i18n="footer.terms">Kullanım Şartları</a>
-          <a href="/accessibility.html" data-i18n="footer.a11y">Erişilebilirlik</a>
-          <a href="/press.html" rel="nofollow" data-i18n="footer.press">Basın Kiti</a>
-          <a href="/roadmap.html" data-i18n="footer.roadmap">Yol Haritası</a>
-          <span class="sep">•</span>
-          <a href="https://github.com/kendlenx" target="_blank" rel="noopener" aria-label="GitHub" class="social">GitHub</a>
-          <a href="https://instagram.com/carbonsteppapp" target="_blank" rel="noopener" aria-label="Instagram" class="social">Instagram</a>
-        </nav>
+      <div class="container footer-grid">
+        <div class="f-brand">
+          <div class="brand-row">
+            <img src="/assets/logo.png" alt="Carbon Step" height="28" />
+            <span>Carbon Step</span>
+          </div>
+          <p class="small">Karbon ayak izinizi takip edin ve azaltın.</p>
+          <div class="socials">
+            <a href="https://github.com/kendlenx" target="_blank" rel="noopener" aria-label="GitHub" class="social">GitHub</a>
+            <a href="https://instagram.com/carbonsteppapp" target="_blank" rel="noopener" aria-label="Instagram" class="social">Instagram</a>
+          </div>
+        </div>
+        <div class="f-links">
+          <h4>Bağlantılar</h4>
+          <ul>
+            <li><a href="/privacy.html" data-i18n="footer.privacy">Gizlilik</a></li>
+            <li><a href="/terms.html" data-i18n="footer.terms">Kullanım Şartları</a></li>
+            <li><a href="/accessibility.html" data-i18n="footer.a11y">Erişilebilirlik</a></li>
+          </ul>
+        </div>
+        <div class="f-more">
+          <h4>Daha Fazla</h4>
+          <ul>
+            <li><a href="/press.html" rel="nofollow" data-i18n="footer.press">Basın Kiti</a></li>
+            <li><a href="/roadmap.html" data-i18n="footer.roadmap">Yol Haritası</a></li>
+            <li><a href="#contact" data-i18n="nav.contact">İletişim</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="container">
+          <span>© <span id="year"></span> Carbon Step</span>
+        </div>
       </div>
     </footer>
 
