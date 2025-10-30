@@ -123,9 +123,7 @@ function setUrlLangParam(current){
     history.replaceState({}, '', url)
   }catch(_){}
 }
-const urlLang = getParam('lang')
-const saved = localStorage.getItem('lang') || (navigator.language?.startsWith('tr')?'tr':'en')
-let lang = (urlLang==='tr' || urlLang==='en') ? urlLang : saved
+let lang = 'tr'
 function applyI18n(){
   $$('[data-i18n]').forEach(el=>{
     const key = el.getAttribute('data-i18n')
@@ -153,12 +151,3 @@ applyI18n()
   document.body.appendChild(bar)
 })()
 
-const langToggle = document.getElementById('lang-toggle')
-if(langToggle){
-  langToggle.addEventListener('click',()=>{
-    lang = lang==='tr'?'en':'tr'
-    localStorage.setItem('lang',lang)
-    applyI18n()
-    if(location.hash){ const id = location.hash; location.hash=''; location.hash=id }
-  })
-}
