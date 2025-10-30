@@ -252,11 +252,15 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        permission.getTitle(AppLocalizations.of(context)!),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                      Expanded(
+                        child: Text(
+                          permission.getTitle(AppLocalizations.of(context)!),
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (permission.isRequired) ...[
@@ -344,11 +348,15 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
               children: [
                 Icon(Icons.privacy_tip, color: Colors.blue, size: 24),
                 const SizedBox(width: 12),
-                Text(
-                  AppLocalizations.of(context)!.translate('ui.securityPrivacy'),
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('ui.securityPrivacy'),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

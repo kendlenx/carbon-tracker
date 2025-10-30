@@ -77,7 +77,7 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.2,
+          childAspectRatio: 0.95,
               children: [
                 _buildCategoryCard(
                   title: AppLocalizations.of(context)!.transportTitle,
@@ -226,6 +226,8 @@ class _ActivitiesHubScreenState extends State<ActivitiesHubScreen> {
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
             Text(

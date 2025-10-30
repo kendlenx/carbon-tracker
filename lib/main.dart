@@ -68,19 +68,20 @@ void main() async {
     );
   };
   
+  // Also catch uncaught async errors
+  WidgetsBinding.instance.platformDispatcher.onError = (error, stack) {
+    ErrorHandlerService().recordError(error, stack, fatal: true);
+    return true;
+  };
+  
   // Create service instances without awaiting heavy initialization here
   final securityService = SecurityService();
   final firebaseService = FirebaseService();
 
-  runZonedGuarded(() {
-    runApp(CarbonTrackerApp(
-      securityService: securityService,
-      firebaseService: firebaseService,
-    ));
-  }, (error, stack) {
-    // Capture uncaught errors
-    ErrorHandlerService().recordError(error, stack, fatal: true);
-  });
+  runApp(CarbonTrackerApp(
+    securityService: securityService,
+    firebaseService: firebaseService,
+  ));
 }
 
 class CarbonTrackerApp extends StatefulWidget {
@@ -530,7 +531,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 1.1,
+                childAspectRatio: 0.95,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
@@ -605,10 +606,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: Scaffold(
+    return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
@@ -623,7 +621,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                 children: [
                   Text(
                     AppLocalizations.of(context)!.appTitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
                     ),
@@ -644,7 +642,6 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
           ],
         ),
         actions: [
-          // More options menu with all controls
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
             onSelected: (value) async {
@@ -662,7 +659,6 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   );
                   break;
                 case 'advanced_analytics':
-                  // Ensure reporting service is initialized before opening
                   await AdvancedReportingService.instance.initialize();
                   context.pushWithTransition(
                     const AnalyticsDashboardScreen(),
@@ -710,9 +706,7 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
                   children: [
                     const Icon(Icons.auto_graph, color: Colors.purple),
                     const SizedBox(width: 8),
-                    Text(
-                      AppLocalizations.of(context)!.translate('ui.advancedAnalytics'),
-                    ),
+                    Text(AppLocalizations.of(context)!.translate('ui.advancedAnalytics')),
                   ],
                 ),
               ),
@@ -733,66 +727,62 @@ class _CarbonTrackerHomeState extends State<CarbonTrackerHome> {
       body: IndexedStack(
         index: _currentIndex,
         children: [
-          // Home (Dashboard)
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _buildHomeBody(),
-          // Activities Hub
+          isLoading ? const Center(child: CircularProgressIndicator()) : _buildHomeBody(),
           const ActivitiesHubScreen(),
-          // Achievements
           const AchievementsScreen(),
-          // Goals
           const GoalsScreen(),
-          // Settings
           const SettingsScreen(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        selectedFontSize: 11,
-        unselectedFontSize: 10,
-        items: [
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.home_outlined),
-            activeIcon: const Icon(Icons.home),
-            label: AppLocalizations.of(context)!.navHome,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.add_circle_outline),
-            activeIcon: const Icon(Icons.add_circle),
-            label: AppLocalizations.of(context)!.translate('navigation.activities')
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.emoji_events_outlined),
-            activeIcon: const Icon(Icons.emoji_events),
-            label: AppLocalizations.of(context)!.navAchievements,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.flag_outlined),
-            activeIcon: const Icon(Icons.flag),
-            label: AppLocalizations.of(context)!.goalsTitle,
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.settings_outlined),
-            activeIcon: const Icon(Icons.settings),
-            label: AppLocalizations.of(context)!.navSettings,
-          ),
-        ],
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BannerAdWidget(),
+            BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              type: BottomNavigationBarType.fixed,
+              selectedFontSize: 11,
+              unselectedFontSize: 10,
+              items: [
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.home_outlined),
+                  activeIcon: const Icon(Icons.home),
+                  label: AppLocalizations.of(context)!.navHome,
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.add_circle_outline),
+                  activeIcon: const Icon(Icons.add_circle),
+                  label: AppLocalizations.of(context)!.translate('navigation.activities'),
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.emoji_events_outlined),
+                  activeIcon: const Icon(Icons.emoji_events),
+                  label: AppLocalizations.of(context)!.navAchievements,
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.flag_outlined),
+                  activeIcon: const Icon(Icons.flag),
+                  label: AppLocalizations.of(context)!.goalsTitle,
+                ),
+                BottomNavigationBarItem(
+                  icon: const Icon(Icons.settings_outlined),
+                  activeIcon: const Icon(Icons.settings),
+                  label: AppLocalizations.of(context)!.navSettings,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ), // Close Scaffold
-        ), // Close Expanded
-        // Banner ad widget at the bottom
-        const BannerAdWidget(),
-      ],
     );
   }
-
   Widget _buildCategoryCard(CategoryData category, double todayValue) {
     return MicroCard(
       onTap: () => _navigateToCategory(category),

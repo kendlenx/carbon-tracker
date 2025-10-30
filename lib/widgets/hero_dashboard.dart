@@ -233,25 +233,33 @@ class _HeroDashboardState extends State<HeroDashboard>
           
           // Mini Stats Row
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildMiniStat(
-                icon: Icons.trending_up,
-                label: AppLocalizations.of(context)!.statisticsThisWeek,
-                value: '${widget.weeklyAverage.toStringAsFixed(1)} kg',
-                color: Colors.blue,
+              Expanded(
+                child: _buildMiniStat(
+                  icon: Icons.trending_up,
+                  label: AppLocalizations.of(context)!.statisticsThisWeek,
+                  value: '${widget.weeklyAverage.toStringAsFixed(1)} kg',
+                  color: Colors.blue,
+                ),
               ),
-              _buildMiniStat(
-                icon: Icons.flag,
-                label: AppLocalizations.of(context)!.goalsTarget,
-                value: '${dailyGoal.toStringAsFixed(0)} kg',
-                color: Colors.orange,
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildMiniStat(
+                  icon: Icons.flag,
+                  label: AppLocalizations.of(context)!.goalsTarget,
+                  value: '${dailyGoal.toStringAsFixed(0)} kg',
+                  color: Colors.orange,
+                ),
               ),
-              _buildMiniStat(
-                icon: Icons.eco,
-                label: AppLocalizations.of(context)!.dashboardPerformance,
-                value: _localizedPerformanceLabel(AppLocalizations.of(context)!, comparison.performanceLevel),
-                color: comparison.performanceColor,
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildMiniStat(
+                  icon: Icons.eco,
+                  label: AppLocalizations.of(context)!.dashboardPerformance,
+                  value: _localizedPerformanceLabel(AppLocalizations.of(context)!, comparison.performanceLevel),
+                  color: comparison.performanceColor,
+                ),
               ),
             ],
           ),
@@ -289,6 +297,8 @@ class _HeroDashboardState extends State<HeroDashboard>
             fontSize: 14,
             color: color,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         Text(
           label,
@@ -296,6 +306,8 @@ class _HeroDashboardState extends State<HeroDashboard>
             fontSize: 12,
             color: Colors.grey.shade600,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );

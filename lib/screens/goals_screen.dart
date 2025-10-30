@@ -491,13 +491,17 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '${AppLocalizations.of(context)!.translate('goals.target')}: ${_dailyGoal.toStringAsFixed(0)} kg',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.grey.shade400
-                        : Colors.grey.shade600,
+                Expanded(
+                  child: Text(
+                    '${AppLocalizations.of(context)!.translate('goals.target')}: ${_dailyGoal.toStringAsFixed(0)} kg',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
@@ -546,10 +550,14 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  AppLocalizations.of(context)!.translate('ui.goalAchievements'),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    AppLocalizations.of(context)!.translate('ui.goalAchievements'),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 TextButton(
