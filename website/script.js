@@ -159,7 +159,7 @@ function showPopup(message, title){
       <h3 id="modal-title"></h3>
       <p id="modal-desc"></p>
       <div class="actions">
-        <button class="btn primary" type="button" id="modal-ok">OK</button>
+        <button class=\"btn primary\" type=\"button\" id=\"modal-ok\">${lang==='tr'?'Tamam':'OK'}</button>
       </div>
     </div>`
     document.body.appendChild(overlay)
@@ -180,34 +180,39 @@ function showPopup(message, title){
 }
 
 // Generic AJAX submit for all Netlify forms (newsletter, contact, future ones)
-(function(){
-  const forms = $$('form[data-netlify]')
-  forms.forEach((form)=>{
-    if(form.dataset.ajaxBound==='1') return
-    form.dataset.ajaxBound='1'
-    form.addEventListener('submit', async (e)=>{
-      e.preventDefault()
-      try{
-        const data = new FormData(form)
-        const body = new URLSearchParams()
-        for(const [k,v] of data.entries()){ body.append(k, v) }
-        const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded', 'Accept':'text/html,application/xhtml+xml'}, body, redirect:'follow' })
-        if(res.status >= 400) throw new Error('netlify')
-        form.reset()
-        const name = (form.getAttribute('name')||'').toLowerCase()
-        let title = lang==='tr' ? 'Başarılı' : 'Success'
-        let msg = '✓'
-        if(name==='newsletter') msg = lang==='tr' ? 'Teşekkürler! Abone oldunuz.' : 'Thanks! You are subscribed.'
-        else if(name==='contact') msg = lang==='tr' ? 'Teşekkürler! Mesajınızı aldık.' : 'Thanks! We received your message.'
-        else msg = lang==='tr' ? 'Form başarıyla gönderildi.' : 'Form submitted.'
-        showPopup(msg, title)
-        try{ if(window.plausible){ window.plausible(`form_${name||'generic'}_submitted`) } }catch(_){ }
-      }catch(err){
-        showPopup(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.', lang==='tr' ? 'Hata' : 'Error')
-      }
-    })
-  })
-})()
+async function handleNetlifySubmit(form){
+  if(form.dataset.submitting==='1') return
+  form.dataset.submitting='1'
+  try{
+    const data = new FormData(form)
+    const body = new URLSearchParams()
+    for(const [k,v] of data.entries()){ body.append(k, v) }
+    const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded', 'Accept':'text/html,application/xhtml+xml'}, body, redirect:'follow' })
+    if(res.status >= 400) throw new Error('netlify')
+    form.reset()
+    const name = (form.getAttribute('name')||'').toLowerCase()
+    let title = lang==='tr' ? 'Başarılı' : 'Success'
+    let msg = '✓'
+    if(name==='newsletter') msg = lang==='tr' ? 'Teşekkürler! Abone oldunuz.' : 'Thanks! You are subscribed.'
+    else if(name==='contact') msg = lang==='tr' ? 'Teşekkürler! Mesajınızı aldık.' : 'Thanks! We received your message.'
+    else msg = lang==='tr' ? 'Form başarıyla gönderildi.' : 'Form submitted.'
+    showPopup(msg, title)
+    try{ if(window.plausible){ window.plausible(`form_${name||'generic'}_submitted`) } }catch(_){ }
+  }catch(_){
+    showPopup(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.', lang==='tr' ? 'Hata' : 'Error')
+  }finally{
+    form.dataset.submitting='0'
+  }
+}
+// Capture submit at document level to reliably prevent navigation
+document.addEventListener('submit', (e)=>{
+  const form = e.target
+  if(form && form.matches && form.matches('form[data-netlify]')){
+    e.preventDefault()
+    e.stopImmediatePropagation()
+    handleNetlifySubmit(form)
+  }
+}, true)
 
 // Cookie banner (analytics notice)
 (function(){
