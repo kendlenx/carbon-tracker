@@ -1,5 +1,7 @@
 const $ = (s,ctx=document)=>ctx.querySelector(s)
 const $$ = (s,ctx=document)=>[...ctx.querySelectorAll(s)]
+// enable JS-specific styles
+document.documentElement.classList.add('js')
 
 // Year
 const yearEl = document.getElementById('year');
@@ -126,10 +128,6 @@ const langToggle = document.getElementById('lang-toggle')
 if(langToggle){
   langToggle.addEventListener('click',()=>{
     lang = lang==='tr'?'en':'tr'
-    localStorage.setItem('lang',lang)
-    applyI18n()
-  })
-}
     localStorage.setItem('lang',lang)
     applyI18n()
   })

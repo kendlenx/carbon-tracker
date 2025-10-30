@@ -128,8 +128,8 @@ input,textarea{background:#0e1411;border:1px solid var(--border);color:var(--tex
 .newsletter-content h2{margin:0 0 6px}
 @media (max-width:900px){.newsletter-card{grid-template-columns:1fr}.newsletter-row{flex-direction:column}}
 /* Animations */
-.reveal{opacity:0;transform:translateY(8px) scale(.995);transition:opacity .35s ease, transform .35s ease}
-.reveal.in{opacity:1;transform:none}
+.js .reveal{opacity:0;transform:translateY(8px) scale(.995);transition:opacity .35s ease, transform .35s ease}
+.js .reveal.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){
   *{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}
