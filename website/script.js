@@ -42,14 +42,26 @@ const io = new IntersectionObserver((entries)=>{
 const themeSaved = localStorage.getItem('theme') || 'dark'
 document.documentElement.setAttribute('data-theme', themeSaved)
 const themeBtn = document.getElementById('theme-toggle')
-const setThemeIcon = (t)=>{ if(!themeBtn) return; themeBtn.textContent = t==='dark' ? '☾' : '☀︎' }
+const setThemeIcon = (t)=>{ if(themeBtn) themeBtn.textContent = t==='dark' ? '☾' : '☀︎'; const m=document.getElementById('mobile-theme'); if(m) m.textContent = t==='dark' ? '☾' : '☀︎' }
 setThemeIcon(themeSaved)
-if(themeBtn){
-  themeBtn.addEventListener('click',()=>{
-    const next = (document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark'
-    document.documentElement.setAttribute('data-theme', next)
-    localStorage.setItem('theme', next)
-    setThemeIcon(next)
+function toggleTheme(){
+  const next = (document.documentElement.getAttribute('data-theme')==='dark')?'light':'dark'
+  document.documentElement.setAttribute('data-theme', next)
+  localStorage.setItem('theme', next)
+  setThemeIcon(next)
+}
+if(themeBtn){ themeBtn.addEventListener('click',toggleTheme) }
+const mobileThemeBtn = document.getElementById('mobile-theme')
+if(mobileThemeBtn){ mobileThemeBtn.addEventListener('click',toggleTheme) }
+
+// Mobile menu
+const menuBtn = document.getElementById('menu-toggle')
+const mobileNav = document.getElementById('mobile-nav')
+if(menuBtn && mobileNav){
+  menuBtn.addEventListener('click',()=>{
+    const open = mobileNav.classList.toggle('open')
+    if(open){ mobileNav.removeAttribute('hidden') } else { mobileNav.setAttribute('hidden','') }
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false')
   })
 }
 
@@ -137,6 +149,14 @@ applyI18n()
 const langToggle = document.getElementById('lang-toggle')
 if(langToggle){
   langToggle.addEventListener('click',()=>{
+    lang = lang==='tr'?'en':'tr'
+    localStorage.setItem('lang',lang)
+    applyI18n()
+  })
+}
+const mobileLangBtn = document.getElementById('mobile-lang')
+if(mobileLangBtn){
+  mobileLangBtn.addEventListener('click',()=>{
     lang = lang==='tr'?'en':'tr'
     localStorage.setItem('lang',lang)
     applyI18n()
