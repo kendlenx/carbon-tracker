@@ -239,6 +239,14 @@
   },
   
   "devices": {
+    "managerTitle": "Cihaz Yöneticisi",
+    "tabs": {"connected": "Bağlı", "addDevice": "Cihaz Ekle", "settings": "Ayarlar"},
+    "noDevices": "Bağlı cihaz yok\nTakip başlatmak için cihaz ekleyin",
+    "addDeviceCta": "Cihaz Ekle",
+    "connectedSnack": "Cihaz bağlandı: {name}",
+    "disconnectedSnack": "Cihaz bağlantısı kesildi: {name}",
+    "errorPrefix": "Cihaz hatası: {error}",
+    "syncCompleted": "{count} veri noktası senkronize edildi",
     "title": "Cihaz Entegrasyonları",
     "appleWatch": "Apple Watch",
     "wearOS": "Wear OS",
@@ -395,7 +403,15 @@
       "encryptedSubtitle": "Verileriniz buluta kaydedilmeden önce şifrelenir"
     },
     "manageBackup": "Bulut yedekleme ve senkronizasyonu yönet",
-    "signInToBackup": "Verilerinizi buluta yedeklemek için giriş yapın"
+    "signInToBackup": "Verilerinizi buluta yedeklemek için giriş yapın",
+    "syncSuccess": "Buluta senkronizasyon başarılı",
+    "syncFailed": "Buluta senkronizasyon başarısız",
+    "restoreTitle": "Buluttan Geri Yükle",
+    "restoreConfirm": "Buluttan geri yüklemek istediğinizden emin misiniz? Bu işlem yerel verilerin üzerine yazacaktır.",
+    "restoreSuccess": "Veriler buluttan başarıyla geri yüklendi",
+    "restoreFailed": "Veriler buluttan geri yüklenemedi",
+    "signOutTitle": "Çıkışı Onayla",
+    "signOutConfirm": "Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz korunacaktır."
   },
   
   "permissions": {
@@ -472,7 +488,8 @@
     "unknown": "Bilinmiyor",
     "daysAgo": "gün önce",
     "hoursAgo": "saat önce",
-    "minutesAgo": "dakika önce"
+    "minutesAgo": "dakika önce",
+    "confirm": "Onayla"
   },
   
   "consent": {
@@ -650,7 +667,9 @@
     "memberSince": "Üye Olma Tarihi",
     "lastSignIn": "Son Giriş",
     "dangerZone": "Tehlikeli Alan",
-    "deleteAccountSubtitle": "Hesabınızı ve tüm verilerinizi kalıcı olarak silin"
+    "deleteAccountSubtitle": "Hesabınızı ve tüm verilerinizi kalıcı olarak silin",
+    "deleteSuccess": "Hesap başarıyla silindi",
+    "passwordIncorrect": "Şifre yanlış"
   },
   "homeAch": {
     "firstSteps": "İlk Adımlar",
@@ -661,6 +680,26 @@
     "mindfulShopper": "Bilinçli Alışverişçi",
     "carbonCrusher": "Karbon Ezici",
     "planetProtector": "Gezegen Koruyucusu"
+  },
+  "biometric": {
+    "faceIdTitle": "Yüz Tanıma",
+    "fingerprintTitle": "Parmak İzi",
+    "irisTitle": "Göz Tarama",
+    "genericTitle": "Biyometrik Kimlik Doğrulama",
+    "faceInstruction": "Carbon Step'i açmak için cihazınıza bakın",
+    "fingerprintInstruction": "Kilidi açmak için parmağınızı sensöre yerleştirin",
+    "genericInstruction": "Kilidi açmak için biyometrik kimliğinizi kullanın",
+    "authenticating": "Kimlik doğrulanıyor...",
+    "tryAgain": "Tekrar Dene",
+    "secureAccess": "Güvenli Erişim",
+    "footerNote": "Verileriniz uçtan uca şifreleme ile korunmaktadır"
+  },
+  "widget": {
+    "dailyTrackingSession": "Günlük Karbon Takibi",
+    "dailyGoal": "Günlük Hedef",
+    "trackingStarted": "Takip Başlatıldı",
+    "activitySession": "{name} Oturumu",
+    "activityGoal": "Aktivite Hedefi"
   },
   "ui": {
     "level": "Seviye",
@@ -730,6 +769,16 @@
     "autoBackup": "Otomatik Yedekleme",
     "privacyPolicy": "Gizlilik Politikası",
     "dataConsent": "Veri İzinleri",
-    "clearAllData": "Tüm Verileri Temizle"
+    "clearAllData": "Tüm Verileri Temizle",
+    "helpTitle": "Yardım",
+    "helpBody": "Carbon Step, karbon ayak izinizi izlemenize ve azaltmanıza yardımcı olur. Ulaşım, enerji, yemek ve alışveriş aktivitelerinizi takip edin.",
+    "profileSettingsSubtitle": "Profil bilgilerinizi ve hesap ayarlarınızı yönetin",
+    "signOutSubtitle": "Hesabınızdan çıkış yapın (yerel veriler kalacak)",
+    "signOutConfirmMessage": "Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz bu cihazda kalacaktır.",
+    "securityPrivacySubtitle": "Karbon verilerinizi koruyun",
+    "signedOutSuccess": "Başarıyla çıkış yapıldı",
+    "changeLanguage": "Dili değiştir",
+    "tableOfContents": "İçindekiler",
+    "support": "Destek"
   }
 }

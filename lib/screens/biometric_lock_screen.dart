@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import '../services/security_service.dart';
 import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
 
 class BiometricLockScreen extends StatefulWidget {
   const BiometricLockScreen({super.key});
@@ -112,29 +113,25 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
   }
 
   String _getBiometricTitle() {
+    final l = AppLocalizations.of(context)!;
     if (_availableBiometrics.contains(BiometricType.face)) {
-      return _languageService.isEnglish ? 'Face ID' : 'Yüz Tanıma';
+      return l.translate('biometric.faceIdTitle');
     } else if (_availableBiometrics.contains(BiometricType.fingerprint)) {
-      return _languageService.isEnglish ? 'Touch ID' : 'Parmak İzi';
+      return l.translate('biometric.fingerprintTitle');
     } else if (_availableBiometrics.contains(BiometricType.iris)) {
-      return _languageService.isEnglish ? 'Iris Scan' : 'Göz Tarama';
+      return l.translate('biometric.irisTitle');
     }
-    return _languageService.isEnglish ? 'Biometric Auth' : 'Biyometrik Kimlik';
+    return l.translate('biometric.genericTitle');
   }
 
   String _getInstructionText() {
+    final l = AppLocalizations.of(context)!;
     if (_availableBiometrics.contains(BiometricType.face)) {
-      return _languageService.isEnglish 
-        ? 'Look at your device to unlock Carbon Tracker'
-        : 'Carbon Tracker\'ı açmak için cihazınıza bakın';
+      return l.translate('biometric.faceInstruction');
     } else if (_availableBiometrics.contains(BiometricType.fingerprint)) {
-      return _languageService.isEnglish
-        ? 'Place your finger on the sensor to unlock'
-        : 'Kilidi açmak için parmağınızı sensöre yerleştirin';
+      return l.translate('biometric.fingerprintInstruction');
     }
-    return _languageService.isEnglish
-      ? 'Use your biometric authentication to unlock'
-      : 'Kilidi açmak için biyometrik kimlik doğrulamanızı kullanın';
+    return l.translate('biometric.genericInstruction');
   }
 
   @override
@@ -185,7 +182,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                           ),
                         ),
                         Text(
-                          _languageService.isEnglish ? 'Secure Access' : 'Güvenli Erişim',
+                          AppLocalizations.of(context)!.translate('biometric.secureAccess'),
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Colors.green.withValues(alpha: 0.8),
                           ),
@@ -271,7 +268,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      _languageService.isEnglish ? 'Authenticating...' : 'Kimlik doğrulanıyor...',
+                      AppLocalizations.of(context)!.translate('biometric.authenticating'),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.green,
                       ),
@@ -309,7 +306,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                             ),
                             const SizedBox(width: 12),
                             Text(
-                              _languageService.isEnglish ? 'Try Again' : 'Tekrar Dene',
+                              AppLocalizations.of(context)!.translate('biometric.tryAgain'),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -324,7 +321,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
                       child: Text(
-                        _languageService.isEnglish ? 'Cancel' : 'İptal',
+                        AppLocalizations.of(context)!.translate('common.cancel'),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.6),
                         ),
@@ -348,9 +345,7 @@ class _BiometricLockScreenState extends State<BiometricLockScreen>
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      _languageService.isEnglish 
-                        ? 'Your data is protected with end-to-end encryption'
-                        : 'Verileriniz uçtan uca şifreleme ile korunmaktadır',
+                      AppLocalizations.of(context)!.translate('biometric.footerNote'),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.white.withValues(alpha: 0.5),
                       ),

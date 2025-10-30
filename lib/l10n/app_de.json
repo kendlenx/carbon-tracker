@@ -206,6 +206,14 @@
     "connecting": "Verbinden..."
   },
   "devices": {
+    "managerTitle": "Geräteverwaltung",
+    "tabs": {"connected": "Verbunden", "addDevice": "Gerät hinzufügen", "settings": "Einstellungen"},
+    "noDevices": "Keine Geräte verbunden\nFüge Geräte hinzu, um zu starten",
+    "addDeviceCta": "Gerät hinzufügen",
+    "connectedSnack": "Gerät verbunden: {name}",
+    "disconnectedSnack": "Gerät getrennt: {name}",
+    "errorPrefix": "Gerätefehler: {error}",
+    "syncCompleted": "{count} Datenpunkte synchronisiert",
     "title": "Geräteintegrationen",
     "appleWatch": "Apple Watch",
     "wearOS": "Wear OS",
@@ -402,7 +410,14 @@
     "done": "Fertig",
     "close": "Schließen",
     "send": "Senden",
-    "noData": "Noch keine Daten"
+    "noData": "Noch keine Daten",
+    "never": "Nie",
+    "justNow": "Gerade eben",
+    "unknown": "Unbekannt",
+    "daysAgo": "Tage her",
+    "hoursAgo": "Stunden her",
+    "minutesAgo": "Minuten her",
+    "confirm": "Bestätigen"
   },
   "consent": {
     "title": "Datenschutz & Einwilligung",
@@ -474,7 +489,65 @@
       "encryptedSubtitle": "Daten werden vor dem Speichern in der Cloud verschlüsselt"
     },
     "manageBackup": "Cloud‑Backup und Sync verwalten",
-    "signInToBackup": "Zum Cloud‑Backup anmelden"
+    "signInToBackup": "Zum Cloud‑Backup anmelden",
+    "signedInBadge": "ANGEMELDET",
+    "statusTitle": "Backup‑Status",
+    "hasBackup": "Daten gesichert",
+    "noBackup": "Keine Sicherung gefunden",
+    "lastSync": "Letzte Synchronisierung:",
+    "syncControls": "Synchronisationssteuerung",
+    "backupToCloud": "In die Cloud sichern",
+    "syncing": "Synchronisieren...",
+    "restoreFromCloud": "Aus der Cloud wiederherstellen",
+    "syncSuccess": "Cloud‑Synchronisierung erfolgreich",
+    "syncFailed": "Cloud‑Synchronisierung fehlgeschlagen",
+    "restoreTitle": "Aus der Cloud wiederherstellen",
+    "restoreConfirm": "Möchten Sie wirklich aus der Cloud wiederherstellen? Lokale Daten werden überschrieben.",
+    "restoreSuccess": "Daten erfolgreich aus der Cloud wiederhergestellt",
+    "restoreFailed": "Wiederherstellung aus der Cloud fehlgeschlagen",
+    "signOutTitle": "Abmelden bestätigen",
+    "signOutConfirm": "Möchten Sie sich wirklich abmelden? Lokale Daten bleiben erhalten."
+  },
+  
+  "profile": {
+    "nameEmpty": "Name darf nicht leer sein",
+    "profileUpdated": "Profil erfolgreich aktualisiert!",
+    "profileUpdateFailed": "Profil konnte nicht aktualisiert werden",
+    "fillAllPasswordFields": "Bitte alle Passwortfelder ausfüllen",
+    "passwordMinLen": "Neues Passwort muss mindestens 6 Zeichen haben",
+    "passwordChanged": "Passwort erfolgreich geändert!",
+    "currentPasswordIncorrect": "Aktuelles Passwort ist falsch",
+    "pictureUpdated": "Profilbild aktualisiert!",
+    "pictureUpdateFailed": "Profilbild konnte nicht aktualisiert werden",
+    "verificationEmailSent": "Bestätigungs‑E‑Mail gesendet!",
+    "verificationEmailFailed": "Bestätigungs‑E‑Mail konnte nicht gesendet werden",
+    "deleteAccount": "Konto löschen",
+    "deleteConfirmMessage": "Dies löscht Ihr Konto und alle Daten dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden. Sind Sie sicher?",
+    "confirmPasswordTitle": "Passwort bestätigen",
+    "confirmPasswordBody": "Bitte geben Sie Ihr Passwort ein, um das Löschen des Kontos zu bestätigen:",
+    "title": "Profil",
+    "signInToView": "Bitte anmelden, um das Profil anzuzeigen",
+    "editProfile": "Profil bearbeiten",
+    "userInitial": "N",
+    "user": "Nutzer",
+    "verifyEmail": "E‑Mail verifizieren",
+    "infoTitle": "Profilinformationen",
+    "fullName": "Vollständiger Name",
+    "emailAddress": "E‑Mail‑Adresse",
+    "emailImmutable": "E‑Mail kann nicht geändert werden",
+    "securityTitle": "Sicherheit",
+    "changePassword": "Passwort ändern",
+    "updatePasswordSubtitle": "Aktualisieren Sie das Passwort Ihres Kontos",
+    "currentPassword": "Aktuelles Passwort",
+    "newPassword": "Neues Passwort",
+    "passwordHint": "Mindestens 6 Zeichen",
+    "statsTitle": "Kontostatistiken",
+    "memberSince": "Mitglied seit",
+    "lastSignIn": "Letzte Anmeldung",
+    "dangerZone": "Gefahrenbereich",
+    "deleteAccountSubtitle": "Konto und alle Daten dauerhaft löschen",
+    "deleteSuccess": "Konto erfolgreich gelöscht",
+    "passwordIncorrect": "Passwort ist falsch"
   },
   
   "onboarding": {
@@ -554,6 +627,26 @@
     "carbonCrusher": "CO₂‑Zerkleinerer",
     "planetProtector": "Planeten‑Schützer"
   },
+  "biometric": {
+    "faceIdTitle": "Face ID",
+    "fingerprintTitle": "Fingerabdruck",
+    "irisTitle": "Iris-Scan",
+    "genericTitle": "Biometrische Authentifizierung",
+    "faceInstruction": "Schau auf dein Gerät, um Carbon Step zu entsperren",
+    "fingerprintInstruction": "Lege deinen Finger auf den Sensor zum Entsperren",
+    "genericInstruction": "Verwende deine biometrische Authentifizierung zum Entsperren",
+    "authenticating": "Authentifizierung...",
+    "tryAgain": "Erneut versuchen",
+    "secureAccess": "Sicherer Zugriff",
+    "footerNote": "Deine Daten sind mit Ende-zu-Ende-Verschlüsselung geschützt"
+  },
+  "widget": {
+    "dailyTrackingSession": "Tägliches CO₂-Tracking",
+    "dailyGoal": "Tagesziel",
+    "trackingStarted": "Tracking gestartet",
+    "activitySession": "{name}-Sitzung",
+    "activityGoal": "Aktivitätsziel"
+  },
   "ui": {
     "level": "Stufe",
     "xpEarned": "XP gesammelt",
@@ -622,6 +715,16 @@
     "autoBackup": "Automatisches Backup",
     "privacyPolicy": "Datenschutzrichtlinie",
     "dataConsent": "Dateneinwilligung",
-    "clearAllData": "Alle Daten löschen"
+    "clearAllData": "Alle Daten löschen",
+    "helpTitle": "Hilfe",
+    "helpBody": "Carbon Step hilft dir, deinen CO₂‑Fußabdruck zu verfolgen und zu reduzieren. Tracke tägliche Aktivitäten in Verkehr, Energie, Ernährung und Einkauf.",
+    "profileSettingsSubtitle": "Verwalten Sie Ihre Profilinformationen und Kontoeinstellungen",
+    "signOutSubtitle": "Von Ihrem Konto abmelden (lokale Daten bleiben)",
+    "signOutConfirmMessage": "Möchten Sie sich wirklich abmelden? Ihre lokalen Daten bleiben auf diesem Gerät.",
+    "securityPrivacySubtitle": "Schütze deine CO₂‑Daten",
+    "signedOutSuccess": "Erfolgreich abgemeldet",
+    "changeLanguage": "Sprache ändern",
+    "tableOfContents": "Inhaltsverzeichnis",
+    "support": "Support"
   }
 }

@@ -206,6 +206,14 @@
     "connecting": "Connexion"
   },
   "devices": {
+    "managerTitle": "Gestion des appareils",
+    "tabs": {"connected": "Connectés", "addDevice": "Ajouter un appareil", "settings": "Paramètres"},
+    "noDevices": "Aucun appareil connecté\nAjoutez des appareils pour commencer",
+    "addDeviceCta": "Ajouter un appareil",
+    "connectedSnack": "Appareil connecté : {name}",
+    "disconnectedSnack": "Appareil déconnecté : {name}",
+    "errorPrefix": "Erreur d’appareil : {error}",
+    "syncCompleted": "{count} points de données synchronisés",
     "title": "Intégrations d'appareils",
     "appleWatch": "Apple Watch",
     "wearOS": "Wear OS",
@@ -402,7 +410,14 @@
     "done": "Terminé",
     "close": "Fermer",
     "send": "Envoyer",
-    "noData": "Pas encore de données"
+    "noData": "Pas encore de données",
+    "never": "Jamais",
+    "justNow": "À l'instant",
+    "unknown": "Inconnu",
+    "daysAgo": "jours",
+    "hoursAgo": "heures",
+    "minutesAgo": "minutes",
+    "confirm": "Confirmer"
   },
   "consent": {
     "title": "Confidentialité et consentement",
@@ -474,7 +489,65 @@
       "encryptedSubtitle": "Vos données sont chiffrées avant d'être stockées dans le cloud"
     },
     "manageBackup": "Gérer la sauvegarde et la synchro cloud",
-    "signInToBackup": "Connectez‑vous pour sauvegarder vos données dans le cloud"
+    "signInToBackup": "Connectez‑vous pour sauvegarder vos données dans le cloud",
+    "signedInBadge": "CONNECTÉ",
+    "statusTitle": "État de la sauvegarde",
+    "hasBackup": "Données sauvegardées",
+    "noBackup": "Aucune sauvegarde trouvée",
+    "lastSync": "Dernière synchro :",
+    "syncControls": "Contrôles de synchro",
+    "backupToCloud": "Sauvegarder vers le cloud",
+    "syncing": "Synchronisation...",
+    "restoreFromCloud": "Restaurer depuis le cloud",
+    "syncSuccess": "Synchronisation cloud réussie",
+    "syncFailed": "Échec de la synchronisation cloud",
+    "restoreTitle": "Restaurer depuis le cloud",
+    "restoreConfirm": "Êtes‑vous sûr de vouloir restaurer depuis le cloud ? Cela écrasera les données locales.",
+    "restoreSuccess": "Données restaurées depuis le cloud",
+    "restoreFailed": "Échec de la restauration depuis le cloud",
+    "signOutTitle": "Confirmer la déconnexion",
+    "signOutConfirm": "Êtes‑vous sûr de vouloir vous déconnecter ? Les données locales seront conservées."
+  },
+  
+  "profile": {
+    "nameEmpty": "Le nom ne peut pas être vide",
+    "profileUpdated": "Profil mis à jour avec succès !",
+    "profileUpdateFailed": "Échec de la mise à jour du profil",
+    "fillAllPasswordFields": "Veuillez remplir tous les champs du mot de passe",
+    "passwordMinLen": "Le nouveau mot de passe doit contenir au moins 6 caractères",
+    "passwordChanged": "Mot de passe modifié avec succès !",
+    "currentPasswordIncorrect": "Le mot de passe actuel est incorrect",
+    "pictureUpdated": "Photo de profil mise à jour !",
+    "pictureUpdateFailed": "Échec de la mise à jour de la photo de profil",
+    "verificationEmailSent": "E‑mail de vérification envoyé !",
+    "verificationEmailFailed": "Échec de l'envoi de l'e‑mail de vérification",
+    "deleteAccount": "Supprimer le compte",
+    "deleteConfirmMessage": "Cela supprimera définitivement votre compte et toutes les données. Cette action est irréversible. Êtes‑vous sûr ?",
+    "confirmPasswordTitle": "Confirmer le mot de passe",
+    "confirmPasswordBody": "Veuillez saisir votre mot de passe pour confirmer la suppression du compte :",
+    "title": "Profil",
+    "signInToView": "Veuillez vous connecter pour voir le profil",
+    "editProfile": "Modifier le profil",
+    "userInitial": "U",
+    "user": "Utilisateur",
+    "verifyEmail": "Vérifier l’e‑mail",
+    "infoTitle": "Informations du profil",
+    "fullName": "Nom complet",
+    "emailAddress": "Adresse e‑mail",
+    "emailImmutable": "L’e‑mail ne peut pas être modifié",
+    "securityTitle": "Sécurité",
+    "changePassword": "Changer le mot de passe",
+    "updatePasswordSubtitle": "Mettez à jour le mot de passe de votre compte",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "passwordHint": "Au moins 6 caractères",
+    "statsTitle": "Statistiques du compte",
+    "memberSince": "Membre depuis",
+    "lastSignIn": "Dernière connexion",
+    "dangerZone": "Zone de danger",
+    "deleteAccountSubtitle": "Supprimer définitivement votre compte et toutes les données",
+    "deleteSuccess": "Compte supprimé avec succès",
+    "passwordIncorrect": "Mot de passe incorrect"
   },
   
   "onboarding": {
@@ -494,6 +567,23 @@
     "loadError": "Erreur de chargement",
     "invalidInput": "Saisie invalide",
     "tryAgain": "Réessayer"
+  },
+  "feedback": {
+    "typeLabel": "Type de commentaire :",
+    "ratingQuestion": "Comment évalueriez-vous l’app ?",
+    "emailOptional": "E‑mail (optionnel)",
+    "emailHint": "Votre e‑mail pour une réponse",
+    "messageLabel": "Votre message",
+    "additionalInfo": "Informations supplémentaires :",
+    "includeScreenshot": "Inclure une capture d’écran",
+    "includeErrorLogs": "Inclure les journaux d’erreurs",
+    "screenshot": "Capture :",
+    "systemInfo": "Informations système",
+    "type": {"bug": "Bogue", "feature": "Demande de fonctionnalité", "general": "Général", "performance": "Performances"},
+    "hint": {"bug": "Décrivez le bogue en détail...", "feature": "Quelle fonctionnalité souhaitez-vous ?", "performance": "Où rencontrez‑vous des problèmes de performances?", "general": "Partagez vos idées..."},
+    "crashPrefill": "L’app a planté avec l’erreur : {error}. Merci de vérifier les journaux et les étapes pour reproduire.",
+    "sentSuccess": "Votre message a été envoyé. Merci !",
+    "sentFailed": "Échec de l’envoi du message"
   },
   "ach": {
     "first_day": {"title": "Premier pas", "desc": "Vous avez enregistré votre première empreinte carbone !"},
@@ -537,6 +627,26 @@
     "mindfulShopper": "Acheteur responsable",
     "carbonCrusher": "Broyeur de carbone",
     "planetProtector": "Protecteur de la planète"
+  },
+  "biometric": {
+    "faceIdTitle": "Face ID",
+    "fingerprintTitle": "Empreinte digitale",
+    "irisTitle": "Scan de l’iris",
+    "genericTitle": "Authentification biométrique",
+    "faceInstruction": "Regardez votre appareil pour déverrouiller Carbon Step",
+    "fingerprintInstruction": "Placez votre doigt sur le capteur pour déverrouiller",
+    "genericInstruction": "Utilisez votre biométrie pour déverrouiller",
+    "authenticating": "Authentification...",
+    "tryAgain": "Réessayer",
+    "secureAccess": "Accès sécurisé",
+    "footerNote": "Vos données sont protégées par un chiffrement de bout en bout"
+  },
+  "widget": {
+    "dailyTrackingSession": "Suivi carbone quotidien",
+    "dailyGoal": "Objectif quotidien",
+    "trackingStarted": "Suivi démarré",
+    "activitySession": "Session {name}",
+    "activityGoal": "Objectif d’activité"
   },
   "ui": {
     "level": "Niveau",
@@ -606,6 +716,16 @@
     "autoBackup": "Sauvegarde automatique",
     "privacyPolicy": "Politique de confidentialité",
     "dataConsent": "Consentement des données",
-    "clearAllData": "Effacer toutes les données"
+    "clearAllData": "Effacer toutes les données",
+    "helpTitle": "Aide",
+    "helpBody": "Carbon Step vous aide à suivre et réduire votre empreinte carbone. Suivez vos activités quotidiennes: transport, énergie, alimentation et achats.",
+    "profileSettingsSubtitle": "Gérez vos informations de profil et paramètres de compte",
+    "signOutSubtitle": "Déconnectez‑vous de votre compte (les données locales restent)",
+    "signOutConfirmMessage": "Êtes‑vous sûr de vouloir vous déconnecter ? Vos données locales resteront sur cet appareil.",
+    "securityPrivacySubtitle": "Protégez vos données de CO₂",
+    "signedOutSuccess": "Déconnexion réussie",
+    "changeLanguage": "Changer de langue",
+    "tableOfContents": "Sommaire",
+    "support": "Assistance"
   }
 }

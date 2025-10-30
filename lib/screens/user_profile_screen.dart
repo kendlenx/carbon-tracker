@@ -262,17 +262,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
       if (mounted) {
         Navigator.of(context).popUntil((route) => route.isFirst);
         _showSuccessSnackBar(
-          _languageService.isEnglish 
-            ? 'Account deleted successfully' 
-            : 'Hesap başarıyla silindi'
+          AppLocalizations.of(context)!.translate('profile.deleteSuccess')
         );
       }
     } catch (e) {
       String errorMessage = e.toString();
       if (errorMessage.contains('wrong-password')) {
-        errorMessage = _languageService.isEnglish 
-          ? 'Password is incorrect' 
-          : 'Şifre yanlış';
+        errorMessage = AppLocalizations.of(context)!.translate('profile.passwordIncorrect');
       }
       _showErrorSnackBar(errorMessage);
     } finally {
@@ -464,6 +460,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     );
   }
 
+  String _getDisplayName() {
+    final name = (_userProfile['displayName'] as String?)?.trim();
+    if (name != null && name.isNotEmpty) return name;
+    return AppLocalizations.of(context)!.translate('profile.user');
+  }
+
+  String _getProfileInitial() {
+    final name = (_userProfile['displayName'] as String?)?.trim();
+    final fallback = AppLocalizations.of(context)!.translate('profile.userInitial');
+    final source = (name != null && name.isNotEmpty) ? name : fallback;
+    return source.isNotEmpty ? source.substring(0, 1).toUpperCase() : 'U';
+  }
+
   Widget _buildProfileHeader() {
     return Card(
       elevation: 4,
@@ -479,12 +488,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: Colors.blue,
-                    backgroundImage: _profileImagePath != null
-                      ? FileImage(File(_profileImagePath!))
-                      : null,
-                    child: _profileImagePath == null
+                    backgroundImage: (() {
+                      try {
+                        if (_profileImagePath != null && File(_profileImagePath!).existsSync()) {
+                          return FileImage(File(_profileImagePath!));
+                        }
+                      } catch (_) {}
+                      return null;
+                    })(),
+                    child: ((_profileImagePath == null) || !( (){ try { return File(_profileImagePath!).existsSync(); } catch (_) { return false; } }() ))
                       ? Text(
-                          (_userProfile['displayName'] as String? ?? AppLocalizations.of(context)!.translate('profile.userInitial'))[0].toUpperCase(),
+                          _getProfileInitial(),
                           style: const TextStyle(
                             fontSize: 36,
                             fontWeight: FontWeight.bold,
@@ -515,7 +529,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
             ),
             const SizedBox(height: 16),
             Text(
-              _userProfile['displayName'] ?? AppLocalizations.of(context)!.translate('profile.user'),
+              _getDisplayName(),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -608,7 +622,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
                       onPressed: () {
                         setState(() {
                           _isEditing = false;
-                          _nameController.text = _userProfile['displayName'] ?? '';
+                          _nameController.text = _getDisplayName();
                         });
                       },
                       child: Text(AppLocalizations.of(context)!.translate('common.cancel')),

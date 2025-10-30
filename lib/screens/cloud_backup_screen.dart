@@ -200,7 +200,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: Text(AppLocalizations.of(context)!.translate('common.next')),
+            child: Text(AppLocalizations.of(context)!.translate('common.confirm')),
           ),
         ],
       ),
@@ -487,6 +487,21 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
     );
   }
 
+  String _getUserInitial() {
+    final dn = _currentUser?.displayName?.trim();
+    final email = _currentUser?.email?.trim();
+    final source = (dn != null && dn.isNotEmpty)
+        ? dn
+        : (email != null && email.isNotEmpty ? email : 'U');
+    return source.isNotEmpty ? source.substring(0, 1).toUpperCase() : 'U';
+  }
+
+  String _getDisplayName() {
+    final dn = _currentUser?.displayName?.trim();
+    if (dn != null && dn.isNotEmpty) return dn;
+    return AppLocalizations.of(context)!.translate('profile.user');
+  }
+
   Widget _buildUserInfo() {
     return Card(
       elevation: 4,
@@ -501,8 +516,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                   radius: 30,
                   backgroundColor: Colors.green,
                   child: Text(
-                    _currentUser!.displayName?.substring(0, 1).toUpperCase() ?? 
-                    _currentUser!.email?.substring(0, 1).toUpperCase() ?? 'U',
+                    _getUserInitial(),
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -516,7 +530,7 @@ class _CloudBackupScreenState extends State<CloudBackupScreen> with TickerProvid
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _currentUser!.displayName ?? 'Carbon Tracker User',
+                        _getDisplayName(),
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

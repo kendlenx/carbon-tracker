@@ -101,10 +101,10 @@ class FirebaseService {
 
   /// Setup Crashlytics
   Future<void> _setupCrashlytics() async {
-    // Pass all uncaught "fatal" errors from the framework to Crashlytics
-    FlutterError.onError = (errorDetails) {
-      _crashlytics.recordFlutterFatalError(errorDetails);
-    };
+    // Enable/disable collection based on build mode
+    await _crashlytics.setCrashlyticsCollectionEnabled(!kDebugMode);
+    // Add some default keys
+    await _crashlytics.setCustomKey('locale', _languageService.currentLanguageCode);
   }
 
   /// Handle authentication state changes
@@ -208,6 +208,11 @@ class FirebaseService {
       await _analytics.setUserId(id: user.uid);
       await _analytics.setUserProperty(name: 'user_type', value: 'authenticated');
       
+      // Set user for crash reporting
+      try {
+        await FirebaseCrashlytics.instance.setUserIdentifier(user.uid);
+      } catch (_) {}
+      
       // Start data sync
       await syncDataToCloud();
       
@@ -257,14 +262,16 @@ class FirebaseService {
       
       final batch = _firestore.batch();
       
-      // Update user stats
+      // Upsert user stats (create document if missing)
       final userRef = _firestore.collection('users').doc(userId);
-      batch.update(userRef, {
-        'stats.totalActivities': activities.length,
-        'stats.totalCO2': dashboardStats['totalCarbon'] ?? 0.0,
-        'stats.lastSyncAt': FieldValue.serverTimestamp(),
+      batch.set(userRef, {
+        'stats': {
+          'totalActivities': activities.length,
+          'totalCO2': dashboardStats['totalCarbon'] ?? 0.0,
+          'lastSyncAt': FieldValue.serverTimestamp(),
+        },
         'lastLoginAt': FieldValue.serverTimestamp(),
-      });
+      }, SetOptions(merge: true));
 
       // Sync activities
       for (final activity in activities) {

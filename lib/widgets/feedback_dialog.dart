@@ -42,7 +42,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     super.initState();
     if (widget.errorMessage != null) {
       _selectedType = FeedbackType.bug;
-      _feedbackController.text = 'App crashed with error: ${widget.errorMessage}';
+      final l = AppLocalizations.of(context)!;
+      _feedbackController.text = l.translate('feedback.crashPrefill').replaceAll('{error}', widget.errorMessage!);
     }
     _captureScreenshot();
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:async';
+import 'services/error_handler_service.dart';
 import 'screens/transport_screen.dart';
 import 'screens/statistics_screen.dart';
 import 'screens/energy_screen.dart';
@@ -49,14 +51,36 @@ void main() async {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
   
+  // Initialize global error handler (Crashlytics/Analytics)
+  await ErrorHandlerService().initialize();
+  
+  // Forward Flutter framework errors to the handler (non-fatal)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    ErrorHandlerService().recordError(
+      details.exception,
+      details.stack,
+      fatal: false,
+      context: {
+        'library': details.library ?? '',
+        'context': details.context?.toDescription() ?? '',
+      },
+    );
+  };
+  
   // Create service instances without awaiting heavy initialization here
   final securityService = SecurityService();
   final firebaseService = FirebaseService();
 
-  runApp(CarbonTrackerApp(
-    securityService: securityService,
-    firebaseService: firebaseService,
-  ));
+  runZonedGuarded(() {
+    runApp(CarbonTrackerApp(
+      securityService: securityService,
+      firebaseService: firebaseService,
+    ));
+  }, (error, stack) {
+    // Capture uncaught errors
+    ErrorHandlerService().recordError(error, stack, fatal: true);
+  });
 }
 
 class CarbonTrackerApp extends StatefulWidget {

@@ -239,6 +239,14 @@
   },
   
   "devices": {
+    "managerTitle": "Device Manager",
+    "tabs": {"connected": "Connected", "addDevice": "Add Device", "settings": "Settings"},
+    "noDevices": "No devices connected\nAdd devices to start tracking",
+    "addDeviceCta": "Add Device",
+    "connectedSnack": "Device connected: {name}",
+    "disconnectedSnack": "Device disconnected: {name}",
+    "errorPrefix": "Device error: {error}",
+    "syncCompleted": "{count} data points synced",
     "title": "Device Integrations",
     "appleWatch": "Apple Watch",
     "wearOS": "Wear OS",
@@ -395,7 +403,15 @@
       "encryptedSubtitle": "Your data is encrypted before being stored in the cloud"
     },
     "manageBackup": "Manage cloud backup and sync",
-    "signInToBackup": "Sign in to backup your data to the cloud"
+    "signInToBackup": "Sign in to backup your data to the cloud",
+    "syncSuccess": "Sync to cloud successful",
+    "syncFailed": "Sync to cloud failed",
+    "restoreTitle": "Restore from Cloud",
+    "restoreConfirm": "Are you sure you want to restore from the cloud? This will overwrite local data.",
+    "restoreSuccess": "Data successfully restored from cloud",
+    "restoreFailed": "Failed to restore data from cloud",
+    "signOutTitle": "Confirm Sign Out",
+    "signOutConfirm": "Are you sure you want to sign out? Local data will be preserved."
   },
   
   "permissions": {
@@ -472,7 +488,8 @@
     "unknown": "Unknown",
     "daysAgo": "days ago",
     "hoursAgo": "hours ago",
-    "minutesAgo": "minutes ago"
+    "minutesAgo": "minutes ago",
+    "confirm": "Confirm"
   },
   
   "consent": {
@@ -688,7 +705,9 @@
     "memberSince": "Member Since",
     "lastSignIn": "Last Sign In",
     "dangerZone": "Danger Zone",
-    "deleteAccountSubtitle": "Permanently delete your account and all data"
+    "deleteAccountSubtitle": "Permanently delete your account and all data",
+    "deleteSuccess": "Account deleted successfully",
+    "passwordIncorrect": "Password is incorrect"
   },
   "homeAch": {
     "firstSteps": "First Steps",
@@ -699,6 +718,26 @@
     "mindfulShopper": "Mindful Shopper",
     "carbonCrusher": "Carbon Crusher",
     "planetProtector": "Planet Protector"
+  },
+  "biometric": {
+    "faceIdTitle": "Face ID",
+    "fingerprintTitle": "Touch ID",
+    "irisTitle": "Iris Scan",
+    "genericTitle": "Biometric Authentication",
+    "faceInstruction": "Look at your device to unlock Carbon Step",
+    "fingerprintInstruction": "Place your finger on the sensor to unlock",
+    "genericInstruction": "Use your biometric authentication to unlock",
+    "authenticating": "Authenticating...",
+    "tryAgain": "Try Again",
+    "secureAccess": "Secure Access",
+    "footerNote": "Your data is protected with end-to-end encryption"
+  },
+  "widget": {
+    "dailyTrackingSession": "Daily Carbon Tracking",
+    "dailyGoal": "Daily Goal",
+    "trackingStarted": "Tracking Started",
+    "activitySession": "{name} Session",
+    "activityGoal": "Activity Goal"
   },
   "ui": {
     "activities": "activities",
@@ -768,6 +807,16 @@
     "autoBackup": "Auto Backup",
     "privacyPolicy": "Privacy Policy",
     "dataConsent": "Data Consent",
-    "clearAllData": "Clear All Data"
+    "clearAllData": "Clear All Data",
+    "helpTitle": "Help",
+    "helpBody": "Carbon Step helps you monitor and reduce your carbon footprint. Track daily activities across transport, energy, food, and shopping.",
+    "profileSettingsSubtitle": "Manage your profile information and account settings",
+    "signOutSubtitle": "Sign out from your account (local data remains)",
+    "signOutConfirmMessage": "Are you sure you want to sign out? Your local data will remain on this device.",
+    "securityPrivacySubtitle": "Protect your carbon data",
+    "signedOutSuccess": "Signed out successfully",
+    "changeLanguage": "Change language",
+    "tableOfContents": "Table of Contents",
+    "support": "Support"
   }
 }

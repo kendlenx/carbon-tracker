@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../data/privacy_policy_content.dart';
 import '../services/gdpr_service.dart';
-import '../services/language_service.dart';
+import '../l10n/app_localizations.dart';
+import './permissions_screen.dart';
 import '../utils/app_colors.dart';
 
 class PrivacyPolicyScreen extends StatefulWidget {
@@ -14,14 +15,14 @@ class PrivacyPolicyScreen extends StatefulWidget {
 class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   final ScrollController _scrollController = ScrollController();
   final GDPRService _gdprService = GDPRService();
-  final LanguageService _languageService = LanguageService.instance;
   String? _selectedSection;
 
   @override
   Widget build(BuildContext context) {
-    final language = _languageService.isEnglish ? 'en' : 'tr';
-    final policyContent = PrivacyPolicyContent.getPrivacyPolicy(language);
-    final sectionTitles = PrivacyPolicyContent.getSectionTitles(language);
+    final code = Localizations.localeOf(context).languageCode;
+    final policyLanguage = code == 'tr' ? 'tr' : 'en';
+    final policyContent = PrivacyPolicyContent.getPrivacyPolicy(policyLanguage);
+    final sectionTitles = PrivacyPolicyContent.getSectionTitles(policyLanguage);
         
     return Scaffold(
           backgroundColor: AppColors.background,
@@ -37,17 +38,10 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
             foregroundColor: Colors.white,
             elevation: 0,
             actions: [
-              // Language toggle
-              IconButton(
-                onPressed: () => _showLanguageDialog(),
-                icon: const Icon(Icons.language),
-                tooltip: language == 'tr' ? 'Dil Değiştir' : 'Change Language',
-              ),
-              // Table of contents
               IconButton(
                 onPressed: () => _showTableOfContents(context, sectionTitles),
                 icon: const Icon(Icons.list),
-                tooltip: language == 'tr' ? 'İçindekiler' : 'Table of Contents',
+                tooltip: AppLocalizations.of(context)!.translate('ui.tableOfContents'),
               ),
             ],
           ),
@@ -70,9 +64,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      language == 'tr' 
-                        ? 'GDPR Haklarınız' 
-                        : 'Your GDPR Rights',
+                      AppLocalizations.of(context)!.translate('permissions.about.title'),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -85,26 +77,26 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       child: Row(
                         children: [
                           _buildDataRightChip(
-                            language == 'tr' ? 'Veri İndir' : 'Export Data',
+                            AppLocalizations.of(context)!.translate('settings.export.title'),
                             Icons.download,
                             () => _handleDataExport(),
                           ),
                           const SizedBox(width: 8),
                           _buildDataRightChip(
-                            language == 'tr' ? 'Hesabı Sil' : 'Delete Account',
+                            AppLocalizations.of(context)!.translate('profile.deleteAccount'),
                             Icons.delete_forever,
                             () => _handleAccountDeletion(),
                             isDestructive: true,
                           ),
                           const SizedBox(width: 8),
                           _buildDataRightChip(
-                            language == 'tr' ? 'İzin Yönetimi' : 'Manage Consent',
+                            AppLocalizations.of(context)!.translate('consent.manage'),
                             Icons.security,
                             () => _handleConsentManagement(),
                           ),
                           const SizedBox(width: 8),
                           _buildDataRightChip(
-                            language == 'tr' ? 'Destek' : 'Support',
+                            AppLocalizations.of(context)!.translate('ui.support'),
                             Icons.support_agent,
                             () => _handleContactSupport(),
                           ),
@@ -159,7 +151,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
                       const SizedBox(height: 32),
                       
                       // Footer with contact and actions
-                      _buildFooter(language),
+                      _buildFooter(),
                     ],
                   ),
                 ),
@@ -281,7 +273,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     );
   }
 
-  Widget _buildFooter(String language) {
+  Widget _buildFooter() {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -299,9 +291,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            language == 'tr'
-              ? 'Gizliliğiniz bizim için önemlidir'
-              : 'Your privacy matters to us',
+            AppLocalizations.of(context)!.translate('consent.bannerTitle'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -310,9 +300,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            language == 'tr'
-              ? 'Sorularınız için destek ekibimizle iletişime geçin'
-              : 'Contact our support team for any questions',
+            AppLocalizations.of(context)!.translate('consent.bannerBody'),
             style: TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary,
@@ -326,9 +314,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               onPressed: _handleContactSupport,
               icon: const Icon(Icons.email),
               label: Text(
-                language == 'tr' 
-                  ? 'Bizimle İletişime Geçin' 
-                  : 'Contact Us',
+                AppLocalizations.of(context)!.translate('ui.support'),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
@@ -345,45 +331,6 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
     );
   }
 
-  void _showLanguageDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          _languageService.isEnglish 
-            ? 'Select Language' 
-            : 'Dil Seçin',
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Text('🇬🇧', style: TextStyle(fontSize: 24)),
-              title: const Text('English'),
-              trailing: _languageService.isEnglish 
-                ? const Icon(Icons.check, color: Colors.green) 
-                : null,
-              onTap: () {
-                _languageService.setLanguage('en');
-                Navigator.of(context).pop();
-              },
-            ),
-            ListTile(
-              leading: const Text('🇹🇷', style: TextStyle(fontSize: 24)),
-              title: const Text('Türkçe'),
-              trailing: !_languageService.isEnglish 
-                ? const Icon(Icons.check, color: Colors.green) 
-                : null,
-              onTap: () {
-                _languageService.setLanguage('tr');
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   void _showTableOfContents(BuildContext context, Map<String, String> sectionTitles) {
     showModalBottomSheet(
@@ -398,9 +345,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _languageService.isEnglish
-                ? 'Table of Contents'
-                : 'İçindekiler',
+              AppLocalizations.of(context)!.translate('ui.tableOfContents'),
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -438,24 +383,17 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   Future<void> _handleDataExport() async {
-    final language = _languageService.isEnglish ? 'en' : 'tr';
-    
+    final l = AppLocalizations.of(context)!;
+
     try {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
+        builder: (context) => const AlertDialog(
           content: Row(
             children: [
-              const CircularProgressIndicator(),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  language == 'tr'
-                    ? 'Verileriniz hazırlanıyor...'
-                    : 'Preparing your data...',
-                ),
-              ),
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
             ],
           ),
         ),
@@ -469,9 +407,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              language == 'tr'
-                ? 'Verileriniz başarıyla dışa aktarıldı'
-                : 'Your data has been successfully exported',
+              l.translate('settings.export.success'),
             ),
             backgroundColor: Colors.green,
           ),
@@ -484,9 +420,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              language == 'tr'
-                ? 'Veri dışa aktarma başarısız: ${e.toString()}'
-                : 'Data export failed: ${e.toString()}',
+              '${l.translate('settings.export.failed')}: ${e.toString()}',
             ),
             backgroundColor: Colors.red,
           ),
@@ -496,34 +430,22 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   Future<void> _handleAccountDeletion() async {
-    final language = _languageService.isEnglish ? 'en' : 'tr';
-    
+    final l = AppLocalizations.of(context)!;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(
-          language == 'tr' 
-            ? 'Hesabı Sil' 
-            : 'Delete Account',
-        ),
-        content: Text(
-          language == 'tr'
-            ? 'Bu işlem geri alınamaz. Tüm verileriniz kalıcı olarak silinecektir. Devam etmek istediğinizden emin misiniz?'
-            : 'This action cannot be undone. All your data will be permanently deleted. Are you sure you want to continue?',
-        ),
+        title: Text(l.translate('profile.deleteAccount')),
+        content: Text(l.translate('profile.deleteConfirmMessage')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
-              language == 'tr' ? 'İptal' : 'Cancel',
-            ),
+            child: Text(l.translate('common.cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(
-              language == 'tr' ? 'Sil' : 'Delete',
-            ),
+            child: Text(l.translate('common.delete')),
           ),
         ],
       ),
@@ -539,13 +461,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    language == 'tr'
-                      ? 'Hesabınız siliniyor...'
-                      : 'Deleting your account...',
-                  ),
-                ),
+                const SizedBox.shrink(),
               ],
             ),
           ),
@@ -560,9 +476,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                language == 'tr'
-                  ? 'Hesabınız başarıyla silindi'
-                  : 'Your account has been successfully deleted',
+                l.translate('profile.deleteSuccess'),
               ),
               backgroundColor: Colors.green,
             ),
@@ -575,9 +489,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                language == 'tr'
-                  ? 'Hesap silme başarısız: ${e.toString()}'
-                  : 'Account deletion failed: ${e.toString()}',
+                '${l.translate('common.error')}: ${e.toString()}',
               ),
               backgroundColor: Colors.red,
             ),
@@ -588,60 +500,30 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
   }
 
   void _handleConsentManagement() {
-    // This will be implemented in the consent management system
-    final language = _languageService.isEnglish ? 'en' : 'tr';
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          language == 'tr' 
-            ? 'İzin Yönetimi' 
-            : 'Consent Management',
-        ),
-        content: Text(
-          language == 'tr'
-            ? 'İzin yönetimi özelliği yakında eklenecek.'
-            : 'Consent management feature will be added soon.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const PermissionsScreen()),
     );
   }
 
   void _handleContactSupport() {
-    final language = _languageService.isEnglish ? 'en' : 'tr';
+    final l = AppLocalizations.of(context)!;
     
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          language == 'tr' 
-            ? 'Destek İletişimi' 
-            : 'Contact Support',
+          l.translate('ui.support'),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              language == 'tr'
-                ? 'Gizlilik ile ilgili sorularınız için:'
-                : 'For privacy-related questions:',
-            ),
+            Text(l.translate('consent.title')),
             const SizedBox(height: 8),
             const SelectableText('privacy@carbontracker.app'),
             const SizedBox(height: 12),
-            Text(
-              language == 'tr'
-                ? 'Veri koruma sorumlusu:'
-                : 'Data Protection Officer:',
-            ),
+            const SizedBox(height: 12),
+            Text('Data Protection Officer:'),
             const SizedBox(height: 8),
             const SelectableText('dpo@carbontracker.app'),
           ],
@@ -649,7 +531,7 @@ class _PrivacyPolicyScreenState extends State<PrivacyPolicyScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(l.translate('common.ok')),
           ),
         ],
       ),

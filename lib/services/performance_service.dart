@@ -29,17 +29,7 @@ class PerformanceService {
       // Enable crashlytics collection
       await _crashlytics.setCrashlyticsCollectionEnabled(true);
       
-      // Set up automatic crash reporting
-      if (!kDebugMode) {
-        FlutterError.onError = (errorDetails) {
-          _crashlytics.recordFlutterFatalError(errorDetails);
-        };
-        
-        PlatformDispatcher.instance.onError = (error, stack) {
-          _crashlytics.recordError(error, stack, fatal: true);
-          return true;
-        };
-      }
+      // Crash reporting is configured centrally; nothing to hook here.
 
       // Track app start performance
       await _trackAppStartup();

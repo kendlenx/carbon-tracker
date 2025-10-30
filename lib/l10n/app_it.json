@@ -206,6 +206,14 @@
     "connecting": "Connessione in corso"
   },
   "devices": {
+    "managerTitle": "Gestione dispositivi",
+    "tabs": {"connected": "Connessi", "addDevice": "Aggiungi dispositivo", "settings": "Impostazioni"},
+    "noDevices": "Nessun dispositivo connesso\nAggiungi dispositivi per iniziare",
+    "addDeviceCta": "Aggiungi dispositivo",
+    "connectedSnack": "Dispositivo connesso: {name}",
+    "disconnectedSnack": "Dispositivo disconnesso: {name}",
+    "errorPrefix": "Errore dispositivo: {error}",
+    "syncCompleted": "{count} punti dati sincronizzati",
     "title": "Integrazioni dispositivi",
     "appleWatch": "Apple Watch",
     "wearOS": "Wear OS",
@@ -402,7 +410,14 @@
     "done": "Fatto",
     "close": "Chiudi",
     "send": "Invia",
-    "noData": "Nessun dato ancora"
+    "noData": "Nessun dato ancora",
+    "never": "Mai",
+    "justNow": "Proprio ora",
+    "unknown": "Sconosciuto",
+    "daysAgo": "giorni fa",
+    "hoursAgo": "ore fa",
+    "minutesAgo": "minuti fa",
+    "confirm": "Conferma"
   },
   "consent": {
     "title": "Privacy e consenso",
@@ -474,7 +489,65 @@
       "encryptedSubtitle": "I tuoi dati sono crittografati prima del salvataggio nel cloud"
     },
     "manageBackup": "Gestisci backup e sincronizzazione cloud",
-    "signInToBackup": "Accedi per salvare i dati nel cloud"
+    "signInToBackup": "Accedi per salvare i dati nel cloud",
+    "signedInBadge": "ACCESSO ESEGUITO",
+    "statusTitle": "Stato del backup",
+    "hasBackup": "Dati salvati",
+    "noBackup": "Nessun backup trovato",
+    "lastSync": "Ultima sincronizzazione:",
+    "syncControls": "Controlli di sincronizzazione",
+    "backupToCloud": "Esegui backup nel cloud",
+    "syncing": "Sincronizzazione...",
+    "restoreFromCloud": "Ripristina dal cloud",
+    "syncSuccess": "Sincronizzazione nel cloud riuscita",
+    "syncFailed": "Sincronizzazione nel cloud non riuscita",
+    "restoreTitle": "Ripristino dal cloud",
+    "restoreConfirm": "Sei sicuro di ripristinare dal cloud? Questo sovrascriverà i dati locali.",
+    "restoreSuccess": "Dati ripristinati dal cloud",
+    "restoreFailed": "Ripristino dal cloud non riuscito",
+    "signOutTitle": "Conferma uscita",
+    "signOutConfirm": "Sei sicuro di voler uscire? I dati locali verranno conservati."
+  },
+  
+  "profile": {
+    "nameEmpty": "Il nome non può essere vuoto",
+    "profileUpdated": "Profilo aggiornato con successo!",
+    "profileUpdateFailed": "Impossibile aggiornare il profilo",
+    "fillAllPasswordFields": "Compila tutti i campi della password",
+    "passwordMinLen": "La nuova password deve contenere almeno 6 caratteri",
+    "passwordChanged": "Password cambiata con successo!",
+    "currentPasswordIncorrect": "La password attuale non è corretta",
+    "pictureUpdated": "Foto profilo aggiornata!",
+    "pictureUpdateFailed": "Impossibile aggiornare la foto profilo",
+    "verificationEmailSent": "Email di verifica inviata!",
+    "verificationEmailFailed": "Impossibile inviare l'email di verifica",
+    "deleteAccount": "Elimina account",
+    "deleteConfirmMessage": "Questo eliminerà definitivamente il tuo account e tutti i dati. L'azione è irreversibile. Sei sicuro?",
+    "confirmPasswordTitle": "Conferma password",
+    "confirmPasswordBody": "Inserisci la password per confermare l'eliminazione dell'account:",
+    "title": "Profilo",
+    "signInToView": "Accedi per visualizzare il profilo",
+    "editProfile": "Modifica profilo",
+    "userInitial": "U",
+    "user": "Utente",
+    "verifyEmail": "Verifica e‑mail",
+    "infoTitle": "Informazioni profilo",
+    "fullName": "Nome completo",
+    "emailAddress": "Indirizzo e‑mail",
+    "emailImmutable": "L’e‑mail non può essere modificata",
+    "securityTitle": "Sicurezza",
+    "changePassword": "Cambia password",
+    "updatePasswordSubtitle": "Aggiorna la password dell’account",
+    "currentPassword": "Password attuale",
+    "newPassword": "Nuova password",
+    "passwordHint": "Almeno 6 caratteri",
+    "statsTitle": "Statistiche account",
+    "memberSince": "Membro dal",
+    "lastSignIn": "Ultimo accesso",
+    "dangerZone": "Zona pericolosa",
+    "deleteAccountSubtitle": "Elimina definitivamente account e tutti i dati",
+    "deleteSuccess": "Account eliminato con successo",
+    "passwordIncorrect": "Password errata"
   },
   
   "onboarding": {
@@ -494,6 +567,23 @@
     "loadError": "Errore di caricamento",
     "invalidInput": "Input non valido",
     "tryAgain": "Riprova"
+  },
+  "feedback": {
+    "typeLabel": "Tipo di feedback:",
+    "ratingQuestion": "Come valuteresti l’app?",
+    "emailOptional": "Email (opzionale)",
+    "emailHint": "La tua email per la risposta",
+    "messageLabel": "Il tuo feedback",
+    "additionalInfo": "Informazioni aggiuntive:",
+    "includeScreenshot": "Includi screenshot",
+    "includeErrorLogs": "Includi log di errore",
+    "screenshot": "Screenshot:",
+    "systemInfo": "Informazioni di sistema",
+    "type": {"bug": "Bug", "feature": "Richiesta funzionalità", "general": "Generale", "performance": "Prestazioni"},
+    "hint": {"bug": "Descrivi il bug in dettaglio...", "feature": "Quale funzionalità vorresti?", "performance": "Dove riscontri problemi di prestazioni?", "general": "Condividi i tuoi pensieri..."},
+    "crashPrefill": "L’app si è arrestata con l’errore: {error}. Controlla i log e i passaggi per riprodurre.",
+    "sentSuccess": "Il tuo feedback è stato inviato. Grazie!",
+    "sentFailed": "Invio feedback non riuscito"
   },
   "ach": {
     "first_day": {"title": "Primo passo", "desc": "Hai registrato la tua prima impronta di carbonio!"},
@@ -537,6 +627,26 @@
     "mindfulShopper": "Acquirente consapevole",
     "carbonCrusher": "Frantumatore di carbonio",
     "planetProtector": "Protettore del pianeta"
+  },
+  "biometric": {
+    "faceIdTitle": "Face ID",
+    "fingerprintTitle": "Impronta digitale",
+    "irisTitle": "Scansione iride",
+    "genericTitle": "Autenticazione biometrica",
+    "faceInstruction": "Guarda il dispositivo per sbloccare Carbon Step",
+    "fingerprintInstruction": "Posiziona il dito sul sensore per sbloccare",
+    "genericInstruction": "Usa l’autenticazione biometrica per sbloccare",
+    "authenticating": "Autenticazione in corso...",
+    "tryAgain": "Riprova",
+    "secureAccess": "Accesso sicuro",
+    "footerNote": "I tuoi dati sono protetti con crittografia end‑to‑end"
+  },
+  "widget": {
+    "dailyTrackingSession": "Tracciamento CO₂ giornaliero",
+    "dailyGoal": "Obiettivo giornaliero",
+    "trackingStarted": "Tracciamento avviato",
+    "activitySession": "Sessione {name}",
+    "activityGoal": "Obiettivo attività"
   },
   "ui": {
     "level": "Livello",
@@ -606,6 +716,16 @@
     "autoBackup": "Backup automatico",
     "privacyPolicy": "Informativa sulla privacy",
     "dataConsent": "Consenso dati",
-    "clearAllData": "Cancella tutti i dati"
+    "clearAllData": "Cancella tutti i dati",
+    "helpTitle": "Aiuto",
+    "helpBody": "Carbon Step ti aiuta a monitorare e ridurre la tua impronta di carbonio. Traccia attività giornaliere tra trasporti, energia, cibo e acquisti.",
+    "profileSettingsSubtitle": "Gestisci le informazioni del profilo e le impostazioni dell'account",
+    "signOutSubtitle": "Esci dal tuo account (i dati locali rimangono)",
+    "signOutConfirmMessage": "Sei sicuro di voler uscire? I dati locali rimarranno su questo dispositivo.",
+    "securityPrivacySubtitle": "Proteggi i tuoi dati di CO₂",
+    "signedOutSuccess": "Disconnessione riuscita",
+    "changeLanguage": "Cambia lingua",
+    "tableOfContents": "Indice",
+    "support": "Supporto"
   }
 }

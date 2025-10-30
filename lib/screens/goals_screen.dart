@@ -104,54 +104,60 @@ class _GoalsScreenState extends State<GoalsScreen> with TickerProviderStateMixin
   }
 
   void _setupAchievements() {
-    _achievements.clear();
-    final l = AppLocalizations.of(context)!;
-    _achievements.addAll([
-      Achievement(
-        id: 'daily_green',
-        title: l.translate('goals.ach.dailyGreenChampion.title'),
-        description: l.translate('goals.ach.dailyGreenChampion.desc'),
-        icon: '🌱',
-        color: Colors.green,
-        type: AchievementType.daily,
-        targetValue: 7,
-        unit: l.translate('goals.units.days'),
-        points: 50,
-      ),
-      Achievement(
-        id: 'weekly_warrior',
-        title: l.translate('goals.ach.weeklyWarrior.title'),
-        description: l.translate('goals.ach.weeklyWarrior.desc'),
-        icon: '🏆',
-        color: Colors.blue,
-        type: AchievementType.weekly,
-        targetValue: 4,
-        unit: l.translate('goals.units.weeks'),
-        points: 75,
-      ),
-      Achievement(
-        id: 'monthly_master',
-        title: l.translate('goals.ach.monthlyMaster.title'),
-        description: l.translate('goals.ach.monthlyMaster.desc'),
-        icon: '⭐',
-        color: Colors.amber,
-        type: AchievementType.monthly,
-        targetValue: 1,
-        unit: l.translate('goals.units.goal'),
-        points: 100,
-      ),
-      Achievement(
-        id: 'carbon_crusher',
-        title: l.translate('goals.ach.carbonCrusher.title'),
-        description: l.translate('goals.ach.carbonCrusher.desc'),
-        icon: '📉',
-        color: Colors.red,
-        type: AchievementType.milestone,
-        targetValue: 50,
-        unit: '%',
-        points: 200,
-      ),
-    ]);
+    try {
+      _achievements.clear();
+      final l = AppLocalizations.of(context);
+      if (l == null) return;
+      String t(String key, String fallback) => l.translate(key).isEmpty ? fallback : l.translate(key);
+      _achievements.addAll([
+        Achievement(
+          id: 'daily_green',
+          title: t('goals.ach.dailyGreenChampion.title', 'Daily Green Champion'),
+          description: t('goals.ach.dailyGreenChampion.desc', 'Stay under your daily goal for 7 days'),
+          icon: '🌱',
+          color: Colors.green,
+          type: AchievementType.daily,
+          targetValue: 7,
+          unit: t('goals.units.days', 'days'),
+          points: 50,
+        ),
+        Achievement(
+          id: 'weekly_warrior',
+          title: t('goals.ach.weeklyWarrior.title', 'Weekly Warrior'),
+          description: t('goals.ach.weeklyWarrior.desc', 'Reach your weekly goal 4 times'),
+          icon: '🏆',
+          color: Colors.blue,
+          type: AchievementType.weekly,
+          targetValue: 4,
+          unit: t('goals.units.weeks', 'weeks'),
+          points: 75,
+        ),
+        Achievement(
+          id: 'monthly_master',
+          title: t('goals.ach.monthlyMaster.title', 'Monthly Master'),
+          description: t('goals.ach.monthlyMaster.desc', 'Exceed your monthly goal'),
+          icon: '⭐',
+          color: Colors.amber,
+          type: AchievementType.monthly,
+          targetValue: 1,
+          unit: t('goals.units.goal', 'goal'),
+          points: 100,
+        ),
+        Achievement(
+          id: 'carbon_crusher',
+          title: t('goals.ach.carbonCrusher.title', 'Carbon Crusher'),
+          description: t('goals.ach.carbonCrusher.desc', 'Reduce emissions by 50%'),
+          icon: '📉',
+          color: Colors.red,
+          type: AchievementType.milestone,
+          targetValue: 50,
+          unit: '%',
+          points: 200,
+        ),
+      ]);
+    } catch (e) {
+      debugPrint('Error in _setupAchievements: $e');
+    }
   }
 
   @override

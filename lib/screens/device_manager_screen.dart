@@ -3,6 +3,7 @@ import '../services/device_integration_framework.dart';
 import '../services/language_service.dart';
 import '../integrations/tesla_integration.dart';
 import '../integrations/healthkit_integration.dart';
+import '../l10n/app_localizations.dart';
 import '../integrations/smart_home_integration.dart';
 import '../widgets/micro_interactions.dart';
 
@@ -66,35 +67,27 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
     switch (event.type) {
       case DeviceEventType.deviceConnected:
         _showSnackBar(
-          _languageService.isEnglish
-              ? 'Device connected: ${event.data['deviceName']}'
-              : 'Cihaz bağlandı: ${event.data['deviceName']}',
+          AppLocalizations.of(context)!.translate('devices.connectedSnack').replaceAll('{name}', (event.data['deviceName'] ?? '').toString()),
           Colors.green,
         );
         _loadDevices();
         break;
       case DeviceEventType.deviceDisconnected:
         _showSnackBar(
-          _languageService.isEnglish
-              ? 'Device disconnected: ${event.data['deviceName']}'
-              : 'Cihaz bağlantısı kesildi: ${event.data['deviceName']}',
+          AppLocalizations.of(context)!.translate('devices.disconnectedSnack').replaceAll('{name}', (event.data['deviceName'] ?? '').toString()),
           Colors.orange,
         );
         _loadDevices();
         break;
       case DeviceEventType.deviceError:
         _showSnackBar(
-          _languageService.isEnglish
-              ? 'Device error: ${event.data['error']}'
-              : 'Cihaz hatası: ${event.data['error']}',
+          AppLocalizations.of(context)!.translate('devices.errorPrefix').replaceAll('{error}', (event.data['error'] ?? '').toString()),
           Colors.red,
         );
         break;
       case DeviceEventType.syncCompleted:
         _showSnackBar(
-          _languageService.isEnglish
-              ? '${event.data['dataPointsCount']} data points synced'
-              : '${event.data['dataPointsCount']} veri noktası senkronize edildi',
+          AppLocalizations.of(context)!.translate('devices.syncCompleted').replaceAll('{count}', (event.data['dataPointsCount'] ?? '').toString()),
           Colors.blue,
         );
         break;
@@ -146,7 +139,7 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEnglish ? 'Device Manager' : 'Cihaz Yöneticisi'),
+        title: Text(AppLocalizations.of(context)!.translate('devices.managerTitle')),
         backgroundColor: Colors.transparent,
         elevation: 0,
         flexibleSpace: Container(
@@ -163,15 +156,15 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
           tabs: [
             Tab(
               icon: const Icon(Icons.devices),
-              text: isEnglish ? 'Connected' : 'Bağlı',
+              text: AppLocalizations.of(context)!.translate('devices.tabs.connected'),
             ),
             Tab(
               icon: const Icon(Icons.add_circle_outline),
-              text: isEnglish ? 'Add Device' : 'Cihaz Ekle',
+              text: AppLocalizations.of(context)!.translate('devices.tabs.addDevice'),
             ),
             Tab(
               icon: const Icon(Icons.settings),
-              text: isEnglish ? 'Settings' : 'Ayarlar',
+              text: AppLocalizations.of(context)!.translate('devices.tabs.settings'),
             ),
           ],
         ),
@@ -214,9 +207,7 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              isEnglish
-                  ? 'No devices connected\nAdd devices to start tracking'
-                  : 'Bağlı cihaz yok\nTakip başlatmak için cihaz ekleyin',
+              AppLocalizations.of(context)!.translate('devices.noDevices'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -227,7 +218,7 @@ class _DeviceManagerScreenState extends State<DeviceManagerScreen>
             ElevatedButton.icon(
               onPressed: () => _tabController.animateTo(1),
               icon: const Icon(Icons.add),
-              label: Text(isEnglish ? 'Add Device' : 'Cihaz Ekle'),
+              label: Text(AppLocalizations.of(context)!.translate('devices.addDeviceCta')),
             ),
           ],
         ),

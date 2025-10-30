@@ -592,8 +592,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return _userName;
     }
     
-    // En son generic text
-    return _languageService.isTurkish ? 'Kullanıcı Hesabı' : 'User Account';
+    // En son generic text (localized)
+    return AppLocalizations.of(context)!.translate('profile.user');
   }
 
   Widget _buildUserAccountSection() {
@@ -654,9 +654,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: Icons.person,
               iconColor: Colors.blue,
               title: AppLocalizations.of(context)!.translate('ui.profileSettings'),
-              subtitle: _languageService.isTurkish 
-                ? 'Profil bilgilerinizi ve hesap ayarlarınızı yönetin'
-                : 'Manage your profile information and account settings',
+              subtitle: AppLocalizations.of(context)!.translate('ui.profileSettingsSubtitle'),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -681,27 +679,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               icon: Icons.logout,
               iconColor: Colors.red,
               title: AppLocalizations.of(context)!.translate('ui.signOut'),
-              subtitle: _languageService.isEnglish 
-                ? 'Sign out from your account (local data remains)'
-                : 'Hesabınızdan çıkış yapın (yerel veriler kalacak)',
+              subtitle: AppLocalizations.of(context)!.translate('ui.signOutSubtitle'),
               onTap: () async {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                title: Text(_languageService.isTurkish ? 'Çıkış Yap' : 'Sign Out'),
+                title: Text(AppLocalizations.of(context)!.translate('ui.signOut')),
                     content: Text(
-                      _languageService.isTurkish
-                        ? 'Çıkış yapmak istediğinizden emin misiniz? Yerel verileriniz bu cihazda kalacaktır.'
-                        : 'Are you sure you want to sign out? Your local data will remain on this device.'
+                      AppLocalizations.of(context)!.translate('ui.signOutConfirmMessage')
                     ),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(false),
-                        child: Text(_languageService.isTurkish ? 'İptal' : 'Cancel'),
+                        child: Text(AppLocalizations.of(context)!.translate('common.cancel')),
                       ),
                       ElevatedButton(
                         onPressed: () => Navigator.of(context).pop(true),
-                        child: Text(_languageService.isTurkish ? 'Çıkış Yap' : 'Sign Out'),
+                        child: Text(AppLocalizations.of(context)!.translate('ui.signOut')),
                       ),
                     ],
                   ),
@@ -712,11 +706,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(
-                          _languageService.isTurkish 
-                            ? 'Başarıyla çıkış yapıldı'
-                            : 'Signed out successfully',
-                        ),
+                        content: Text(AppLocalizations.of(context)!.translate('ui.signedOutSuccess')),
                         backgroundColor: Colors.green,
                       ),
                     );
@@ -773,9 +763,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     Text(
-                      _languageService.isTurkish 
-                        ? 'Karbon verilerinizi koruyun' 
-                        : 'Protect your carbon data',
+                      AppLocalizations.of(context)!.translate('ui.securityPrivacySubtitle'),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.grey[600],
                       ),
@@ -1265,7 +1253,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Icon(Icons.person, color: Theme.of(context).primaryColor),
                   const SizedBox(width: 8),
                   Text(
-                    _languageService.isTurkish ? 'Profili Düzenle' : 'Edit Profile',
+                    AppLocalizations.of(context)!.translate('profile.editProfile'),
                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const Spacer(),
@@ -1279,7 +1267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(
-                  labelText: _languageService.isTurkish ? 'Kullanıcı Adı' : 'Username',
+                  labelText: AppLocalizations.of(context)!.translate('profile.fullName'),
                   border: const OutlineInputBorder(),
                   hintText: _defaultUserName,
                 ),
@@ -1289,7 +1277,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: _languageService.isTurkish ? 'E-posta' : 'Email',
+                  labelText: AppLocalizations.of(context)!.translate('profile.emailAddress'),
                   border: const OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -1304,10 +1292,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     String? error;
                     if (name.isEmpty) {
-                      error = _languageService.isTurkish ? 'Kullanıcı adı boş olamaz' : 'Username cannot be empty';
+                      error = AppLocalizations.of(context)!.translate('profile.nameEmpty');
                     } else if (email.isEmpty || !RegExp(r'^.+@.+\\..+').hasMatch(email)) {
                       // Basic email validation fallback
-                      error = _languageService.isTurkish ? 'Geçerli bir e-posta girin' : 'Please enter a valid email';
+                      error = AppLocalizations.of(context)!.translate('auth.emailInvalid');
                     }
 
                     if (error != null) {
@@ -1324,13 +1312,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(_languageService.isTurkish ? 'Profil güncellendi' : 'Profile updated'),
+                          content: Text(AppLocalizations.of(context)!.translate('profile.profileUpdated')),
                         ),
                       );
                     }
                   },
                   icon: const Icon(Icons.save),
-                  label: Text(_languageService.isTurkish ? 'Kaydet' : 'Save'),
+                  label: Text(AppLocalizations.of(context)!.translate('common.save')),
                 ),
               ),
             ],
@@ -1823,14 +1811,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(_languageService.isTurkish ? 'Yardım' : 'Help'),
-        content: Text(_languageService.isTurkish
-          ? 'Carbon Step karbon ayak izinizi izlemenize ve azaltmanıza yardımcı olur. Ulaşım, enerji, yemek ve alışveriş kategorilerinde günlük aktivitelerinizi takip edin.'
-          : 'Carbon Step helps you monitor and reduce your carbon footprint. Track your daily activities across transport, energy, food, and shopping categories.'),
+        title: Text(AppLocalizations.of(context)!.translate('ui.helpTitle')),
+        content: Text(AppLocalizations.of(context)!.translate('ui.helpBody')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(_languageService.isTurkish ? 'Tamam' : 'OK'),
+            child: Text(AppLocalizations.of(context)!.translate('common.ok')),
           ),
         ],
       ),

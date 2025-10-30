@@ -216,6 +216,14 @@
   },
   
   "devices": {
+    "managerTitle": "Gestor de dispositivos",
+    "tabs": {"connected": "Conectados", "addDevice": "Añadir dispositivo", "settings": "Ajustes"},
+    "noDevices": "No hay dispositivos conectados\nAñade dispositivos para empezar",
+    "addDeviceCta": "Añadir dispositivo",
+    "connectedSnack": "Dispositivo conectado: {name}",
+    "disconnectedSnack": "Dispositivo desconectado: {name}",
+    "errorPrefix": "Error de dispositivo: {error}",
+    "syncCompleted": "{count} puntos de datos sincronizados",
     "title": "Integraciones de dispositivos",
     "appleWatch": "Apple Watch",
     "wearOS": "Wear OS",
@@ -415,7 +423,14 @@
     "done": "Listo",
     "close": "Cerrar",
     "send": "Enviar",
-    "noData": "Aún no hay datos"
+    "noData": "Aún no hay datos",
+    "never": "Nunca",
+    "justNow": "Ahora mismo",
+    "unknown": "Desconocido",
+    "daysAgo": "días",
+    "hoursAgo": "horas",
+    "minutesAgo": "minutos",
+    "confirm": "Confirmar"
   },
   
   "consent": {
@@ -489,7 +504,65 @@
       "encryptedSubtitle": "Tus datos se cifran antes de almacenarse en la nube"
     },
     "manageBackup": "Gestionar copia y sincronización en la nube",
-    "signInToBackup": "Inicia sesión para copiar tus datos en la nube"
+    "signInToBackup": "Inicia sesión para copiar tus datos en la nube",
+    "signedInBadge": "SESION INICIADA",
+    "statusTitle": "Estado de la copia",
+    "hasBackup": "Datos copiados",
+    "noBackup": "No se encontró copia",
+    "lastSync": "Última sincronización:",
+    "syncControls": "Controles de sincronización",
+    "backupToCloud": "Copiar a la nube",
+    "syncing": "Sincronizando...",
+    "restoreFromCloud": "Restaurar desde la nube",
+    "syncSuccess": "Sincronización en la nube correcta",
+    "syncFailed": "Error al sincronizar con la nube",
+    "restoreTitle": "Restaurar desde la nube",
+    "restoreConfirm": "¿Seguro que quieres restaurar desde la nube? Esto sobrescribirá los datos locales.",
+    "restoreSuccess": "Datos restaurados desde la nube",
+    "restoreFailed": "Error al restaurar datos desde la nube",
+    "signOutTitle": "Confirmar cierre de sesión",
+    "signOutConfirm": "¿Seguro que quieres cerrar sesión? Los datos locales se conservarán."
+  },
+  
+  "profile": {
+    "nameEmpty": "El nombre no puede estar vacío",
+    "profileUpdated": "¡Perfil actualizado correctamente!",
+    "profileUpdateFailed": "No se pudo actualizar el perfil",
+    "fillAllPasswordFields": "Completa todos los campos de contraseña",
+    "passwordMinLen": "La nueva contraseña debe tener al menos 6 caracteres",
+    "passwordChanged": "¡Contraseña cambiada correctamente!",
+    "currentPasswordIncorrect": "La contraseña actual es incorrecta",
+    "pictureUpdated": "¡Foto de perfil actualizada!",
+    "pictureUpdateFailed": "No se pudo actualizar la foto de perfil",
+    "verificationEmailSent": "¡Correo de verificación enviado!",
+    "verificationEmailFailed": "No se pudo enviar el correo de verificación",
+    "deleteAccount": "Eliminar cuenta",
+    "deleteConfirmMessage": "Esto eliminará permanentemente tu cuenta y todos los datos. Esta acción no se puede deshacer. ¿Estás seguro?",
+    "confirmPasswordTitle": "Confirmar contraseña",
+    "confirmPasswordBody": "Introduce tu contraseña para confirmar la eliminación de la cuenta:",
+    "title": "Perfil",
+    "signInToView": "Inicia sesión para ver el perfil",
+    "editProfile": "Editar perfil",
+    "userInitial": "U",
+    "user": "Usuario",
+    "verifyEmail": "Verificar correo",
+    "infoTitle": "Información del perfil",
+    "fullName": "Nombre completo",
+    "emailAddress": "Dirección de correo",
+    "emailImmutable": "El correo no se puede cambiar",
+    "securityTitle": "Seguridad",
+    "changePassword": "Cambiar contraseña",
+    "updatePasswordSubtitle": "Actualiza la contraseña de tu cuenta",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "passwordHint": "Al menos 6 caracteres",
+    "statsTitle": "Estadísticas de la cuenta",
+    "memberSince": "Miembro desde",
+    "lastSignIn": "Último inicio de sesión",
+    "dangerZone": "Zona de peligro",
+    "deleteAccountSubtitle": "Eliminar permanentemente tu cuenta y todos los datos",
+    "deleteSuccess": "Cuenta eliminada correctamente",
+    "passwordIncorrect": "La contraseña es incorrecta"
   },
   
   "onboarding": {
@@ -570,6 +643,26 @@
     "carbonCrusher": "Triturador de carbono",
     "planetProtector": "Protector del planeta"
   },
+  "biometric": {
+    "faceIdTitle": "Face ID",
+    "fingerprintTitle": "Huella dactilar",
+    "irisTitle": "Escaneo de iris",
+    "genericTitle": "Autenticación biométrica",
+    "faceInstruction": "Mira tu dispositivo para desbloquear Carbon Step",
+    "fingerprintInstruction": "Coloca el dedo en el sensor para desbloquear",
+    "genericInstruction": "Usa tu autenticación biométrica para desbloquear",
+    "authenticating": "Autenticando...",
+    "tryAgain": "Intentar de nuevo",
+    "secureAccess": "Acceso seguro",
+    "footerNote": "Tus datos están protegidos con cifrado de extremo a extremo"
+  },
+  "widget": {
+    "dailyTrackingSession": "Seguimiento de CO₂ diario",
+    "dailyGoal": "Meta diaria",
+    "trackingStarted": "Seguimiento iniciado",
+    "activitySession": "Sesión de {name}",
+    "activityGoal": "Meta de actividad"
+  },
   "ui": {
     "level": "Nivel",
     "xpEarned": "XP obtenidos",
@@ -638,6 +731,16 @@
     "autoBackup": "Copia automática",
     "privacyPolicy": "Política de privacidad",
     "dataConsent": "Consentimiento de datos",
-    "clearAllData": "Borrar todos los datos"
+    "clearAllData": "Borrar todos los datos",
+    "helpTitle": "Ayuda",
+    "helpBody": "Carbon Step te ayuda a monitorear y reducir tu huella de carbono. Registra tus actividades diarias en transporte, energía, comida y compras.",
+    "profileSettingsSubtitle": "Gestiona tu información de perfil y ajustes de cuenta",
+    "signOutSubtitle": "Cerrar sesión (los datos locales permanecen)",
+    "signOutConfirmMessage": "¿Seguro que quieres cerrar sesión? Tus datos locales permanecerán en este dispositivo.",
+    "securityPrivacySubtitle": "Protege tus datos de CO₂",
+    "signedOutSuccess": "Cierre de sesión correcto",
+    "changeLanguage": "Cambiar idioma",
+    "tableOfContents": "Índice",
+    "support": "Soporte"
   }
 }
