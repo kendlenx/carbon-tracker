@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="bg3" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#0c1110"/>
+  <g opacity="0.18">
+    <circle cx="200" cy="90" r="100" fill="#22c55e"/>
+    <circle cx="760" cy="480" r="140" fill="#16a34a"/>
+  </g>
+  <g transform="translate(120,120)">
+    <rect rx="22" width="720" height="300" fill="#121a17" stroke="#1c2621"/>
+    <g transform="translate(40,40)">
+      <rect width="260" height="220" rx="16" fill="#0f1614" stroke="#1c2621"/>
+      <rect x="24" y="24" width="212" height="40" rx="10" fill="url(#bg3)"/>
+      <rect x="24" y="80" width="160" height="14" rx="7" fill="#e7f5ee"/>
+      <rect x="24" y="104" width="180" height="14" rx="7" fill="#9fb2aa"/>
+      <rect x="24" y="128" width="136" height="14" rx="7" fill="#9fb2aa"/>
+    </g>
+    <g transform="translate(340,40)">
+      <rect width="340" height="36" rx="10" fill="#e7f5ee"/>
+      <rect y="52" width="300" height="12" rx="6" fill="#9fb2aa"/>
+      <rect y="72" width="320" height="12" rx="6" fill="#9fb2aa"/>
+      <rect y="92" width="280" height="12" rx="6" fill="#9fb2aa"/>
+      <rect y="132" width="180" height="16" rx="8" fill="#e7f5ee"/>
+      <rect y="160" width="140" height="12" rx="6" fill="#9fb2aa"/>
+    </g>
+  </g>
+  <text x="120" y="460" fill="#e7f5ee" font-family="Inter, system-ui, Roboto, Arial" font-size="36" font-weight="800">Widget ve Kısayollar</text>
+  <text x="120" y="496" fill="#9fb2aa" font-family="Inter, system-ui, Roboto, Arial" font-size="20">Ana ekrandan tek dokunuşla ekleme</text>
+</svg>

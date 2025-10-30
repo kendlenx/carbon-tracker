@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#0c1110"/>
+  <g opacity="0.18">
+    <circle cx="180" cy="140" r="120" fill="url(#bg)"/>
+    <circle cx="860" cy="60" r="80" fill="#22c55e"/>
+    <circle cx="760" cy="460" r="120" fill="#16a34a"/>
+  </g>
+  <g transform="translate(140,110)">
+    <rect x="0" y="0" rx="18" width="380" height="140" fill="#121a17" stroke="#1c2621"/>
+    <rect x="24" y="28" rx="10" width="72" height="72" fill="#0f1614" stroke="#1c2621"/>
+    <g transform="translate(116,36)" fill="#e7f5ee">
+      <rect width="180" height="16" rx="8"/>
+      <rect y="28" width="140" height="12" rx="6" opacity=".7"/>
+      <rect y="48" width="108" height="12" rx="6" opacity=".5"/>
+    </g>
+  </g>
+  <g transform="translate(140,280)">
+    <rect x="0" y="0" rx="18" width="250" height="80" fill="#121a17" stroke="#1c2621"/>
+    <rect x="18" y="22" rx="10" width="44" height="36" fill="#0f1614" stroke="#1c2621"/>
+    <rect x="76" y="30" width="140" height="16" rx="8" fill="#e7f5ee"/>
+  </g>
+  <g transform="translate(520,120)">
+    <rect x="0" y="0" rx="24" width="300" height="300" fill="#121a17" stroke="#1c2621"/>
+    <circle cx="150" cy="150" r="110" fill="#0f1614" stroke="#1c2621"/>
+    <path d="M150 150 L150 60 A90 90 0 0 1 228 192 Z" fill="url(#bg)"/>
+    <circle cx="150" cy="150" r="6" fill="#e7f5ee"/>
+  </g>
+  <text x="140" y="440" fill="#e7f5ee" font-family="Inter, system-ui, Roboto, Arial" font-size="36" font-weight="800">Hızlı Kayıt</text>
+  <text x="140" y="476" fill="#9fb2aa" font-family="Inter, system-ui, Roboto, Arial" font-size="20">Ulaşım ve enerji kayıtlarını saniyeler içinde ekleyin</text>
+</svg>
