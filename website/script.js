@@ -29,6 +29,7 @@ function animateCounter(el){
 
 // Unified observer for reveal + counters
 const io = new IntersectionObserver((entries)=>{
+  document.documentElement.classList.add('js')
   entries.forEach(e=>{
     if(e.isIntersecting){
       if(!motionOK){ e.target.style.transitionDuration='0s'; e.target.style.transitionDelay='0s' }

@@ -26,6 +26,10 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.png" />
     <meta name="theme-color" content="#22c55e" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" as="image" href="/assets/screen-1.png" imagesrcset="/assets/screen-1.png 1x" fetchpriority="high" />
+    <link rel="dns-prefetch" href="https://plausible.io" />
+    <link rel="preconnect" href="https://plausible.io" crossorigin />
+    <script defer data-domain="carbonstepapp.com" src="https://plausible.io/js/script.js"></script>
     <link rel="stylesheet" href="/styles.css" />
 
     <script type="application/ld+json">
@@ -93,7 +97,9 @@
           </div>
           <div class="hero-media reveal" style="background:#0b110f">
             <div class="device" style="max-width:420px;margin:0 auto">
-              <div class="bezel"><img src="/assets/screen-1.png" alt="Carbon Step ana ekran" /></div>
+              <div class="bezel">
+                <img src="/assets/screen-1.png" alt="Carbon Step ana ekran" width="1080" height="2340" fetchpriority="high" />
+              </div>
             </div>
           </div>
         </div>
@@ -185,10 +191,10 @@
         <div class="container">
           <h2 class="reveal" data-i18n="screens.title">Ekran Görüntüleri</h2>
           <div class="screens-grid">
-            <div class="device reveal"><div class="bezel"><img src="/assets/screen-1.png" alt="Dashboard" loading="lazy" /></div></div>
-            <div class="device reveal"><div class="bezel"><img src="/assets/screen-2.png" alt="Ulaşım kaydı" loading="lazy" /></div></div>
-            <div class="device reveal"><div class="bezel"><img src="/assets/screen-3.png" alt="Analitik" loading="lazy" /></div></div>
-            <div class="device reveal"><div class="bezel"><img src="/assets/screen-4.png" alt="Başarımlar" loading="lazy" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-1.png" alt="Dashboard" loading="lazy" width="1080" height="2340" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-2.png" alt="Ulaşım kaydı" loading="lazy" width="1080" height="2340" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-3.png" alt="Analitik" loading="lazy" width="1080" height="2340" /></div></div>
+            <div class="device reveal"><div class="bezel"><img src="/assets/screen-4.png" alt="Başarımlar" loading="lazy" width="1080" height="2340" /></div></div>
           </div>
         </div>
       </section>
