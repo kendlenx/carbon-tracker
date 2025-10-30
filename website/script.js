@@ -44,6 +44,10 @@ const io = new IntersectionObserver((entries)=>{
 // Force dark theme only
 document.documentElement.setAttribute('data-theme', 'dark')
 
+// Minimal error logging to analytics
+window.addEventListener('error', (e)=>{ try{ if(window.plausible){ window.plausible('js_error',{props:{m:(e.message||'').slice(0,120)}}) } }catch(_){} })
+window.addEventListener('unhandledrejection', (e)=>{ try{ if(window.plausible){ window.plausible('promise_rejection',{props:{m: String(e.reason||'').slice(0,120)}}) } }catch(_){} })
+
 // i18n
 const dict = {
   tr: {

@@ -63,6 +63,28 @@
       ]
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Carbon Step",
+      "url": "https://carbonstepapp.com/",
+      "logo": "https://carbonstepapp.com/assets/logo.png",
+      "sameAs": [
+        "https://github.com/kendlenx",
+        "https://instagram.com/carbonsteppapp"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://carbonstepapp.com/"}
+      ]
+    }
+    </script>
   </head>
   <body>
     <a href="#main" class="skip">İçeriğe geç</a>
@@ -337,7 +359,7 @@
 
       <section id="contact" class="section contact">
         <div class="container">
-          <h2 class="reveal" data-i18n="contact.title">Bize Ulaşın</h2>
+          <h2 id="contact-title" class="reveal" data-i18n="contact.title">Bize Ulaşın</h2>
           <div class="contact-grid">
             <div class="contact-card reveal">
 <form name="contact" method="POST" action="/thanks.html?from=contact" data-netlify="true" netlify-honeypot="bot-field" aria-labelledby="contact-title">
