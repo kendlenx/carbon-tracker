@@ -140,6 +140,57 @@ function applyI18n(){
 }
 applyI18n()
 
+// Toast helper
+function showToast(msg){
+  let t = document.querySelector('.toast')
+  if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t) }
+  t.textContent = msg
+  t.classList.add('show')
+  setTimeout(()=>{ t.classList.remove('show') }, 3000)
+}
+
+// Newsletter AJAX submit
+(function(){
+  const form = document.querySelector('form[name="newsletter"]')
+  if(!form) return
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault()
+    try{
+      const data = new FormData(form)
+      const body = new URLSearchParams()
+      for(const [k,v] of data.entries()){ body.append(k, v) }
+      const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
+      if(!res.ok) throw new Error('netlify')
+      form.reset()
+      showToast(lang==='tr' ? 'Teşekkürler! Abone oldunuz.' : 'Thanks! You are subscribed.')
+      try{ if(window.plausible){ window.plausible('newsletter_subscribed') } }catch(_){ }
+    }catch(err){
+      form.submit() // fallback
+    }
+  })
+})()
+
+// Contact AJAX submit
+(function(){
+  const form = document.querySelector('form[name="contact"]')
+  if(!form) return
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault()
+    try{
+      const data = new FormData(form)
+      const body = new URLSearchParams()
+      for(const [k,v] of data.entries()){ body.append(k, v) }
+      const res = await fetch(form.getAttribute('action')||'/', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body })
+      if(!res.ok) throw new Error('netlify')
+      form.reset()
+      showToast(lang==='tr' ? 'Teşekkürler! Mesajınızı aldık.' : 'Thanks! We received your message.')
+      try{ if(window.plausible){ window.plausible('contact_submitted') } }catch(_){ }
+    }catch(err){
+      form.submit() // fallback
+    }
+  })
+})()
+
 // Cookie banner (analytics notice)
 (function(){
   if(localStorage.getItem('cookieConsent')==='1') return
