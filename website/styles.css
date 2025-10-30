@@ -18,6 +18,11 @@ html,body{margin:0;padding:0;background:radial-gradient(1200px 600px at 10% -10%
   --text:#0b110f;--muted:#4f635b;--shadow:0 14px 40px rgba(2,6,4,.06);
 }
 :root[data-theme="light"] body{background:radial-gradient(1200px 600px at 10% -10%, rgba(34,197,94,.10), transparent 60%), radial-gradient(1000px 500px at 110% 10%, rgba(16,163,74,.12), transparent 60%), var(--bg)}
+:root[data-theme="light"] .card{background:linear-gradient(180deg,#ffffff,#f7fbf8)}
+:root[data-theme="light"] .faq details{background:#ffffff}
+:root[data-theme="light"] .device{background:#ffffff}
+:root[data-theme="light"] .hero-media{background:#ffffff}
+:root[data-theme="light"] .lead{color:#2b3a35}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
 .section{padding:88px 20px}
@@ -34,7 +39,7 @@ a{color:inherit;text-decoration:none}
 .btn.dark{background:var(--bg-soft)}
 .btn.ghost{background:transparent}
 .note{color:var(--muted);margin-top:8px}
-.lead{font-size:1.2rem;color:#d7e3dc}
+.lead{font-size:1.2rem;color:var(--muted)}
 .hero{position:relative}
 .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
 .hero h1{font-size:clamp(32px,5vw,56px);margin:0 0 12px;line-height:1.05}

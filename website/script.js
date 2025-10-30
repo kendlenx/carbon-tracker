@@ -46,8 +46,12 @@ const dict = {
     'features.gamification.title':'Oyunlaştırma','features.gamification.desc':'Başarımlar, hedefler ve rozetlerle motivasyonunuzu yüksek tutun.',
     'features.integrations.title':'Entegrasyonlar','features.integrations.desc':'Ana ekran widget\'ları, Siri/CarPlay ve yerel bildirim desteği.',
     'screens.title':'Ekran Görüntüleri',
-    'faq.title':'Sıkça Sorulan Sorular','faq1.q':'Uygulama ücretsiz mi?','faq1.a':'Temel özellikler ücretsizdir. İleri seviye özellikler için daha sonra opsiyonel destek paketleri eklenebilir.',
+'faq.title':'Sıkça Sorulan Sorular','faq1.q':'Uygulama ücretsiz mi?','faq1.a':'Temel özellikler ücretsizdir. İleri seviye özellikler için daha sonra opsiyonel destek paketleri eklenebilir.',
     'faq2.q':'Verilerim güvende mi?','faq2.a':'Verileriniz yerel olarak saklanır ve isteğe bağlı olarak bulutla senkronize edilir. Gizlilik politikamıza uyumludur.',
+    'faq3.q':'Veri senkronizasyonu nasıl çalışır?','faq3.a':'İsteğe bağlı hesap girişiyle kayıtlarınız cihazlar arasında senkronize edilebilir. İnternet yokken yerel kayıt devam eder, bağlantı geldiğinde eşitlenir.',
+    'faq4.q':'Widget, Siri ve CarPlay desteği var mı?','faq4.a':'Evet. Ana ekran widget’ları hızlı erişim sağlar; Siri/CarPlay komutlarıyla eller serbest kayıt alabilirsiniz.',
+    'faq5.q':'Verilerimi dışa aktarabilir miyim?','faq5.a':'Evet. Ayarlar bölümünden CSV/JSON dışa aktarma seçeneklerini kullanabilirsiniz.',
+    'faq6.q':'Hedefleri nasıl ayarlarım?','faq6.a':'Analitik ekranından aylık/haftalık hedef belirleyebilir, ilerleme çubukları ve bildirimlerle takibini yapabilirsiniz.',
     'contact.title':'Bize Ulaşın','contact.name':'Ad Soyad','contact.email':'E-posta','contact.message':'Mesaj','contact.submit':'Gönder','contact.alt':'Veya:',
     'footer.privacy':'Gizlilik','footer.press':'Basın Kiti'
   },
@@ -64,8 +68,12 @@ const dict = {
     'features.gamification.title':'Gamification','features.gamification.desc':'Stay motivated with achievements, goals and badges.',
     'features.integrations.title':'Integrations','features.integrations.desc':'Home widgets, Siri/CarPlay and local notification support.',
     'screens.title':'Screenshots',
-    'faq.title':'Frequently Asked Questions','faq1.q':'Is the app free?','faq1.a':'Core features are free. Optional support packs may be added later for advanced features.',
+'faq.title':'Frequently Asked Questions','faq1.q':'Is the app free?','faq1.a':'Core features are free. Optional support packs may be added later for advanced features.',
     'faq2.q':'Is my data safe?','faq2.a':'Your data is stored locally and can optionally sync to the cloud. We comply with our privacy policy.',
+    'faq3.q':'How does sync work?','faq3.a':'With optional sign-in, your logs sync across devices. Offline logging works and reconciles when back online.',
+    'faq4.q':'Do you support Widgets, Siri and CarPlay?','faq4.a':'Yes. Home widgets provide quick access; with Siri/CarPlay you can log hands‑free.',
+    'faq5.q':'Can I export my data?','faq5.a':'Yes. Use CSV/JSON export options in Settings.',
+    'faq6.q':'How do I set goals?','faq6.a':'From Analytics set weekly/monthly goals and track via progress bars and notifications.',
     'contact.title':'Contact Us','contact.name':'Name','contact.email':'Email','contact.message':'Message','contact.submit':'Send','contact.alt':'Or:',
     'footer.privacy':'Privacy','footer.press':'Press Kit'
   }
