@@ -149,6 +149,36 @@ function showToast(msg){
   setTimeout(()=>{ t.classList.remove('show') }, 3000)
 }
 
+// Popup helper (centered modal)
+function showPopup(message, title){
+  let overlay = document.querySelector('.modal-overlay')
+  if(!overlay){
+    overlay = document.createElement('div')
+    overlay.className = 'modal-overlay'
+    overlay.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+      <h3 id="modal-title"></h3>
+      <p id="modal-desc"></p>
+      <div class="actions">
+        <button class="btn primary" type="button" id="modal-ok">OK</button>
+      </div>
+    </div>`
+    document.body.appendChild(overlay)
+  }
+  const h = overlay.querySelector('#modal-title')
+  const p = overlay.querySelector('#modal-desc')
+  h.textContent = title || (lang==='tr' ? 'Bilgi' : 'Notice')
+  p.textContent = message || ''
+  overlay.classList.add('show')
+  const ok = overlay.querySelector('#modal-ok')
+  ok.focus()
+  function close(){ overlay.classList.remove('show'); overlay.removeEventListener('click', onBg); document.removeEventListener('keydown', onEsc) }
+  function onBg(e){ if(e.target===overlay) close() }
+  function onEsc(e){ if(e.key==='Escape') close() }
+  overlay.addEventListener('click', onBg)
+  document.addEventListener('keydown', onEsc, { once:true })
+  ok.onclick = close
+}
+
 // Generic AJAX submit for all Netlify forms (newsletter, contact, future ones)
 (function(){
   const forms = $$('form[data-netlify]')
@@ -165,14 +195,15 @@ function showToast(msg){
         if(res.status >= 400) throw new Error('netlify')
         form.reset()
         const name = (form.getAttribute('name')||'').toLowerCase()
+        let title = lang==='tr' ? 'Başarılı' : 'Success'
         let msg = '✓'
         if(name==='newsletter') msg = lang==='tr' ? 'Teşekkürler! Abone oldunuz.' : 'Thanks! You are subscribed.'
         else if(name==='contact') msg = lang==='tr' ? 'Teşekkürler! Mesajınızı aldık.' : 'Thanks! We received your message.'
-        else msg = lang==='tr' ? 'Gönderildi.' : 'Submitted.'
-        showToast(msg)
+        else msg = lang==='tr' ? 'Form başarıyla gönderildi.' : 'Form submitted.'
+        showPopup(msg, title)
         try{ if(window.plausible){ window.plausible(`form_${name||'generic'}_submitted`) } }catch(_){ }
       }catch(err){
-        showToast(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.')
+        showPopup(lang==='tr' ? 'Bir hata oluştu. Lütfen tekrar deneyin.' : 'Something went wrong. Please try again.', lang==='tr' ? 'Hata' : 'Error')
       }
     })
   })

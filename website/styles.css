@@ -113,6 +113,16 @@ input,textarea{background:#0e1411;border:1px solid var(--border);color:var(--tex
 @media (max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){.footer-grid{grid-template-columns:1fr}}
 .hidden{display:none}
+/* Toast notifications */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);color:var(--text);padding:14px 20px;border-radius:12px;border:1px solid var(--border);box-shadow:var(--shadow);opacity:0;transition:all .3s ease;z-index:190;max-width:90vw}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* Modal popup */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:250}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);max-width:520px;width:100%;padding:18px}
+.modal h3{margin:0 0 8px}
+.modal p{margin:0;color:var(--text)}
+.modal .actions{margin-top:14px;display:flex;justify-content:flex-end;gap:8px}
 /* Skip link */
 .skip{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
 .skip:focus{left:12px;top:12px;width:auto;height:auto;background:var(--card);color:var(--text);padding:8px 10px;border-radius:8px;border:1px solid var(--border);z-index:100}
