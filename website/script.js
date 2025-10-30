@@ -5,16 +5,37 @@ const $$ = (s,ctx=document)=>[...ctx.querySelectorAll(s)]
 const yearEl = document.getElementById('year');
 if(yearEl) yearEl.textContent = new Date().getFullYear()
 
-// Reveal on scroll
+// Motion budget: reduce on save-data/slow connection
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection
+const motionOK = !prefersReduced && !(conn && (conn.saveData || /2g|3g/.test(conn.effectiveType||'')))
+
+function animateCounter(el){
+  const target = parseInt(el.getAttribute('data-target')||'0',10)
+  let start = 0
+  const dur = 700
+  const t0 = performance.now()
+  const step = (t)=>{
+    const p = Math.min(1, (t - t0)/dur)
+    const val = Math.floor(start + (target - start) * (0.5 - Math.cos(Math.PI*p)/2))
+    el.textContent = val.toLocaleString()
+    if(p<1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
+// Unified observer for reveal + counters
 const io = new IntersectionObserver((entries)=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
-      e.target.classList.add('in');
-      io.unobserve(e.target);
+      if(!motionOK){ e.target.style.transitionDuration='0s'; e.target.style.transitionDelay='0s' }
+      e.target.classList.add('in')
+      if(e.target.classList.contains('counter')) animateCounter(e.target)
+      io.unobserve(e.target)
     }
   })
 },{threshold:.12, rootMargin:'0px 0px -10% 0px'})
-;[...document.querySelectorAll('.reveal')].forEach((el,i)=>{ el.style.transitionDelay = (i*0.05)+'s'; io.observe(el) })
+;[...document.querySelectorAll('.reveal, .counter')].forEach((el)=>{ io.observe(el) })
 
 // Theme
 const themeSaved = localStorage.getItem('theme') || 'dark'
@@ -28,54 +49,6 @@ if(themeBtn){
     document.documentElement.setAttribute('data-theme', next)
     localStorage.setItem('theme', next)
     setThemeIcon(next)
-  })
-}
-
-// Parallax (reduced motion aware)
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-if(!prefersReduced){
-  let ticking=false
-  const onScroll=()=>{
-    if(ticking) return; ticking=true
-    requestAnimationFrame(()=>{
-      const y=window.scrollY||0
-      const blob=document.querySelector('.hero-blob')
-      const media=document.querySelector('.hero-media')
-      if(blob) blob.style.transform = `translateY(${y*0.04}px)`
-      if(media) media.style.transform = `translateY(${Math.min(16,y*0.02)}px)`
-      ticking=false
-    })
-  }
-  window.addEventListener('scroll',onScroll,{passive:true})
-}
-
-// Counters
-function animateCounter(el){
-  const target = parseInt(el.getAttribute('data-target')||'0',10)
-  let start = 0
-  const dur = 1200
-  const t0 = performance.now()
-  const step = (t)=>{
-    const p = Math.min(1, (t - t0)/dur)
-    const val = Math.floor(start + (target - start) * (0.5 - Math.cos(Math.PI*p)/2))
-    el.textContent = val.toLocaleString()
-    if(p<1) requestAnimationFrame(step)
-  }
-  requestAnimationFrame(step)
-}
-[...document.querySelectorAll('.counter')].forEach(c=>{
-  io.observe(c)
-})
-
-// Extend IO to trigger counters when entering
-const oldCallback = io.callback
-io.callback = (entries)=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('in')
-      if(e.target.classList.contains('counter')) animateCounter(e.target)
-      io.unobserve(e.target)
-    }
   })
 }
 
