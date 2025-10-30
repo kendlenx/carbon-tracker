@@ -29,27 +29,27 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Carbon Step fatura QR kodlarını okumak için kameranızı kullanabilir.</string>
+	<string>Carbon Step may use your camera to scan bill QR codes.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Carbon Step reads health data (e.g., steps and activity) to analyze environmental impact and track goals.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Carbon Step can write health data to keep your goals and activities in sync.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Carbon Step uses your location to automatically track your trips in the background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Carbon Step arka planda otomatik yolculuk takibi yapabilmek için konum bilginizi kullanır.</string>
+	<string>Carbon Step uses your location in the background to automatically track trips.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Carbon Step uses your location for automatic trip tracking and eco-friendly route suggestions.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Carbon Step requires access to your microphone for voice commands and activity recording.</string>
 	<key>NSMotionUsageDescription</key>
-	<string>The Carbon Step uses motion sensors for step counting and activity detection.</string>
+	<string>Carbon Step uses motion sensors for step counting and activity detection.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Carbon Step uses speech recognition to recognize voice commands.</string>
+	<string>Carbon Step needs access to your photo library to save reports and exports.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Carbon Step needs Siri access to run Shortcuts and enable voice interactions.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Carbon Step uses speech recognition to recognize voice commands.</string>
-	<key>NSSiriUsageDescription</key>
-	<string>Carbon Step, Siri Kestirmelerini çalıştırmak ve sesli etkileşimleri etkinleştirmek için Siri erişimine ihtiyaç duyar.</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>Carbon Step, adım/aktivite gibi sağlık verilerini çevresel etki analizi ve hedef takibi için okur.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>Carbon Step, hedef ilerlemesi ve aktiviteleri senkron tutmak için sağlık verilerinize yazabilir.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
@@ -57,6 +57,8 @@
 		<string>location</string>
 		<string>background-fetch</string>
 		<string>background-processing</string>
+		<string>fetch</string>
+		<string>processing</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
