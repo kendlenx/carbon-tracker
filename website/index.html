@@ -50,6 +50,7 @@
     </script>
   </head>
   <body>
+    <a href="#main" class="skip">İçeriğe geç</a>
     <header class="site-header">
       <a class="logo" href="/">
         <img src="/assets/logo.png" alt="Carbon Step" height="32" />
@@ -67,7 +68,7 @@
       </div>
     </header>
 
-    <main>
+    <main id="main">
       <section class="hero section">
         <div class="container hero-grid">
           <div class="hero-content reveal">
@@ -89,6 +90,29 @@
           </div>
         </div>
         <div class="hero-blob" aria-hidden="true"></div>
+      </section>
+
+      <section id="how" class="section how">
+        <div class="container">
+          <h2 class="reveal" data-i18n="how.title">Nasıl çalışır?</h2>
+          <div class="grid steps">
+            <article class="card reveal">
+              <div class="step">1</div>
+              <h3 data-i18n="how.step1.title">Kayıt</h3>
+              <p data-i18n="how.step1.desc">Ulaşım, enerji ve gıda kayıtlarını birkaç dokunuşla ekleyin.</p>
+            </article>
+            <article class="card reveal">
+              <div class="step">2</div>
+              <h3 data-i18n="how.step2.title">Analiz</h3>
+              <p data-i18n="how.step2.desc">Günlük/aylık eğilimleri görün, hedefler belirleyin.</p>
+            </article>
+            <article class="card reveal">
+              <div class="step">3</div>
+              <h3 data-i18n="how.step3.title">Aksiyon</h3>
+              <p data-i18n="how.step3.desc">Widget, Siri/CarPlay ve bildirimlerle alışkanlık kazanın.</p>
+            </article>
+          </div>
+        </div>
       </section>
 
       <section id="features" class="features section">
@@ -129,6 +153,26 @@
         </div>
       </section>
 
+      <section id="demos" class="section demos">
+        <div class="container">
+          <h2 class="reveal" data-i18n="demos.title">Mini demolar</h2>
+          <div class="grid">
+            <article class="card reveal">
+              <h3 data-i18n="demos.quicklog">Hızlı kayıt</h3>
+              <img src="/assets/demo-quick.gif" alt="Hızlı kayıt demosu" loading="lazy" />
+            </article>
+            <article class="card reveal">
+              <h3 data-i18n="demos.analytics">Analitik</h3>
+              <img src="/assets/demo-analytics.gif" alt="Analitik demosu" loading="lazy" />
+            </article>
+            <article class="card reveal">
+              <h3 data-i18n="demos.widgets">Widget</h3>
+              <img src="/assets/demo-widgets.gif" alt="Widget demosu" loading="lazy" />
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section id="screens" class="section">
         <div class="container">
           <h2 class="reveal" data-i18n="screens.title">Ekran Görüntüleri</h2>
@@ -157,6 +201,17 @@
               <div class="num counter" data-target="3760">0</div>
               <div class="label" data-i18n="impact.stat3">Ağaç eşdeğeri tasarruf</div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="shortcuts" class="section shortcuts">
+        <div class="container">
+          <h2 class="reveal" data-i18n="shortcuts.title">Kısayollar ve entegrasyonlar</h2>
+          <div class="grid">
+            <article class="card reveal"><h3>Siri</h3><p data-i18n="shortcuts.siri">“Hey Siri, işe gidişimi kaydet.”</p></article>
+            <article class="card reveal"><h3>CarPlay</h3><p data-i18n="shortcuts.carplay">Direksiyon başında eller serbest kayıt.</p></article>
+            <article class="card reveal"><h3>Widget</h3><p data-i18n="shortcuts.widget">Ana ekrandan tek dokunuşla ekleme.</p></article>
           </div>
         </div>
       </section>
@@ -253,7 +308,14 @@
         <span>© <span id="year"></span> Carbon Step</span>
         <nav>
           <a href="/privacy.html" data-i18n="footer.privacy">Gizlilik</a>
+          <a href="/terms.html" data-i18n="footer.terms">Kullanım Şartları</a>
+          <a href="/accessibility.html" data-i18n="footer.a11y">Erişilebilirlik</a>
           <a href="/press.html" rel="nofollow" data-i18n="footer.press">Basın Kiti</a>
+          <a href="/roadmap.html" data-i18n="footer.roadmap">Yol Haritası</a>
+          <span class="sep">•</span>
+          <a href="#" aria-label="X" class="social">X</a>
+          <a href="#" aria-label="Instagram" class="social">Instagram</a>
+          <a href="#" aria-label="GitHub" class="social">GitHub</a>
         </nav>
       </div>
     </footer>

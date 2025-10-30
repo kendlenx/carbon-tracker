@@ -55,7 +55,10 @@ if(themeBtn){
 // i18n
 const dict = {
   tr: {
-    'nav.features':'Özellikler','nav.screens':'Ekran Görüntüleri','nav.faq':'SSS','nav.contact':'İletişim',
+'nav.features':'Özellikler','nav.screens':'Ekran Görüntüleri','nav.faq':'SSS','nav.contact':'İletişim',
+    'how.title':'Nasıl çalışır?','how.step1.title':'Kayıt','how.step1.desc':'Ulaşım, enerji ve gıda kayıtlarını birkaç dokunuşla ekleyin.',
+    'how.step2.title':'Analiz','how.step2.desc':'Günlük/aylık eğilimleri görün, hedefler belirleyin.',
+    'how.step3.title':'Aksiyon','how.step3.desc':'Widget, Siri/CarPlay ve bildirimlerle alışkanlık kazanın.',
     'hero.title':'Karbon ayak izinizi takip edin ve azaltın',
     'hero.subtitle':'Ulaşım, enerji, gıda ve alışveriş kaynaklı emisyonlarınızı kaydedin; hedefler belirleyin, içgörüler alın, başarımlar kazanın.',
     'hero.appstore':'App Store','hero.playstore':'Google Play','hero.note':'Widget\'lar, Siri/CarPlay ve yerel bildirimlerle hızlı kayıt deneyimi.',
@@ -66,6 +69,7 @@ const dict = {
     'features.analytics.title':'Analitik','features.analytics.desc':'Günlük/haftalık/aylık eğilimler ve hedeflerle ilerlemenizi takip edin.',
     'features.gamification.title':'Oyunlaştırma','features.gamification.desc':'Başarımlar, hedefler ve rozetlerle motivasyonunuzu yüksek tutun.',
     'features.integrations.title':'Entegrasyonlar','features.integrations.desc':'Ana ekran widget\'ları, Siri/CarPlay ve yerel bildirim desteği.',
+'demos.title':'Mini demolar','demos.quicklog':'Hızlı kayıt','demos.analytics':'Analitik','demos.widgets':'Widget',
     'screens.title':'Ekran Görüntüleri',
 'faq.title':'Sıkça Sorulan Sorular','faq1.q':'Uygulama ücretsiz mi?','faq1.a':'Temel özellikler ücretsizdir. İleri seviye özellikler için daha sonra opsiyonel destek paketleri eklenebilir.',
     'faq2.q':'Verilerim güvende mi?','faq2.a':'Verileriniz yerel olarak saklanır ve isteğe bağlı olarak bulutla senkronize edilir. Gizlilik politikamıza uyumludur.',
@@ -80,7 +84,10 @@ const dict = {
     'newsletter.title':'Güncellemeleri alın','newsletter.placeholder':'E-postanızı girin','newsletter.submit':'Abone ol'
   },
   en: {
-    'nav.features':'Features','nav.screens':'Screens','nav.faq':'FAQ','nav.contact':'Contact',
+'nav.features':'Features','nav.screens':'Screens','nav.faq':'FAQ','nav.contact':'Contact',
+    'how.title':'How it works','how.step1.title':'Log','how.step1.desc':'Add transport, energy and food logs in a few taps.',
+    'how.step2.title':'Analyze','how.step2.desc':'See daily/monthly trends and set goals.',
+    'how.step3.title':'Act','how.step3.desc':'Build habits with Widgets, Siri/CarPlay and notifications.',
     'hero.title':'Track and reduce your carbon footprint',
     'hero.subtitle':'Log emissions from transport, energy, food and shopping; set goals, get insights and earn achievements.',
     'hero.appstore':'App Store','hero.playstore':'Google Play','hero.note':'Fast logging with Home Widgets, Siri/CarPlay and local notifications.',
@@ -91,6 +98,7 @@ const dict = {
     'features.analytics.title':'Analytics','features.analytics.desc':'Track progress with daily/weekly/monthly trends and goals.',
     'features.gamification.title':'Gamification','features.gamification.desc':'Stay motivated with achievements, goals and badges.',
     'features.integrations.title':'Integrations','features.integrations.desc':'Home widgets, Siri/CarPlay and local notification support.',
+'demos.title':'Mini demos','demos.quicklog':'Quick log','demos.analytics':'Analytics','demos.widgets':'Widget',
     'screens.title':'Screenshots',
 'faq.title':'Frequently Asked Questions','faq1.q':'Is the app free?','faq1.a':'Core features are free. Optional support packs may be added later for advanced features.',
     'faq2.q':'Is my data safe?','faq2.a':'Your data is stored locally and can optionally sync to the cloud. We comply with our privacy policy.',
@@ -99,7 +107,7 @@ const dict = {
     'faq5.q':'Can I export my data?','faq5.a':'Yes. Use CSV/JSON export options in Settings.',
     'faq6.q':'How do I set goals?','faq6.a':'From Analytics set weekly/monthly goals and track via progress bars and notifications.',
     'contact.title':'Contact Us','contact.name':'Name','contact.email':'Email','contact.message':'Message','contact.submit':'Send','contact.alt':'Or:',
-'footer.privacy':'Privacy','footer.press':'Press Kit',
+'footer.privacy':'Privacy','footer.press':'Press Kit','footer.terms':'Terms','footer.a11y':'Accessibility','footer.roadmap':'Roadmap',
     'impact.title':'Community impact','impact.stat1':'kg CO₂e logged this month','impact.stat2':'Public transit trips','impact.stat3':'Trees saved equivalent',
     'testimonials.title':'What users say','testimonials.q1':'“Logging daily transport is super fast, goals help me reduce.”','testimonials.q2':'“With widgets and notifications it became a habit; my monthly emissions dropped.”','testimonials.q3':'“Insights are great; I changed my dietary choices.”',
     'newsletter.title':'Get updates','newsletter.placeholder':'Enter your email','newsletter.submit':'Subscribe'
