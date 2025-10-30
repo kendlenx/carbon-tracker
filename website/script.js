@@ -108,8 +108,13 @@ const dict = {
   }
 }
 
+function getParam(name){
+  const m = new URLSearchParams(location.search).get(name)
+  return m && m.trim() ? m : null
+}
+const urlLang = getParam('lang')
 const saved = localStorage.getItem('lang') || (navigator.language?.startsWith('tr')?'tr':'en')
-let lang = saved
+let lang = (urlLang==='tr' || urlLang==='en') ? urlLang : saved
 function applyI18n(){
   $$('[data-i18n]').forEach(el=>{
     const key = el.getAttribute('data-i18n')
@@ -124,6 +129,17 @@ function applyI18n(){
   if(toggle) toggle.textContent = lang==='tr'?'🇬🇧':'🇹🇷'
 }
 applyI18n()
+
+// Cookie banner (analytics notice)
+(function(){
+  if(localStorage.getItem('cookieConsent')==='1') return
+  const bar = document.createElement('div')
+  bar.style.position='fixed';bar.style.inset='auto 10px 10px 10px';bar.style.zIndex='70';bar.style.background='rgba(17,24,21,.95)';bar.style.border='1px solid var(--border)';bar.style.borderRadius='12px';bar.style.padding='12px 14px';bar.style.display='flex';bar.style.gap='10px';bar.style.flexWrap='wrap';
+  bar.innerHTML = `<span class="small">Bu sitede anonim analiz için Plausible kullanıyoruz. <a href="/privacy.html">Gizlilik</a></span>`;
+  const btn = document.createElement('button');btn.className='btn primary';btn.textContent='Kabul Et';btn.onclick=()=>{localStorage.setItem('cookieConsent','1');bar.remove()}
+  bar.appendChild(btn)
+  document.body.appendChild(bar)
+})()
 
 const langToggle = document.getElementById('lang-toggle')
 if(langToggle){

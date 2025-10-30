@@ -2,6 +2,9 @@
   # This file lives under the Netlify Base directory (website/), so publish the current dir
   publish = "."
 
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
 # Force HTTPS for apex
 [[redirects]]
   from = "http://carbonstepapp.com/*"
