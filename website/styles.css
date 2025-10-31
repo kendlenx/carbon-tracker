@@ -16,6 +16,8 @@ body{padding-bottom:env(safe-area-inset-bottom)}
 /* Light theme overrides */
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
+.store-icon{width:18px;height:18px;display:inline-block}
+.store-icon.white{filter: invert(1) brightness(2)}
 .section{padding:88px 20px}
 .section h2{position:relative}
 .section h2::after{content:"";display:block;width:64px;height:3px;background:linear-gradient(135deg,var(--brand),var(--brand-2));border-radius:999px;margin-top:8px}
@@ -27,6 +29,7 @@ a{color:inherit;text-decoration:none}
 .nav a{opacity:.95;padding:8px 12px;border-radius:10px;border:1px solid transparent;white-space:nowrap}
 .nav a:hover{opacity:1;background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.15)}
 .header-ctas{display:flex;gap:8px;align-items:center}
+.header-ctas .store-w{width:156px;justify-content:center}
 .nav a{opacity:.9}
 .nav a:hover{opacity:1}
 .btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:12px 16px;border-radius:14px;transition:transform .2s ease, box-shadow .2s ease, background .2s ease;min-height:44px}
